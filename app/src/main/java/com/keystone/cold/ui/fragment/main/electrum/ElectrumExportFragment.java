@@ -26,7 +26,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ElectrumExportBinding;
@@ -117,7 +117,7 @@ public class ElectrumExportFragment extends BaseFragment<ElectrumExportBinding> 
     }
 
     private String getFileName() {
-        Coins.Account account = GlobalViewModel.getAccount(mActivity);
+        Account account = GlobalViewModel.getAccount(mActivity);
         switch (account) {
             case P2WPKH:
             case P2WPKH_TESTNET:

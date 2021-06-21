@@ -26,7 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.SettingItemSelectableBinding;
@@ -117,9 +117,9 @@ public class ChooseWatchWalletFragment extends ListPreferenceFragment {
         if (prefs.edit().putString(SETTING_CHOOSE_WATCH_WALLET, value).commit()) {
             WatchWallet wallet = getWatchWallet(mActivity);
             if (wallet.supportNativeSegwit()) {
-                prefs.edit().putString(SETTING_ADDRESS_FORMAT, Coins.Account.P2WPKH.getType()).apply();
+                prefs.edit().putString(SETTING_ADDRESS_FORMAT, Account.P2WPKH.getType()).apply();
             } else if (wallet.supportNestedSegwit()) {
-                prefs.edit().putString(SETTING_ADDRESS_FORMAT, Coins.Account.P2SH_P2WPKH.getType()).apply();
+                prefs.edit().putString(SETTING_ADDRESS_FORMAT, Account.P2SH_P2WPKH.getType()).apply();
             }
         }
     }

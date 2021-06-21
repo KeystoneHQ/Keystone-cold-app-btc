@@ -27,11 +27,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.keystone.coinlib.accounts.Account;
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.coinlib.exception.CoinNotFindException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.utils.B58;
 import com.keystone.coinlib.utils.Coins;
-import com.keystone.coinlib.utils.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
@@ -39,6 +40,12 @@ import com.keystone.cold.protocol.ZipUtil;
 import com.keystone.cold.protocol.parser.ProtoParser;
 import com.keystone.cold.ui.fragment.main.QRCodeScanFragment;
 import com.keystone.cold.ui.fragment.main.QrScanPurpose;
+import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
+import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
+import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
+import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoCoinInfo;
 import com.sparrowwallet.hummingbird.registry.CryptoHDKey;
@@ -49,7 +56,6 @@ import com.sparrowwallet.hummingbird.registry.PathComponent;
 import com.sparrowwallet.hummingbird.registry.ScriptExpression;
 
 import co.nstant.in.cbor.CborDecoder;
-import co.nstant.in.cbor.CborException;
 import co.nstant.in.cbor.model.DataItem;
 
 import org.json.JSONException;
@@ -88,9 +94,9 @@ public class QrScanViewModel extends AndroidViewModel {
         if (!TextUtils.isEmpty(hex)) {
             WatchWallet wallet = WatchWallet.getWatchWallet(getApplication());
             if (QrScanPurpose.IMPORT_MULTISIG_WALLET == fragment.getPurpose()) {
-                JSONObject object = MultiSigViewModel.decodeColdCardWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
+                JSONObject object = LegacyMultiSigViewModel.decodeColdCardWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
                 if (object == null) {
-                    object = MultiSigViewModel.decodeCaravanWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
+                    object = LegacyMultiSigViewModel.decodeCaravanWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
                 }
                 if (object != null) {
                     fragment.handleImportMultisigWallet(hex);
@@ -181,24 +187,22 @@ public class QrScanViewModel extends AndroidViewModel {
         }
     }
 
-    private List<ScriptExpression> getScriptExpressionByAccount(MultiSig.Account account) {
+    private List<ScriptExpression> getScriptExpressionByAccount(Account account) {
         switch (account) {
-            case P2SH:
-            case P2SH_TEST:
+            case MULTI_P2SH:
+            case MULTI_P2SH_TEST:
                 return Arrays.asList(ScriptExpression.SCRIPT_HASH);
-            case P2WSH:
-            case P2WSH_TEST:
+            case MULTI_P2WSH:
+            case MULTI_P2WSH_TEST:
                 return Arrays.asList(ScriptExpression.WITNESS_SCRIPT_HASH);
-            case P2SH_P2WSH:
-            case P2SH_P2WSH_TEST:
-                return Arrays.asList(ScriptExpression.SCRIPT_HASH, ScriptExpression.WITNESS_SCRIPT_HASH);
             default:
+                // MULTI_P2SH_P2WSH, MULTI_P2SH_P2WSH_TEST:
                 return Arrays.asList(ScriptExpression.SCRIPT_HASH, ScriptExpression.WITNESS_SCRIPT_HASH);
         }
     }
 
 
-    public CryptoOutput collectMultiSigCryptoOutputFromCryptoAccount(CryptoAccount cryptoAccount, MultiSig.Account targetAccount) {
+    public CryptoOutput collectMultiSigCryptoOutputFromCryptoAccount(CryptoAccount cryptoAccount, Account targetAccount) {
         List<CryptoOutput> cryptoOutputs = cryptoAccount.getOutputDescriptors();
         if (cryptoOutputs.size() == 0) {
             return null;
@@ -231,7 +235,7 @@ public class QrScanViewModel extends AndroidViewModel {
                 if (path == null) {
                     throw new CollectExPubException("invalid CryptoHDKey: origin path is null");
                 }
-                if (!MultiSig.Account.isValidMultiSigPath(path)) {
+                if (!MultiSig.isValidPath(path)) {
                     throw new CollectExPubException("invalid CryptoHDKey: origin path is invalid: " + path);
                 }
 
@@ -250,7 +254,7 @@ public class QrScanViewModel extends AndroidViewModel {
                 if (coinInfo != null) {
                     isTestnet = coinInfo.getNetwork().equals(CryptoCoinInfo.Network.TESTNET);
                 }
-                MultiSig.Account account = MultiSig.Account.ofPath(path, isTestnet);
+                Account account = MultiSig.ofPath(path, !isTestnet).get(0);
                 byte[] parentFingerprint = cryptoHDKey.getParentFingerprint();
                 if (parentFingerprint == null) {
                     throw new CollectExPubException("invalid CryptoHDKey: parentFingerprint is null");
@@ -272,7 +276,7 @@ public class QrScanViewModel extends AndroidViewModel {
                     throw new CollectExPubException("invalid CryptoHDKey: chainCode is null");
                 }
 
-                byte[] xPubVersion = BigInteger.valueOf(account.getXpubVersion()).toByteArray();
+                byte[] xPubVersion = account.getXPubVersion().getVersionBytes();
                 byte[] bytes = new byte[4 + 1 + 4 + 4 + 32 + 33];//version + depth + parentFingerprint + index + chainCode + key;
                 byte[] index = BigInteger.valueOf(lastPathComponent.isHardened() ? 0x80000000 + lastPathComponent.getIndex() : lastPathComponent.getIndex()).toByteArray();
 

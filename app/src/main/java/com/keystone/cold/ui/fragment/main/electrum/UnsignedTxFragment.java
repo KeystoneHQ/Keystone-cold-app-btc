@@ -53,11 +53,11 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.viewmodel.GlobalViewModel;
-import com.keystone.cold.viewmodel.NoMatchedMultisigWallet;
+import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
-import com.keystone.cold.viewmodel.WatchWalletNotMatchException;
-import com.keystone.cold.viewmodel.XpubNotMatchException;
+import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
+import com.keystone.cold.viewmodel.exceptions.XpubNotMatchException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -257,7 +257,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                     buttonText = getString(R.string.know);
                 }
 
-                if (ex instanceof NoMatchedMultisigWallet) {
+                if (ex instanceof NoMatchedMultisigWalletException) {
                     title = getString(R.string.no_matched_wallet);
                     errorMessage = getString(R.string.no_matched_wallet_hint);
                     buttonText = getString(R.string.know);

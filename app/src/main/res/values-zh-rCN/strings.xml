@@ -478,6 +478,11 @@
         <item>通用钱包</item>
     </string-array>
 
+    <string-array name="multisig_mode_list">
+        <item>通用模式</item>
+        <item>Casa</item>
+    </string-array>
+
     <string-array name="address_format">
         <item>隔离见证兼容（P2SH-P2WPKH）</item>
         <item>隔离见证原生（P2WPKH）</item>

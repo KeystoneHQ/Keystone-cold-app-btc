@@ -327,7 +327,7 @@
 
     <fragment
         android:id="@+id/multisigFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.MultisigMainFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment"
         android:label="MultisigMainFragment">
         <action android:id="@+id/export_export_multisig_expub"
             app:destination="@id/exportMultisigExpubFragment"
@@ -391,12 +391,12 @@
 
     <fragment
         android:id="@+id/exportMultisigExpubFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.ExportMultisigExpubFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.common.ExportMultisigExpubFragment"
         android:label="ExportMultisigExpubFragment"/>
 
     <fragment
         android:id="@+id/walletFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.WalletFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.WalletFragment"
         android:label="WalletFragment">
         <action
             android:id="@id/action_to_txList"
@@ -433,7 +433,7 @@
 
     <fragment
         android:id="@+id/exportMultiSigWalletToWatchWalletGuide"
-        android:name="com.keystone.cold.ui.fragment.multisig.ExportMultiSigWalletToWatchWalletGuide"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ExportMultiSigWalletToWatchWalletGuide"
         android:label="ExportMultiSigWalletToWatchWalletGuide">
         <action
             android:id="@+id/action_to_export_multisig_xpub_to_el"
@@ -454,22 +454,22 @@
     </fragment>
     <fragment
         android:id="@+id/exportMultiSigWalletToWatchWallet"
-        android:name="com.keystone.cold.ui.fragment.multisig.ExportMultiSigWalletToWatchWallet"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ExportMultiSigWalletToWatchWallet"
         android:label="ExportMultiSigWalletToWatchWallet"/>
 
     <fragment
         android:id="@+id/exportXpubToElectrumFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.ExportXpubToElectrumFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ExportXpubToElectrumFragment"
         android:label="ExportXpubToElectrumFragment"/>
 
     <fragment
         android:id="@+id/multisigWalletInfoFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.MultisigWalletInfoFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.MultisigWalletInfoFragment"
         android:label="MultisigWalletInfoFragment"/>
 
     <fragment
         android:id="@+id/exportWalletToCosignerFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.ExportWalletToCosignerFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ExportWalletToCosignerFragment"
         android:label="ExportWalletToCosignerFragment">
         <action android:id="@id/action_export_multisig_wallet_watch_only_guide"
             app:destination="@id/exportMultiSigWalletToWatchWalletGuide"
@@ -481,7 +481,7 @@
 
     <fragment
         android:id="@+id/manageWalletFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.ManageWalletFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ManageWalletFragment"
         android:label="ManageWalletFragment">
         <action
             android:id="@id/action_to_preImportFragment"
@@ -494,7 +494,7 @@
 
     <fragment
         android:id="@+id/importMultisigFileList"
-        android:name="com.keystone.cold.ui.fragment.multisig.ImportMultisigFileList"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ImportMultisigFileList"
         android:label="ImportMultisigFileList">
         <action android:id="@+id/import_multisig_wallet"
             app:destination="@id/importWalletFragment"
@@ -513,7 +513,7 @@
 
     <fragment
         android:id="@+id/importWalletFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.ImportWalletFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.ImportWalletFragment"
         android:label="ImportWalletFragment">
         <action android:id="@id/action_export_multisig_wallet_watch_only_guide"
             app:destination="@id/exportMultiSigWalletToWatchWalletGuide"
@@ -525,7 +525,7 @@
 
     <fragment
         android:id="@+id/PreCreateMultiSigWalletFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.PreCreateMultiSigWalletFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.PreCreateMultiSigWalletFragment"
         android:label="PreCreateMultiSigWalletFragment">
         <action android:id="@+id/action_to_collect_expubs"
             app:destination="@id/collectExpubFragment"
@@ -538,7 +538,7 @@
 
     <fragment
         android:id="@+id/collectExpubFragment"
-        android:name="com.keystone.cold.ui.fragment.multisig.CollectExpubFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment"
         android:label="CollectExpubFragment">
         <action
             android:id="@+id/scan_xpub_info"

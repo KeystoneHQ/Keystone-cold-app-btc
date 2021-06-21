@@ -23,7 +23,7 @@
 
         <variable
             name="callback"
-            type="com.keystone.cold.ui.fragment.multisig.AddressClickCallback" />
+            type="com.keystone.cold.ui.fragment.multisigs.legacy.AddressClickCallback" />
 
         <variable
             name="address"

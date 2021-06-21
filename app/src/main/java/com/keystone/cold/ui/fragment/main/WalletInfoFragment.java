@@ -24,7 +24,7 @@ import android.view.View;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.ExtendPubkeyFormat;
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.WalletInfoBinding;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -37,7 +37,7 @@ import static com.keystone.cold.ui.fragment.setup.SelectAddressFormatFragment.KE
 import static com.keystone.cold.viewmodel.WatchWallet.getWatchWallet;
 
 public class WalletInfoFragment extends BaseFragment<WalletInfoBinding> {
-    private Coins.Account account;
+    private Account account;
 
     @Override
     protected int setView() {

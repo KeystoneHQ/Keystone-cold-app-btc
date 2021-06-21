@@ -112,6 +112,16 @@
         <item>100</item>
     </string-array>
 
+    <string-array name="multisig_mode_list">
+        <item>Generic Mode</item>
+        <item>Casa Mode</item>
+    </string-array>
+
+    <string-array name="multisig_mode_list_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 
     <string-array name="address_format">
         <item>Nested SegWit（P2SH-P2WPKH）</item>

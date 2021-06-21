@@ -26,7 +26,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.TxListBinding;
@@ -35,7 +35,7 @@ import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.ui.common.FilterableBaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.viewmodel.CoinListViewModel;
-import com.keystone.cold.viewmodel.MultiSigViewModel;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 
 import java.util.Collections;
@@ -90,7 +90,7 @@ public class TxListFragment extends BaseFragment<TxListBinding> {
 
         LiveData<List<TxEntity>> txs;
         if (multisig) {
-            MultiSigViewModel vm = ViewModelProviders.of(this).get(MultiSigViewModel.class);
+            LegacyMultiSigViewModel vm = ViewModelProviders.of(this).get(LegacyMultiSigViewModel.class);
             txs = vm.loadTxs(walletFingerprint);
         } else {
             txs = viewModel.loadTxs(data.getString(KEY_COIN_ID));
@@ -148,8 +148,8 @@ public class TxListFragment extends BaseFragment<TxListBinding> {
                     && !txEntity.getSignId().contains(PSBT_MULTISIG_SIGN_ID);
         } else {
             if (watchWallet == ELECTRUM) {
-                Coins.Account account = getAccount(mActivity);
-                if (account == Coins.Account.P2WPKH || account == Coins.Account.P2WPKH_TESTNET) {
+                Account account = getAccount(mActivity);
+                if (account == Account.P2WPKH || account == Account.P2WPKH_TESTNET) {
                     return (watchWallet.getSignId()+"_NATIVE_SEGWIT").equals(txEntity.getSignId());
                 } else {
                     return watchWallet.getSignId().equals(txEntity.getSignId());

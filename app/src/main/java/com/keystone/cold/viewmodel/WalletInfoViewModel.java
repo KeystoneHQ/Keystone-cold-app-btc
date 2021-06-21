@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.keystone.coinlib.utils.Account;
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.DataRepository;
@@ -48,7 +49,7 @@ public class WalletInfoViewModel extends AndroidViewModel {
         return fingerprint;
     }
 
-    public MutableLiveData<String> getXpub(Coins.Account account) {
+    public MutableLiveData<String> getXpub(Account account) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             DataRepository repo = ((MainApplication)getApplication()).getRepository();
             boolean isMainNet = Utilities.isMainNet(getApplication());

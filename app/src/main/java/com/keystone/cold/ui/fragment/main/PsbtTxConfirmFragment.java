@@ -33,7 +33,7 @@ import com.keystone.cold.ui.fragment.main.electrum.UnsignedTxFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.update.utils.Storage;
-import com.keystone.cold.viewmodel.MultiSigViewModel;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 
 import org.spongycastle.util.encoders.Base64;
@@ -77,7 +77,7 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
         ModalDialog modalDialog = ModalDialog.newInstance();
         ExportSdcardModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(activity),
                 R.layout.export_sdcard_modal, null, false);
-        MultiSigViewModel vm = ViewModelProviders.of(activity).get(MultiSigViewModel.class);
+        LegacyMultiSigViewModel vm = ViewModelProviders.of(activity).get(LegacyMultiSigViewModel.class);
         String fileName;
         if (signed) {
             fileName = "signed_" + txId.substring(0, 8) + ".psbt";
