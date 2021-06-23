@@ -81,12 +81,10 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
 
     private final LiveData<List<MultiSigWalletEntity>> mObservableWallets;
     private final MutableLiveData<Boolean> addComplete = new MutableLiveData<>();
-    private final String xfp;
     private final DataRepository repo;
 
     public LegacyMultiSigViewModel(@NonNull Application application) {
         super(application);
-        xfp = new GetMasterFingerprintCallable().call();
         repo = ((MainApplication) application).getRepository();
         mObservableWallets = repo.loadAllMultiSigWallet();
     }
@@ -204,7 +202,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
         String netmode = Utilities.isMainNet(getApplication()) ? "main" : "testnet";
         MutableLiveData<MultiSigWalletEntity> result = new MutableLiveData<>();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            String defaultMultisgWalletFp = Utilities.getDefaultMultisigWallet(getApplication(), xfp);
+            String defaultMultisgWalletFp = Utilities.getDefaultMultisigWallet(getApplication(), getXfp());
             if (!TextUtils.isEmpty(defaultMultisgWalletFp)) {
                 MultiSigWalletEntity wallet = repo.loadMultisigWallet(defaultMultisgWalletFp);
                 if (wallet != null && wallet.getNetwork().equals(netmode)) {
@@ -213,7 +211,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                     List<MultiSigWalletEntity> list = repo.loadAllMultiSigWalletSync();
                     if (!list.isEmpty()) {
                         result.postValue(list.get(0));
-                        Utilities.setDefaultMultisigWallet(getApplication(), xfp, list.get(0).getWalletFingerPrint());
+                        Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), list.get(0).getWalletFingerPrint());
                     } else {
                         result.postValue(null);
                     }
@@ -222,7 +220,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 List<MultiSigWalletEntity> list = repo.loadAllMultiSigWalletSync();
                 if (!list.isEmpty()) {
                     result.postValue(list.get(0));
-                    Utilities.setDefaultMultisigWallet(getApplication(), xfp, list.get(0).getWalletFingerPrint());
+                    Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), list.get(0).getWalletFingerPrint());
                 } else {
                     result.postValue(null);
                 }
@@ -294,7 +292,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                     String path = wallet.getExPubPath();
                     int threshold = wallet.getThreshold();
                     int total = wallet.getTotal();
-                    builder.append(String.format("# Keystone Multisig setup file (created on %s)", xfp)).append("\n")
+                    builder.append(String.format("# Keystone Multisig setup file (created on %s)", getXfp())).append("\n")
                             .append("#").append("\n")
                             .append("Name: ").append(wallet.getWalletName()).append("\n")
                             .append(String.format("Policy: %d of %d", threshold, total)).append("\n")
@@ -326,14 +324,10 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
         return result;
     }
 
-    public String getXfp() {
-        return xfp;
-    }
-
     public String getExportXpubInfo(Account account) {
         JSONObject object = new JSONObject();
         try {
-            object.put("xfp", xfp);
+            object.put("xfp", getXfp());
             object.put("xpub", getXPub(account));
             object.put("path", account.getPath());
         } catch (JSONException e) {
@@ -344,11 +338,11 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
     }
 
     public CryptoAccount getCryptoAccount(Account account) {
-        return new CryptoAccount(Hex.decode(xfp), Arrays.asList(getCryptoOutput(account)));
+        return new CryptoAccount(Hex.decode(getXfp()), Arrays.asList(getCryptoOutput(account)));
     }
 
     public CryptoOutput getCryptoOutput(Account account) {
-        String masterFingerprint = xfp;
+        String masterFingerprint = getXfp();
         String xpub = getXPub(account);
         byte[] xpubBytes = new B58().decodeAndCheck(xpub);
         byte[] parentFp = Arrays.copyOfRange(xpubBytes, 5, 9);
@@ -425,7 +419,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 object.put(format + "_deriv", value.getPath());
                 object.put(format, getXPub(value));
             }
-            object.put("xfp", xfp.toUpperCase());
+            object.put("xfp", getXfp().toUpperCase());
             return object.toString(2).replace("\\", "");
         } catch (JSONException e) {
             return "";
@@ -433,11 +427,11 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
     }
 
     public String getExportXpubFileName(Account account) {
-        return xfp + "_" + account.getScript() + ".json";
+        return getXfp() + "_" + account.getScript() + ".json";
     }
 
     public String getExportAllXpubFileName() {
-        return "ccxp-" + xfp + ".json";
+        return "ccxp-" + getXfp() + ".json";
     }
 
     public String getAddressTypeString(Account account) {
@@ -466,7 +460,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 obj = xpubsInfo.getJSONObject(i);
                 String xfp = obj.getString("xfp");
                 String xpub = ExtendedPublicKeyVersion.convertXPubVersion(obj.getString("xpub"), account.getXPubVersion());
-                if ((xfp.equalsIgnoreCase(this.xfp) || xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(account))))
+                if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(account))))
                         && ExtendPubkeyFormat.isEqualIgnorePrefix(getXPub(account), xpub)) {
                     xfpMatch = true;
                 }
@@ -480,7 +474,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             throw new XfpNotMatchException("xfp not match");
         }
         String verifyCode = calculateWalletVerifyCode(threshold, xpubs, account.getPath());
-        String walletFingerprint = verifyCode + xfp;
+        String walletFingerprint = verifyCode + getXfp();
         String walletName = !TextUtils.isEmpty(name) ? name : "KT_" + verifyCode + "_" + threshold + "-" + total;
         MultiSigWalletEntity wallet = new MultiSigWalletEntity(
                 walletName,
@@ -488,7 +482,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 total,
                 account.getPath(),
                 xpubsInfo.toString(),
-                xfp,
+                getXfp(),
                 Utilities.isMainNet(getApplication()) ? "main" : "testnet", verifyCode, creator);
         wallet.setWalletFingerPrint(walletFingerprint);
         AppExecutors.getInstance().diskIO().execute(() -> {
@@ -501,7 +495,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 repo.updateWallet(wallet);
                 result.postValue(wallet);
             }
-            Utilities.setDefaultMultisigWallet(getApplication(), xfp, walletFingerprint);
+            Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), walletFingerprint);
         });
         return result;
     }

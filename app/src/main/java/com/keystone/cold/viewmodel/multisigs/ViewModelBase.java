@@ -8,15 +8,22 @@ import androidx.lifecycle.AndroidViewModel;
 import com.keystone.coinlib.accounts.Account;
 import com.keystone.coinlib.accounts.ExtendedPublicKeyVersion;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
+import com.keystone.cold.callables.GetMasterFingerprintCallable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 class ViewModelBase extends AndroidViewModel {
     private final Map<Account, String> xPubMap = new HashMap<>();
+    private final String xfp;
 
     public ViewModelBase(@NonNull Application application) {
         super(application);
+        xfp = new GetMasterFingerprintCallable().call();
+    }
+
+    public String getXfp() {
+        return xfp;
     }
 
     public String getXPub(Account account) {
