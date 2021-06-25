@@ -23,7 +23,7 @@ import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
@@ -80,7 +80,7 @@ public class SelectAddressFormatFragment extends ListPreferenceFragment {
 
     @Override
     protected String defaultValue() {
-        return Coins.Account.P2SH_P2WPKH.getType();
+        return Account.P2SH_P2WPKH.getType();
     }
 
     @Override

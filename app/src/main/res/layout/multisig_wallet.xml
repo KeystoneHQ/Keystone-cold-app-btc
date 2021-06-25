@@ -23,7 +23,7 @@
     <data>
         <variable
             name="clickHandler"
-            type="com.keystone.cold.ui.fragment.multisig.ClickHandler" />
+            type="com.keystone.cold.ui.fragment.multisigs.legacy.ClickHandler" />
     </data>
 
     <LinearLayout

@@ -24,7 +24,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
@@ -73,7 +73,7 @@ public class CoinListViewModel extends AndroidViewModel {
                 List<AccountEntity> accounts = loadAccountForCoin(entity);
                 for (AccountEntity accountEntity : accounts) {
                     //only sync account M/49'/0'/0' to Keystone mobile
-                    if (accountEntity.getHdPath().equals(Coins.Account.P2SH_P2WPKH.getPath())) {
+                    if (accountEntity.getHdPath().equals(Account.P2SH_P2WPKH.getPath())) {
                         SyncBuilder.Account account = new SyncBuilder.Account();
                         account.addressLength = accountEntity.getAddressLength();
                         account.hdPath = accountEntity.getHdPath();

@@ -31,7 +31,7 @@
 
         <variable
             name="clickHandler"
-            type="com.keystone.cold.ui.fragment.multisig.CollectXpubClickHandler" />
+            type="com.keystone.cold.ui.fragment.multisigs.legacy.CollectXpubClickHandler" />
     </data>
 
     <RelativeLayout

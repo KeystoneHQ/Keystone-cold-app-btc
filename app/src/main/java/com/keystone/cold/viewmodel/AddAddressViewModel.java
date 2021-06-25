@@ -30,6 +30,7 @@ import com.keystone.coinlib.coins.BTC.Deriver;
 import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.path.AddressIndex;
 import com.keystone.coinlib.path.CoinPath;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
@@ -59,13 +60,13 @@ public class AddAddressViewModel extends AndroidViewModel {
         boolean isMainNet = Utilities.isMainNet(getApplication());
         switch (type) {
             case P2SH_P2WPKH:
-                hdPath = isMainNet ? Coins.Account.P2SH_P2WPKH.getPath() : Coins.Account.P2SH_P2WPKH_TESTNET.getPath();
+                hdPath = isMainNet ? Account.P2SH_P2WPKH.getPath() : Account.P2SH_P2WPKH_TESTNET.getPath();
                 break;
             case P2WPKH:
-                hdPath = isMainNet ? Coins.Account.P2WPKH.getPath() : Coins.Account.P2WPKH_TESTNET.getPath();
+                hdPath = isMainNet ? Account.P2WPKH.getPath() : Account.P2WPKH_TESTNET.getPath();
                 break;
            default:
-                hdPath = isMainNet ? Coins.Account.P2PKH.getPath() : Coins.Account.P2PKH_TESTNET.getPath();
+                hdPath = isMainNet ? Account.P2PKH.getPath() : Account.P2PKH_TESTNET.getPath();
                 break;
         }
         List<AccountEntity> accounts = mRepo.loadAccountsForCoin(coin);
@@ -153,11 +154,11 @@ public class AddAddressViewModel extends AndroidViewModel {
 
         static Btc.AddressType getAddressType(AccountEntity accountEntity) {
             String hdPath = accountEntity.getHdPath();
-            if (Coins.Account.P2SH_P2WPKH.getPath().equals(hdPath)
-                    || Coins.Account.P2SH_P2WPKH_TESTNET.getPath().equals(hdPath)) {
+            if (Account.P2SH_P2WPKH.getPath().equals(hdPath)
+                    || Account.P2SH_P2WPKH_TESTNET.getPath().equals(hdPath)) {
                 return Btc.AddressType.P2SH_P2WPKH;
-            } else if(Coins.Account.P2WPKH.getPath().equals(hdPath)
-                    || Coins.Account.P2WPKH_TESTNET.getPath().equals(hdPath) ) {
+            } else if(Account.P2WPKH.getPath().equals(hdPath)
+                    || Account.P2WPKH_TESTNET.getPath().equals(hdPath) ) {
                 return Btc.AddressType.P2WPKH;
             } else {
                 return Btc.AddressType.P2PKH;

@@ -25,7 +25,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.keystone.coinlib.ExtendPubkeyFormat;
-import com.keystone.coinlib.utils.Coins;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
@@ -38,7 +38,6 @@ import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.sparrowwallet.hummingbird.UR;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
-import com.sparrowwallet.hummingbird.registry.CryptoOutput;
 
 import org.json.JSONObject;
 
@@ -133,7 +132,7 @@ public class ExportGenericXpubFragment extends BaseFragment<ExportXpubGenericBin
     }
 
     private String getFileName() {
-        Coins.Account account = GlobalViewModel.getAccount(mActivity);
+        Account account = GlobalViewModel.getAccount(mActivity);
         switch (account) {
             case P2WPKH:
             case P2WPKH_TESTNET:
@@ -153,7 +152,7 @@ public class ExportGenericXpubFragment extends BaseFragment<ExportXpubGenericBin
 
     }
 
-    private String convertExtpub(String expub, Coins.Account account) {
+    private String convertExtpub(String expub, Account account) {
         return convertExtendPubkey(expub, ExtendPubkeyFormat.valueOf(account.getXpubPrefix()));
     }
 }

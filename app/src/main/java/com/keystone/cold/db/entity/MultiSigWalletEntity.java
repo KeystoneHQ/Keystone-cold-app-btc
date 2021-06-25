@@ -25,8 +25,8 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.coinlib.coins.BTC.Deriver;
-import com.keystone.coinlib.utils.MultiSig;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -165,7 +165,7 @@ public class MultiSigWalletEntity {
         }
         return deriver.deriveMultiSigAddress(getThreshold(),
                 xpubList, new int[] {index[0], index[1]},
-                MultiSig.Account.ofPath(getExPubPath()));
+                MultiSig.ofPath(getExPubPath()).get(0));
     }
 
     @Override

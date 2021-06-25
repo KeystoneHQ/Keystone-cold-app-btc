@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.coins.BTC.Btc;
 import com.keystone.coinlib.coins.BTC.Deriver;
-import com.keystone.coinlib.utils.MultiSig;
+import com.keystone.coinlib.accounts.MultiSig;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
@@ -140,16 +140,16 @@ public class BtcTest {
 
         List<byte[]> pubkeys = Lists.newArrayList(Hex.decode(pubkey1), Hex.decode(pubkey2), Hex.decode(pubkey3));
 
-        String address = new Deriver(true).createMultiSigAddress(2, pubkeys, MultiSig.Account.P2SH_P2WSH);
+        String address = new Deriver(true).createMultiSigAddress(2, pubkeys, MultiSig.P2SH_P2WSH);
         assertEquals("3PA7HYj6x6xmk9WPGfrwqeKckYcQyNPdS7", address);
 
-        address = new Deriver(false).createMultiSigAddress(2, pubkeys, MultiSig.Account.P2SH_P2WSH);
+        address = new Deriver(false).createMultiSigAddress(2, pubkeys, MultiSig.P2SH_P2WSH);
         assertEquals("2NEiKMHf8ZZU7ww8vwoUpTbJsxtpai1VjtM", address);
 
-        address = new Deriver(true).createMultiSigAddress(2, pubkeys, MultiSig.Account.P2WSH);
+        address = new Deriver(true).createMultiSigAddress(2, pubkeys, MultiSig.P2WSH);
         assertEquals("bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej", address);
 
-        address = new Deriver(false).createMultiSigAddress(2, pubkeys, MultiSig.Account.P2WSH);
+        address = new Deriver(false).createMultiSigAddress(2, pubkeys, MultiSig.P2WSH);
         assertEquals("tb1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxsey6dra", address);
     }
 
@@ -173,7 +173,7 @@ public class BtcTest {
         };
         List<String> xpubs = Lists.newArrayList(xpub1,xpub2,xpub3);
         for (int i = 0; i < expect.length; i++) {
-            String s = new Deriver(true).deriveMultiSigAddress(2, xpubs, new int[]{0, i}, MultiSig.Account.P2WSH);
+            String s = new Deriver(true).deriveMultiSigAddress(2, xpubs, new int[]{0, i}, MultiSig.P2WSH);
             assertEquals(expect[i],s);
         }
 
@@ -191,7 +191,7 @@ public class BtcTest {
         };
 
         for (int i = 0; i < expect.length; i++) {
-            String s = new Deriver(false).deriveMultiSigAddress(2, xpubs, new int[]{0, i}, MultiSig.Account.P2WSH);
+            String s = new Deriver(false).deriveMultiSigAddress(2, xpubs, new int[]{0, i}, MultiSig.P2WSH);
             assertEquals(expect[i],s);
         }
 

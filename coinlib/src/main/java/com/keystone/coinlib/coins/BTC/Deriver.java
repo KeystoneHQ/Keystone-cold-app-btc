@@ -18,7 +18,7 @@
 package com.keystone.coinlib.coins.BTC;
 
 import com.keystone.coinlib.ExtendPubkeyFormat;
-import com.keystone.coinlib.utils.MultiSig;
+import com.keystone.coinlib.accounts.Account;
 
 import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.NetworkParameters;
@@ -80,7 +80,7 @@ public class Deriver {
     }
 
     public String deriveMultiSigAddress(int threshold, List<String> xPubs,
-                                               int[] path, MultiSig.Account account) {
+                                               int[] path, Account account) {
         checkArgument(path.length == 2);
         checkArgument(path[0] == 0 || path[0] == 1);
         checkArgument(path[1] >= 0);
@@ -104,13 +104,13 @@ public class Deriver {
 
     public String createMultiSigAddress(int threshold,
                                                List<byte[]> pubKeys,
-                                        MultiSig.Account type) {
+                                        Account type) {
         Script p2ms = createMultiSigOutputScript(threshold, pubKeys);
         Script p2wsh = ScriptBuilder.createP2WSHOutputScript(p2ms);
 
-        if (type == MultiSig.Account.P2WSH || type == MultiSig.Account.P2WSH_TEST) {
+        if (type == Account.MULTI_P2WSH || type == Account.MULTI_P2WSH_TEST) {
             return SegwitAddress.fromHash(network, p2wsh.getPubKeyHash()).toBech32();
-        } else if(type == MultiSig.Account.P2SH_P2WSH || type == MultiSig.Account.P2SH_P2WSH_TEST){
+        } else if(type == Account.MULTI_P2SH_P2WSH || type == Account.MULTI_P2SH_P2WSH_TEST){
             Script p2sh = ScriptBuilder.createP2SHOutputScript(p2wsh);
             return LegacyAddress.fromScriptHash(network, p2sh.getPubKeyHash()).toBase58();
         } else {

@@ -31,10 +31,11 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.coinlib.accounts.Account;
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.coinlib.exception.CoinNotFindException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.utils.Base43;
-import com.keystone.coinlib.utils.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.CommonModalBinding;
@@ -46,17 +47,17 @@ import com.keystone.cold.scan.bean.ZxingConfig;
 import com.keystone.cold.scan.bean.ZxingConfigBuilder;
 import com.keystone.cold.scan.camera.CameraManager;
 import com.keystone.cold.ui.fragment.BaseFragment;
-import com.keystone.cold.ui.fragment.multisig.CollectExpubFragment;
+import com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
-import com.keystone.cold.viewmodel.CollectExPubException;
-import com.keystone.cold.viewmodel.InvalidMultisigWalletException;
-import com.keystone.cold.viewmodel.MultiSigViewModel;
+import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.QrScanViewModel;
 import com.keystone.cold.viewmodel.SharedDataViewModel;
-import com.keystone.cold.viewmodel.UnknowQrCodeException;
+import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.keystone.cold.viewmodel.WatchWallet;
-import com.keystone.cold.viewmodel.WatchWalletNotMatchException;
-import com.keystone.cold.viewmodel.XfpNotMatchException;
+import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
+import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoOutput;
 
@@ -72,8 +73,8 @@ import java.nio.charset.StandardCharsets;
 
 import static com.keystone.coinlib.Util.getExpubFingerprint;
 import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.viewmodel.MultiSigViewModel.decodeCaravanWalletFile;
-import static com.keystone.cold.viewmodel.MultiSigViewModel.decodeColdCardWalletFile;
+import static com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel.decodeCaravanWalletFile;
+import static com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel.decodeColdCardWalletFile;
 import static com.keystone.cold.viewmodel.WatchWallet.getWatchWallet;
 
 public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
@@ -234,7 +235,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
             try {
                 if (qrScanPurpose == QrScanPurpose.COLLECT_XPUB) {
                     CryptoAccount cryptoAccount = viewModel.decodeCryptoAccount(res);
-                    MultiSig.Account targetAccount = sharedDataViewModel.getTargetMultiSigAccount();
+                    Account targetAccount = sharedDataViewModel.getTargetMultiSigAccount();
                     if (cryptoAccount != null) {
                         CryptoOutput cryptoOutput = viewModel.collectMultiSigCryptoOutputFromCryptoAccount(cryptoAccount, targetAccount);
                         if (cryptoOutput != null) {
@@ -302,7 +303,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
 
     public void handleImportMultisigWallet(String hex) {
         try {
-            MultiSigViewModel viewModel = ViewModelProviders.of(mActivity).get(MultiSigViewModel.class);
+            LegacyMultiSigViewModel viewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
             String xfp = viewModel.getXfp();
             JSONObject obj;
             //try decode cc format
@@ -317,7 +318,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
             }
 
             boolean isWalletFileTest = obj.optBoolean("isTest", false);
-            MultiSig.Account account = MultiSig.Account.ofPath(obj.getString("Derivation"), isWalletFileTest);
+            Account account = MultiSig.ofPath(obj.getString("Derivation"), !isWalletFileTest).get(0);
             boolean isTestnet = !Utilities.isMainNet(mActivity);
             if (isWalletFileTest != isTestnet) {
                 String currentNet = isTestnet ? getString(R.string.testnet) : getString(R.string.mainnet);
@@ -335,7 +336,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
                 JSONObject xpubInfo = array.getJSONObject(i);
                 String thisXfp = xpubInfo.getString("xfp");
                 if (thisXfp.equalsIgnoreCase(xfp)
-                        || thisXfp.equalsIgnoreCase(getExpubFingerprint(viewModel.getXpub(account)))) {
+                        || thisXfp.equalsIgnoreCase(getExpubFingerprint(viewModel.getXPub(account)))) {
                     matchXfp = true;
                     break;
                 }

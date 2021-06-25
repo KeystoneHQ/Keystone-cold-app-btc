@@ -42,6 +42,7 @@ import com.keystone.coinlib.interfaces.SignPsbtCallback;
 import com.keystone.coinlib.interfaces.Signer;
 import com.keystone.coinlib.path.AddressIndex;
 import com.keystone.coinlib.path.CoinPath;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.DataRepository;
@@ -63,6 +64,9 @@ import com.keystone.cold.encryption.ChipSigner;
 import com.keystone.cold.protobuf.TransactionProtoc;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.util.HashUtil;
+import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
+import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -290,7 +294,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             } catch (JSONException e) {
                 e.printStackTrace();
                 parseTxException.postValue(new InvalidTransactionException("adapt failed,invalid psbt data"));
-            } catch (WatchWalletNotMatchException | NoMatchedMultisigWallet e) {
+            } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             }
@@ -299,10 +303,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
     }
 
     private JSONObject parsePsbtTx(JSONObject adaptTx) throws JSONException {
-        Coins.Account account = getAccount(getApplication());
+        Account account = getAccount(getApplication());
         WatchWallet wallet = WatchWallet.getWatchWallet(getApplication());
         String signId = WatchWallet.getWatchWallet(getApplication()).getSignId();
-        if ((account == Coins.Account.P2WPKH || account == Coins.Account.P2WPKH_TESTNET) && wallet == ELECTRUM) {
+        if ((account == Account.P2WPKH || account == Account.P2WPKH_TESTNET) && wallet == ELECTRUM) {
             signId += "_NATIVE_SEGWIT";
         }
         boolean isMultisig = adaptTx.optBoolean("multisig");
@@ -549,7 +553,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             if (index < max) {
                 final CountDownLatch mLatch = new CountDownLatch(1);
                 addingAddress.postValue(true);
-                new MultiSigViewModel.AddAddressTask(wallet.getWalletFingerPrint(),
+                new LegacyMultiSigViewModel.AddAddressTask(wallet.getWalletFingerPrint(),
                         mRepository, mLatch::countDown, 0).execute(max - index);
                 try {
                     mLatch.await();
@@ -877,7 +881,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
         }
 
         private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException {
-            Coins.Account account = getAccount(MainApplication.getApplication());
+            Account account = getAccount(MainApplication.getApplication());
             for (int i = 0; i < psbtInputs.length(); i++) {
                 JSONObject psbtInput = psbtInputs.getJSONObject(i);
                 JSONObject in = new JSONObject();
@@ -914,14 +918,14 @@ public class TxConfirmViewModel extends AndroidViewModel {
 
         boolean matchRootXfp(String fingerprint, String path) {
             String rootXfp = new GetMasterFingerprintCallable().call();
-            Coins.Account account = getAccount(MainApplication.getApplication());
+            Account account = getAccount(MainApplication.getApplication());
             return (fingerprint.equalsIgnoreCase(rootXfp)
                     || reverseHex(fingerprint).equalsIgnoreCase(rootXfp))
                     && path.toUpperCase().startsWith(account.getPath());
         }
 
         boolean matchKeyXfp(String fingerprint) {
-            Coins.Account account = getAccount(MainApplication.getApplication());
+            Account account = getAccount(MainApplication.getApplication());
             String xpub = new GetExtendedPublicKeyCallable(account.getPath()).call();
             String xfp = getExpubFingerprint(xpub);
             return (fingerprint.equalsIgnoreCase(xfp)
@@ -929,7 +933,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
         }
 
         private void adaptOutputs(JSONArray psbtOutputs, JSONArray outputs) throws JSONException {
-            Coins.Account account = getAccount(MainApplication.getApplication());
+            Account account = getAccount(MainApplication.getApplication());
             for (int i = 0; i < psbtOutputs.length(); i++) {
                 JSONObject psbtOutput = psbtOutputs.getJSONObject(i);
                 JSONObject out = new JSONObject();
@@ -970,7 +974,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
         private String fingerprintsHash;
         private JSONObject object;
 
-        JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWallet {
+        JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWalletException {
             object = new JSONObject();
             JSONArray inputs = new JSONArray();
             JSONArray outputs = new JSONArray();
@@ -986,7 +990,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             return object;
         }
 
-        private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException, NoMatchedMultisigWallet {
+        private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException, NoMatchedMultisigWalletException {
             for (int i = 0; i < psbtInputs.length(); i++) {
                 JSONObject psbtInput = psbtInputs.getJSONObject(i);
                 JSONObject in = new JSONObject();
@@ -1059,7 +1063,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
                     in.put("masterFingerprint", wallet.getBelongTo());
                     inputs.put(in);
                 } else {
-                    throw new NoMatchedMultisigWallet("no matched multisig wallet");
+                    throw new NoMatchedMultisigWalletException("no matched multisig wallet");
                 }
 
             }

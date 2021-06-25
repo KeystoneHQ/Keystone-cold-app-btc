@@ -23,14 +23,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.keystone.coinlib.utils.MultiSig;
+import com.keystone.coinlib.accounts.Account;
 import com.keystone.cold.callables.VerifyMnemonicCallable;
 
 public class SharedDataViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> scanResult = new MutableLiveData<>();
 
-    private MultiSig.Account targetMultiSigAccount = MultiSig.Account.P2WSH;
+    private Account targetMultiSigAccount = Account.MULTI_P2WSH;
 
     public SharedDataViewModel(@NonNull Application application) {
         super(application);
@@ -44,11 +44,11 @@ public class SharedDataViewModel extends AndroidViewModel {
         scanResult.setValue(s);
     }
 
-    public void setTargetMultiSigAccount(MultiSig.Account account) {
+    public void setTargetMultiSigAccount(Account account) {
         this.targetMultiSigAccount = account;
     }
 
-    public MultiSig.Account getTargetMultiSigAccount() {
+    public Account getTargetMultiSigAccount() {
         return this.targetMultiSigAccount;
     }
 

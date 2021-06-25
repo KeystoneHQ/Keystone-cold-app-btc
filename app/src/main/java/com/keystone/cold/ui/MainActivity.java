@@ -47,7 +47,7 @@ import com.keystone.cold.fingerprint.FingerprintKit;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
 import com.keystone.cold.ui.fragment.main.AssetFragment;
-import com.keystone.cold.ui.fragment.multisig.MultisigMainFragment;
+import com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment;
 import com.keystone.cold.ui.fragment.setting.SettingFragment;
 import com.keystone.cold.ui.views.DrawerAdapter;
 import com.keystone.cold.ui.views.FullScreenDrawer;
@@ -241,7 +241,7 @@ public class MainActivity extends FullScreenActivity {
     public void updateBadge() {
         boolean supportFingerprint = FingerprintKit.isHardwareDetected(this);
         if (Utilities.hasUserClickPatternLock(this)
-                &&(!supportFingerprint || Utilities.hasUserClickFingerprint(this))) {
+                && (!supportFingerprint || Utilities.hasUserClickFingerprint(this))) {
             toolbar.setNavigationIcon(R.drawable.menu);
         }
         drawerAdapter.notifyDataSetChanged();

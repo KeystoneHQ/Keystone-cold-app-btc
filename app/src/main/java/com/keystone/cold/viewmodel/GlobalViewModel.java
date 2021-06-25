@@ -34,8 +34,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.coins.BTC.Btc;
 import com.keystone.coinlib.coins.BTC.Deriver;
+import com.keystone.coinlib.utils.Account;
 import com.keystone.coinlib.utils.B58;
-import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.BuildConfig;
 import com.keystone.cold.DataRepository;
@@ -93,16 +93,16 @@ public class GlobalViewModel extends AndroidViewModel {
         Utilities.getPrefs(application).registerOnSharedPreferenceChangeListener(listener);
     }
 
-    public static Coins.Account getAccount(Context context) {
+    public static Account getAccount(Context context) {
         boolean isMainNet = Utilities.isMainNet(context);
         SharedPreferences pref = Utilities.getPrefs(context);
-        String type = pref.getString(SETTING_ADDRESS_FORMAT, Coins.Account.P2SH_P2WPKH.getType());
-        for (Coins.Account account : Coins.Account.values()) {
+        String type = pref.getString(SETTING_ADDRESS_FORMAT, Account.P2SH_P2WPKH.getType());
+        for (Account account : Account.values()) {
             if (type.equals(account.getType()) && isMainNet == account.isMainNet()) {
                 return account;
             }
         }
-        return Coins.Account.P2SH_P2WPKH;
+        return Account.P2SH_P2WPKH;
     }
 
     public static Btc.AddressType getAddressType(Context context) {
@@ -138,7 +138,7 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public static JSONObject getXpubInfo(Context activity) {
         JSONObject xpubInfo = new JSONObject();
-        Coins.Account account = getAccount(activity);
+        Account account = getAccount(activity);
         String xpub = new GetExtendedPublicKeyCallable(account.getPath()).call();
         String masterKeyFingerprint = new GetMasterFingerprintCallable().call();
         try {
@@ -154,7 +154,7 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public static String getOutputDescriptionString(Context activity) {
         String masterKeyFingerprint = new GetMasterFingerprintCallable().call();
-        Coins.Account account = getAccount(activity);
+        Account account = getAccount(activity);
         String xpub = new GetExtendedPublicKeyCallable(account.getPath()).call();
         String path = account.getPath().substring(1);
         String convertedXPub = convertExtendPubkey(xpub, account.getXpubFormat());
@@ -180,7 +180,7 @@ public class GlobalViewModel extends AndroidViewModel {
 
     public static CryptoOutput generateOutputDescription(Context activity) {
         String masterKeyFingerprint = new GetMasterFingerprintCallable().call();
-        Coins.Account account = getAccount(activity);
+        Account account = getAccount(activity);
         String xpub = new GetExtendedPublicKeyCallable(account.getPath()).call();
         byte[] xpubBytes = new B58().decodeAndCheck(xpub);
         byte[] parentFp = Arrays.copyOfRange(xpubBytes, 5, 9);
@@ -301,11 +301,11 @@ public class GlobalViewModel extends AndroidViewModel {
             String path = expubInfo.hdPath;
             List<String> changes = new ArrayList<>();
             Btc.AddressType type;
-            if (Coins.Account.P2SH_P2WPKH.getPath().equals(path)
-                    || Coins.Account.P2SH_P2WPKH_TESTNET.getPath().equals(path)) {
+            if (Account.P2SH_P2WPKH.getPath().equals(path)
+                    || Account.P2SH_P2WPKH_TESTNET.getPath().equals(path)) {
                 type = Btc.AddressType.P2SH_P2WPKH;
-            } else if (Coins.Account.P2WPKH.getPath().equals(path)
-                    || Coins.Account.P2WPKH_TESTNET.getPath().equals(path)) {
+            } else if (Account.P2WPKH.getPath().equals(path)
+                    || Account.P2WPKH_TESTNET.getPath().equals(path)) {
                 type = Btc.AddressType.P2WPKH;
             } else {
                 type = Btc.AddressType.P2PKH;
@@ -324,7 +324,7 @@ public class GlobalViewModel extends AndroidViewModel {
             ExpubInfo expubInfo = new ExpubInfo().getExPubInfo();
             String hdPath = expubInfo.getHdPath();
             String extPub = expubInfo.getExpub();
-            Coins.Account account = Coins.Account.ofPath(hdPath);
+            Account account = Account.ofPath(hdPath);
             exPub.postValue(convertExtendPubkey(extPub,
                     ExtendPubkeyFormat.valueOf(account.getXpubPrefix())));
         });
@@ -360,16 +360,16 @@ public class GlobalViewModel extends AndroidViewModel {
             CoinEntity coinEntity = mRepo.loadCoinSync(Utilities.currentCoin(getApplication()).coinId());
             SharedPreferences sp = Utilities.getPrefs(getApplication());
             List<AccountEntity> accounts = mRepo.loadAccountsForCoin(coinEntity);
-            String format = sp.getString(SETTING_ADDRESS_FORMAT, Coins.Account.P2SH_P2WPKH.getType());
+            String format = sp.getString(SETTING_ADDRESS_FORMAT, Account.P2SH_P2WPKH.getType());
 
-            Coins.Account account;
+            Account account;
             boolean isMainNet = Utilities.isMainNet(getApplication());
-            if (Coins.Account.P2SH_P2WPKH.getType().equals(format)) {
-                account = isMainNet ? Coins.Account.P2SH_P2WPKH : Coins.Account.P2SH_P2WPKH_TESTNET;
-            } else if (Coins.Account.P2WPKH.getType().equals(format)) {
-                account = isMainNet ? Coins.Account.P2WPKH : Coins.Account.P2WPKH_TESTNET;
+            if (Account.P2SH_P2WPKH.getType().equals(format)) {
+                account = isMainNet ? Account.P2SH_P2WPKH : Account.P2SH_P2WPKH_TESTNET;
+            } else if (Account.P2WPKH.getType().equals(format)) {
+                account = isMainNet ? Account.P2WPKH : Account.P2WPKH_TESTNET;
             } else {
-                account = isMainNet ? Coins.Account.P2PKH : Coins.Account.P2PKH_TESTNET;
+                account = isMainNet ? Account.P2PKH : Account.P2PKH_TESTNET;
             }
             for (AccountEntity entity : accounts) {
                 if (entity.getHdPath().equals(account.getPath())) {
