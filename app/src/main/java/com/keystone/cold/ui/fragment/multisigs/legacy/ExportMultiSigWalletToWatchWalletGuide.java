@@ -39,7 +39,7 @@ public class ExportMultiSigWalletToWatchWalletGuide extends MultiSigBaseFragment
         super.init(view);
         Bundle data = getArguments();
         Objects.requireNonNull(data);
-        View.OnClickListener naviBack = v -> popBackStack(R.id.multisigFragment, false);
+        View.OnClickListener naviBack = v -> popBackStack(R.id.legacyMultisigFragment, false);
         if (data.getBoolean("isImportMultisig")) {
             mBinding.toolbar.setNavigationOnClickListener(naviBack);
         } else {

@@ -19,26 +19,128 @@
 
 package com.keystone.cold.ui.fragment.multisigs.common;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.keystone.cold.R;
+import com.keystone.cold.Utilities;
+import com.keystone.cold.databinding.MultisigModeBottomSheetBinding;
+import com.keystone.cold.databinding.SettingItemWithArrowCallableBinding;
+import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
+import com.keystone.cold.ui.fragment.setting.ListPreferenceCallback;
+import com.keystone.cold.viewmodel.multisigs.CasaMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
 
 public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
-        extends BaseFragment<T> {
-    protected LegacyMultiSigViewModel viewModel;
+        extends BaseFragment<T> implements ListPreferenceCallback {
+    protected LegacyMultiSigViewModel legacyMultiSigViewModel;
+    protected CasaMultiSigViewModel casaMultiSigViewModel;
+    private BottomSheetDialog dialog;
+    private Adapter adapter;
 
     @Override
     protected void init(View view) {
-        viewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+        legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+        casaMultiSigViewModel = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class);
+        dialog = new BottomSheetDialog(mActivity);
+        adapter = new Adapter(mActivity);
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
+        SharedPreferences preferences = Utilities.getPrefs(mActivity);
+        String modeId = preferences.getString(getKey(), defaultValue());
+        String[] entries = getResources().getStringArray(getEntries());
+        String[] values = getResources().getStringArray(getValues());
+        List<Pair<String, String>> displayItems = new ArrayList<>();
 
+        for (int i = 0; i < values.length; i++) {
+            String _modeId = values[i];
+            if (modeId.equals(_modeId)) {
+                continue;
+            }
+            String _entry = entries[i];
+            displayItems.add(new Pair<>(_modeId, _entry));
+        }
+        adapter.setItems(displayItems);
+        MultisigModeBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
+                R.layout.multisig_mode_bottom_sheet, null, false);
+        binding.modeList.setAdapter(adapter);
+        dialog.setContentView(binding.getRoot());
+    }
+
+    private int getEntries() {
+        return R.array.multisig_mode_list;
+    }
+
+    private int getValues() {
+        return R.array.multisig_mode_list_values;
+    }
+
+    private String getKey() {
+        return SETTING_MULTI_SIG_MODE;
+    }
+
+    private String defaultValue() {
+        return MultiSigMode.LEGACY.getModeId();
+    }
+
+    protected void showMultisigSelection() {
+        dialog.show();
+    }
+
+    @Override
+    public void onSelect(int modeId) {
+        String _modeId = String.valueOf(modeId);
+        if (_modeId.equals(MultiSigMode.LEGACY.getModeId())) {
+            dialog.dismiss();
+            navigate(R.id.action_to_legacyMultisigFragment);
+        } else {
+            dialog.dismiss();
+            //to casa
+            navigate(R.id.action_to_legacyMultisigFragment);
+        }
+    }
+
+    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SettingItemWithArrowCallableBinding> {
+
+        public Adapter(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected int getLayoutResId(int viewType) {
+            return R.layout.setting_item_with_arrow_callable;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            SettingItemWithArrowCallableBinding binding = DataBindingUtil.getBinding(holder.itemView);
+            binding.title.setText(items.get(position).second);
+            binding.setIndex(Integer.parseInt(items.get(position).first));
+            binding.setCallback(MultiSigBaseFragment.this);
+        }
+
+        @Override
+        protected void onBindItem(SettingItemWithArrowCallableBinding binding, Pair<String, String> item) {
+        }
     }
 }

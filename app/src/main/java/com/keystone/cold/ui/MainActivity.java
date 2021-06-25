@@ -17,6 +17,7 @@
 
 package com.keystone.cold.ui;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,6 +26,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -54,6 +56,7 @@ import com.keystone.cold.ui.views.FullScreenDrawer;
 import com.keystone.cold.ui.views.UpdatingHelper;
 import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.update.data.UpdateManifest;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 
 import java.util.Arrays;
@@ -63,12 +66,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
 import static com.keystone.cold.update.utils.Storage.hasSdcard;
 
 public class MainActivity extends FullScreenActivity {
 
     private ActivityMainBinding mBinding;
     private NavController mNavController;
+
+    private SharedPreferences prefs;
 
     private Toolbar toolbar;
     private final Handler mHandler = new Handler();
@@ -89,6 +95,7 @@ public class MainActivity extends FullScreenActivity {
         }
         initViews();
         initNavController();
+        prefs = Utilities.getPrefs(this);
         belongTo = Utilities.getCurrentBelongTo(this);
         vaultId = Utilities.getVaultId(this);
 
@@ -192,7 +199,16 @@ public class MainActivity extends FullScreenActivity {
                     break;
                 case R.id.drawer_multisig:
                     mNavController.navigateUp();
-                    mNavController.navigate(R.id.action_to_multisigFragment);
+                    if (prefs.contains(SETTING_MULTI_SIG_MODE)) {
+                        String mode = prefs.getString(SETTING_MULTI_SIG_MODE, "0");
+                        if (mode.equals(MultiSigMode.LEGACY.getModeId())) {
+                            mNavController.navigate(R.id.action_to_legacyMultisigFragment);
+                        } else {
+                            mNavController.navigate(R.id.action_to_multisigSelectionFragment);
+                        }
+                    } else {
+                        mNavController.navigate(R.id.action_to_multisigSelectionFragment);
+                    }
                     break;
                 case R.id.drawer_settings:
                     mNavController.navigateUp();

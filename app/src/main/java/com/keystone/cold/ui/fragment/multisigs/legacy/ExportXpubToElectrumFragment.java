@@ -65,7 +65,7 @@ public class ExportXpubToElectrumFragment extends MultiSigBaseFragment<ExportXpu
         Bundle data = getArguments();
         Objects.requireNonNull(data);
         mBinding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
-        viewModel.getWalletEntity(data.getString("wallet_fingerprint"))
+        legacyMultiSigViewModel.getWalletEntity(data.getString("wallet_fingerprint"))
                 .observe(this, walletEntity -> {
                     this.walletEntity = walletEntity;
                     try {
@@ -88,7 +88,7 @@ public class ExportXpubToElectrumFragment extends MultiSigBaseFragment<ExportXpu
                 index++;
                 updateUI();
             } else {
-                popBackStack(R.id.multisigFragment, false);
+                popBackStack(R.id.legacyMultisigFragment, false);
             }
         });
 
@@ -114,7 +114,7 @@ public class ExportXpubToElectrumFragment extends MultiSigBaseFragment<ExportXpu
             binding.left.setText(R.string.create_later);
             binding.left.setOnClickListener(left -> {
                 dialog.dismiss();
-                popBackStack(R.id.multisigFragment, false);
+                popBackStack(R.id.legacyMultisigFragment, false);
             });
             binding.right.setText(R.string.keep_create);
             binding.right.setOnClickListener(right -> dialog.dismiss());

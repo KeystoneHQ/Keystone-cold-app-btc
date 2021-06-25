@@ -102,7 +102,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
                         R.layout.common_modal, null, false);
                 binding.title.setText(R.string.verify_multisig_wallet);
                 binding.subTitle.setText(getString(R.string.verify_wallet_hint,
-                        viewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath())));
+                        legacyMultiSigViewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath())));
                 binding.close.setVisibility(View.GONE);
                 binding.confirm.setText(R.string.verify_code_ok);
                 binding.confirm.setOnClickListener(v -> {
@@ -148,7 +148,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
     private void importWallet() {
         try {
-            viewModel.createMultisigWallet(threshold, account, walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(walletInfo.toString()))).substring(0, 6).toUpperCase()), walletInfo.getJSONArray("Xpubs"), creator)
+            legacyMultiSigViewModel.createMultisigWallet(threshold, account, walletInfo.getString("Name"), walletInfo.getJSONArray("Xpubs"), creator)
                     .observe(this, this::onImportWalletSuccess);
         } catch (XfpNotMatchException e) {
             e.printStackTrace();
@@ -176,7 +176,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             dialog.show(mActivity.getSupportFragmentManager(), "");
             handler.postDelayed(() -> {
                 dialog.dismiss();
-                popBackStack(R.id.multisigFragment, false);
+                popBackStack(R.id.legacyMultisigFragment, false);
             }, 500);
         }
     }

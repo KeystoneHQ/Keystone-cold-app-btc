@@ -91,7 +91,7 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
     private void updateUI() {
         View.OnClickListener goHome;
         if (isMultisig) {
-            goHome = v -> popBackStack(R.id.multisigFragment, false);
+            goHome = v -> popBackStack(R.id.legacyMultisigFragment, false);
             mBinding.toolbarTitle.setText(getString(R.string.export_tx));
             mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
             mBinding.exportToSdcard.setVisibility(View.VISIBLE);

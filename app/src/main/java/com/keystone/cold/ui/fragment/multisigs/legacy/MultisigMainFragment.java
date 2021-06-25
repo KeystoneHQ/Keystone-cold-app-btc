@@ -75,7 +75,7 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
         coinId = Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId();
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
-        viewModel.getCurrentWallet().observe(this, w -> {
+        legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
             if (w != null) {
                 isEmpty = false;
                 wallet = w;
@@ -83,6 +83,9 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
                 isEmpty = true;
             }
             refreshUI();
+        });
+        mBinding.toolbarModeSelection.setOnClickListener(l -> {
+            showMultisigSelection();
         });
     }
 
@@ -161,8 +164,8 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
         Handler handler = new Handler();
         AppExecutors.getInstance().diskIO().execute(() -> {
             int tabPosition = mBinding.tab.getSelectedTabPosition();
-            viewModel.addAddress(wallet.getWalletFingerPrint(), value, tabPosition);
-            handler.post(() -> viewModel.getObservableAddState().observe(this, complete -> {
+            legacyMultiSigViewModel.addAddress(wallet.getWalletFingerPrint(), value, tabPosition);
+            handler.post(() -> legacyMultiSigViewModel.getObservableAddState().observe(this, complete -> {
                 if (complete) {
                     handler.postDelayed(dialog::dismiss, 500);
                 }
@@ -247,22 +250,22 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
     private void showBottomSheetMenu() {
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
         MultisigBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.multisig_bottom_sheet,null,false);
-        binding.exportXpub.setOnClickListener(v-> {
+                R.layout.multisig_bottom_sheet, null, false);
+        binding.exportXpub.setOnClickListener(v -> {
             dialog.dismiss();
             navigate(R.id.export_export_multisig_expub);
         });
-        binding.createMultisig.setOnClickListener(v-> {
+        binding.createMultisig.setOnClickListener(v -> {
             navigate(R.id.create_multisig_wallet);
             dialog.dismiss();
         });
 
-        binding.importMultisig.setOnClickListener(v-> {
+        binding.importMultisig.setOnClickListener(v -> {
             navigate(R.id.import_multisig_file_list);
             dialog.dismiss();
         });
 
-        binding.manageMultisig.setOnClickListener(v-> {
+        binding.manageMultisig.setOnClickListener(v -> {
             navigate(R.id.manage_multisig_wallet);
             dialog.dismiss();
         });

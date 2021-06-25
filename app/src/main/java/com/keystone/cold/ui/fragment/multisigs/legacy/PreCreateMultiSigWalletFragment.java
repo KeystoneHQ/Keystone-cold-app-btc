@@ -84,7 +84,7 @@ public class PreCreateMultiSigWalletFragment extends MultiSigBaseFragment<PreCre
         List<CollectXpubViewModel.XpubInfo> info = vm.getXpubInfo();
         for (int i = 1; i <= total; i++) {
             if (i == 1) {
-                info.add(new CollectXpubViewModel.XpubInfo(1, viewModel.getXfp(), viewModel.getXPub(account)));
+                info.add(new CollectXpubViewModel.XpubInfo(1, legacyMultiSigViewModel.getXfp(), legacyMultiSigViewModel.getXPub(account)));
             } else {
                 info.add(new CollectXpubViewModel.XpubInfo(i,null,null));
             }
@@ -99,7 +99,7 @@ public class PreCreateMultiSigWalletFragment extends MultiSigBaseFragment<PreCre
     private void updateUI() {
         mBinding.total.setRemindText(String.valueOf(total));
         mBinding.threshold.setRemindText(String.valueOf(threshold));
-        mBinding.addressType.setRemindText(viewModel.getAddressTypeString(account));
+        mBinding.addressType.setRemindText(legacyMultiSigViewModel.getAddressTypeString(account));
     }
 
 

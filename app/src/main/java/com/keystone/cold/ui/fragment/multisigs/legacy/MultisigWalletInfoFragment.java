@@ -68,7 +68,7 @@ public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWal
     }
 
     private void subscribeGetWallet(Bundle data) {
-        viewModel.getWalletEntity(data.getString("wallet_fingerprint"))
+        legacyMultiSigViewModel.getWalletEntity(data.getString("wallet_fingerprint"))
                 .observe(this, w -> {
                     wallet = w;
                     setBindings(w);

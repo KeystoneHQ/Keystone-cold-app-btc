@@ -62,6 +62,7 @@
     <string name="version_update_hint"><![CDATA[请访问: <font color="#00cdc3">https://keyst.one/fw<font/> 查看是否有更新。如需更新，请按下图依次取下电池和TF卡，下载最新安装包到TF卡根目录下（仅支持FAT32格式），插回卡后开机，按照系统提示更新。]]></string>
     <string name="version">版本</string>
     <string name="setting_language">语言设置</string>
+    <string name="setting_multisig_mode">选择多签钱包</string>
     <string name="setting_vibrator">震动开关</string>
     <string name="setting_brightness">屏幕亮度</string>
     <string name="setting_screen_off_time">锁屏时间</string>
@@ -482,6 +483,9 @@
         <item>通用模式</item>
         <item>Casa</item>
     </string-array>
+
+    <string name="multisig_legacy">通用模式</string>
+    <string name="multisig_casa">Casa</string>
 
     <string-array name="address_format">
         <item>隔离见证兼容（P2SH-P2WPKH）</item>

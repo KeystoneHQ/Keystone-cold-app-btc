@@ -103,6 +103,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
     public static final String SETTING_ADDRESS_FORMAT = "setting_address_format";
     public static final String SETTING_TESTNET = "setting_testnet";
     public static final String SETTING_CHECK_MNEMONIC = "setting_check_mnemonic";
+    public static final String SETTING_MULTI_SIG_MODE = "setting_multi_sig_mode";
 
     private SwitchPreference switchPreference;
     private SimplePreference versionPreference;
