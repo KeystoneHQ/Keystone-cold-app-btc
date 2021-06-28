@@ -37,7 +37,6 @@ import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
-import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.db.entity.TxEntity;

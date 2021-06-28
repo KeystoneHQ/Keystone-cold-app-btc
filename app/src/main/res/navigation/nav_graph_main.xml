@@ -356,6 +356,17 @@
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment" />
+        <action
+            android:id="@+id/action_to_casaExportXPubFragment"
+            app:destination="@id/casaExportXPubFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/casaExportXPubFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaExportXPubFragment"
+        android:label="CasaExportXPubFragment"
+        >
+
     </fragment>
 
     <fragment

@@ -27,7 +27,16 @@ public class MultiSig {
     }
 
     public static List<Account> ofPath(String path, boolean isMainNet) {
-        return MultiSig.ofPath(path).stream().filter(account -> account.isMainNet() == isMainNet).collect(Collectors.toList());
+        List<Account> list = MultiSig.ofPath(path).stream().filter(account -> account.isMainNet() == isMainNet).collect(Collectors.toList());
+        if (list.size() == 0) {
+            if(isMainNet){
+                return Collections.singletonList(MultiSig.P2WSH);
+            }
+            else {
+                return Collections.singletonList(MultiSig.P2WSH_TEST);
+            }
+        }
+        return list;
     }
 
     public static List<Account> ofPrefix(String xPubVersionName) {

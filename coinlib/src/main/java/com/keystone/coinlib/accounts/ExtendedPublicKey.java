@@ -1,10 +1,10 @@
 package com.keystone.coinlib.accounts;
 
+
 import com.keystone.coinlib.utils.B58;
 
 import org.spongycastle.util.encoders.Hex;
 
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -79,7 +79,7 @@ public class ExtendedPublicKey {
         System.arraycopy(version.getVersionBytes(), 0, bytes, 0, 4);
         bytes[4] = this.depth;
         System.arraycopy(this.parentFingerprint, 0, bytes, 5, 4);
-        System.arraycopy(this.index, 0, bytes, 9, 13);
+        System.arraycopy(this.index, 0, bytes, 9, 4);
         System.arraycopy(this.chainCode, 0, bytes, 13, 32);
         System.arraycopy(this.key, 0, bytes, 45, 33);
         return new String(new B58().encodeToBytesChecked(bytes), StandardCharsets.US_ASCII);

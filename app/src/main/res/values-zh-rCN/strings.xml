@@ -493,6 +493,15 @@
     <string name="casa_operation_health_check">Perform Health Check</string>
     <string name="casa_operation_export">Export XPUB</string>
 
+    <string name="scan_qrcode_with_casa">使用Casa扫描二维码</string>
+    <string name="scan_qrcode_with_casa_hint_title">Scan the QR code using Casa</string>
+    <string name="scan_qrcode_with_casa_hint"><![CDATA[
+        1. 前往【BTCPay--PSBT】，扫描已签名交易的二维码；<br>
+        2. 点击“Decode”；<br>
+        3. 点击“Other Actions” 选择“Review”；<br>
+        4. 检查交易无误后点击“Broadcast”。<br>
+    ]]></string>
+
     <string-array name="address_format">
         <item>隔离见证兼容（P2SH-P2WPKH）</item>
         <item>隔离见证原生（P2WPKH）</item>

@@ -18,7 +18,7 @@ public class URRegistryHelper {
     private static List<PathComponent> fromAccountToPathComponent(Account account) {
         String path = account.getPath();
         String[] rawPaths = path.split("/");
-        return Arrays.stream(rawPaths).map(rp -> {
+        return Arrays.stream(rawPaths).filter(rp -> !rp.equalsIgnoreCase("m")).map(rp -> {
             if (rp.contains("'")) {
                 return new PathComponent(Integer.parseInt(rp.replace("'", "")), true);
             } else {

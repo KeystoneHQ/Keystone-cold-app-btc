@@ -132,6 +132,15 @@
     <string name="casa_operation">OPERATION</string>
     <string name="casa_signatures">SIGNATURES</string>
 
+    <string name="scan_qrcode_with_casa">Scan the QR code using Casa</string>
+    <string name="scan_qrcode_with_casa_hint_title">How to export XPub to Casa</string>
+    <string name="scan_qrcode_with_casa_hint"><![CDATA[
+        1. 前往【BTCPay--PSBT】，扫描已签名交易的二维码；<br>
+        2. 点击“Decode”；<br>
+        3. 点击“Other Actions” 选择“Review”；<br>
+        4. 检查交易无误后点击“Broadcast”。<br>
+    ]]></string>
+
     <string-array name="address_format">
         <item>Nested SegWit（P2SH-P2WPKH）</item>
         <item>Native SegWit（P2WPKH）</item>

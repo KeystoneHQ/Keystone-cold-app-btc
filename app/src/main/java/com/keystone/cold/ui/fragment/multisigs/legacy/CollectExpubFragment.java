@@ -22,6 +22,7 @@ package com.keystone.cold.ui.fragment.multisigs.legacy;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -9,6 +9,7 @@ import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 
 public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMainBinding> {
     public static final String TAG = "MultisigEntry";
+
     @Override
     protected int setView() {
         return R.layout.multisig_casa_main;
@@ -22,5 +23,6 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         mBinding.toolbarModeSelection.setOnClickListener(l -> {
             showMultisigSelection();
         });
+        mBinding.export.setOnClickListener(v -> navigate(R.id.action_to_casaExportXPubFragment));
     }
 }
