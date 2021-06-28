@@ -30,7 +30,6 @@ import com.keystone.cold.databinding.AddressFragmentBinding;
 import com.keystone.cold.databinding.MultisigAddressItemBinding;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 
 import java.util.List;
 import java.util.Objects;

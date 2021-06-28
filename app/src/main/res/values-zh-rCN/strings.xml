@@ -486,6 +486,12 @@
 
     <string name="multisig_legacy">通用模式</string>
     <string name="multisig_casa">Casa</string>
+    
+    <string name="casa_operation">OPERATION</string>
+    <string name="casa_signatures">SIGNATURES</string>
+
+    <string name="casa_operation_health_check">Perform Health Check</string>
+    <string name="casa_operation_export">Export XPUB</string>
 
     <string-array name="address_format">
         <item>隔离见证兼容（P2SH-P2WPKH）</item>

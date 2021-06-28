@@ -289,6 +289,9 @@
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment" />
         <action
+            android:id="@+id/action_to_casaMultisigFragment"
+            app:destination="@id/casaMultisigFragment" />
+        <action
             android:id="@+id/action_to_multisigSelectionFragment"
             app:destination="@id/multisigSelectionFragment" />
         <action
@@ -337,16 +340,31 @@
     <fragment
         android:id="@+id/multisigSelectionFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment"
-        android:label="MultiSigPreferenceFragment">
+        android:label="MultisigEntry">
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
-            app:destination="@+id/legacyMultisigFragment" />
+            app:destination="@id/legacyMultisigFragment" />
+        <action
+            android:id="@+id/action_to_casaMultisigFragment"
+            app:destination="@id/casaMultisigFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/casaMultisigFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaMainFragment"
+        android:label="MultisigEntry">
+        <action
+            android:id="@+id/action_to_legacyMultisigFragment"
+            app:destination="@id/legacyMultisigFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/legacyMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment"
-        android:label="MultisigMainFragment">
+        android:label="MultisigEntry">
+        <action
+            android:id="@+id/action_to_casaMultisigFragment"
+            app:destination="@id/casaMultisigFragment" />
         <action
             android:id="@+id/export_export_multisig_expub"
             app:destination="@id/exportMultisigExpubFragment"

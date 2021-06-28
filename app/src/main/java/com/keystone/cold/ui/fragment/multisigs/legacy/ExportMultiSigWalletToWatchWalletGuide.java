@@ -24,7 +24,6 @@ import android.view.View;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportMultisigWalletToWatchWalletGuideBinding;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 
 import java.util.Objects;
 

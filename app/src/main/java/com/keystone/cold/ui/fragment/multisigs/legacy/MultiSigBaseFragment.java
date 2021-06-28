@@ -22,35 +22,24 @@ package com.keystone.cold.ui.fragment.multisigs.legacy;
 import android.os.Bundle;
 import android.view.View;
 
-import com.keystone.cold.R;
-import com.keystone.cold.databinding.MultisigWalletBinding;
+import androidx.databinding.ViewDataBinding;
+import androidx.lifecycle.ViewModelProviders;
 
-import java.util.Objects;
+import com.keystone.cold.ui.fragment.BaseFragment;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 
-public class WalletFragment extends MultiSigBaseFragment<MultisigWalletBinding>
-        implements ClickHandler {
-    @Override
-    protected int setView() {
-        return R.layout.multisig_wallet;
-    }
+public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
+        extends BaseFragment<T> {
+    protected LegacyMultiSigViewModel legacyMultiSigViewModel;
 
     @Override
     protected void init(View view) {
-        super.init(view);
-        mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
-        mBinding.setClickHandler(this);
-        if ("Caravan".equalsIgnoreCase(Objects.requireNonNull(getArguments()).getString("creator"))) {
-            mBinding.exportWalletToCosigner.setVisibility(View.GONE);
-        }
+        legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
     }
 
     @Override
-    public void onClick(int id) {
-        Bundle data = getArguments();
-        Objects.requireNonNull(data).putBoolean("setup",false);
-        data.putBoolean("multisig",true);
-        navigate(id, data);
+    protected void initData(Bundle savedInstanceState) {
     }
 
-}
 
+}

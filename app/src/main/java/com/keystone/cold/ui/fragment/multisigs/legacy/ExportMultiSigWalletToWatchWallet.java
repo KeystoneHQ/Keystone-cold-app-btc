@@ -31,7 +31,6 @@ import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ExportMultisigWalletToWatchWalletBinding;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;
 

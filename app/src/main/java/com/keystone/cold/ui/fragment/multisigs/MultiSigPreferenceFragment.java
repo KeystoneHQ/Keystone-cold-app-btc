@@ -26,6 +26,7 @@ import java.util.List;
 import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
 
 public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePreferenceBinding> implements ListPreferenceCallback {
+    public static final String TAG = "MultisigEntry";
     private Adapter adapter;
     protected SharedPreferences prefs;
     protected CharSequence[] values;
@@ -45,7 +46,15 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
         adapter = new Adapter(mActivity);
         mBinding.list.setAdapter(adapter);
-        mBinding.confirm.setOnClickListener(v -> prefs.edit().putString(getKey(), value).apply());
+        mBinding.confirm.setOnClickListener(v -> {
+            prefs.edit().putString(getKey(), value).apply();
+            navigateUp();
+            if (value.equals(MultiSigMode.LEGACY.getModeId())) {
+                navigate(R.id.action_to_legacyMultisigFragment);
+            } else {
+                navigate(R.id.action_to_casaMultisigFragment);
+            }
+        });
         entries = getResources().getStringArray(getEntries());
         values = getResources().getStringArray(getValues());
         value = prefs.getString(getKey(), defaultValue());
@@ -87,7 +96,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
     }
 
-    protected class Adapter extends BaseBindingAdapter<Pair<String,String>, SettingItemSelectableBinding> {
+    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SettingItemSelectableBinding> {
 
         public Adapter(Context context) {
             super(context);
@@ -108,7 +117,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         }
 
         @Override
-        protected void onBindItem(SettingItemSelectableBinding binding, Pair<String,String> item) {
+        protected void onBindItem(SettingItemSelectableBinding binding, Pair<String, String> item) {
         }
     }
 }

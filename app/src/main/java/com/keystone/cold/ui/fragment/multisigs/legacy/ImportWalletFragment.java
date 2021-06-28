@@ -36,7 +36,6 @@ import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ExportSuccessBinding;
 import com.keystone.cold.databinding.ImportWalletBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;

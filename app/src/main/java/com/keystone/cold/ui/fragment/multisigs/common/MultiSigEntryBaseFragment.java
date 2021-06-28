@@ -49,12 +49,13 @@ import java.util.List;
 
 import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
 
-public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
+public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> implements ListPreferenceCallback {
     protected LegacyMultiSigViewModel legacyMultiSigViewModel;
     protected CasaMultiSigViewModel casaMultiSigViewModel;
     private BottomSheetDialog dialog;
     private Adapter adapter;
+    private SharedPreferences preferences;
 
     @Override
     protected void init(View view) {
@@ -62,6 +63,7 @@ public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
         casaMultiSigViewModel = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class);
         dialog = new BottomSheetDialog(mActivity);
         adapter = new Adapter(mActivity);
+        preferences = Utilities.getPrefs(mActivity);
     }
 
     @Override
@@ -109,14 +111,18 @@ public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
 
     @Override
     public void onSelect(int modeId) {
+        navigateUp();
         String _modeId = String.valueOf(modeId);
         if (_modeId.equals(MultiSigMode.LEGACY.getModeId())) {
-            dialog.dismiss();
-            navigate(R.id.action_to_legacyMultisigFragment);
+            if (preferences.edit().putString(getKey(), MultiSigMode.LEGACY.getModeId()).commit()) {
+                dialog.dismiss();
+                navigate(R.id.action_to_legacyMultisigFragment);
+            }
         } else {
-            dialog.dismiss();
-            //to casa
-            navigate(R.id.action_to_legacyMultisigFragment);
+            if (preferences.edit().putString(getKey(), MultiSigMode.CASA.getModeId()).commit()) {
+                dialog.dismiss();
+                navigate(R.id.action_to_casaMultisigFragment);
+            }
         }
     }
 
@@ -136,7 +142,7 @@ public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
             SettingItemWithArrowCallableBinding binding = DataBindingUtil.getBinding(holder.itemView);
             binding.title.setText(items.get(position).second);
             binding.setIndex(Integer.parseInt(items.get(position).first));
-            binding.setCallback(MultiSigBaseFragment.this);
+            binding.setCallback(MultiSigEntryBaseFragment.this);
         }
 
         @Override

@@ -34,7 +34,6 @@ import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.AddAddressBottomSheetBinding;
 import com.keystone.cold.databinding.PreCreateMultisigWalletBinding;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.viewmodel.CollectXpubViewModel;
 
 import java.util.List;

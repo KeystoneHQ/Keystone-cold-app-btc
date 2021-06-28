@@ -40,6 +40,7 @@ import com.keystone.cold.databinding.ExportMultisigExpubBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.databinding.SwitchXpubBottomSheetBinding;
 import com.keystone.cold.databinding.XpubEncodingHintBinding;
+import com.keystone.cold.ui.fragment.multisigs.legacy.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ExportToSdcardDialog;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;

@@ -44,7 +44,7 @@ import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
+import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 
 import java.util.Objects;
@@ -52,9 +52,9 @@ import java.util.stream.IntStream;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBinding>
+public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMainBinding>
         implements NumberPickerCallback {
-    public static final String TAG = "MultisigMainFragment";
+    public static final String TAG = "MultisigEntry";
 
     private MultiSigAddressFragment[] fragments;
     private String[] title;

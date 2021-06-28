@@ -49,6 +49,7 @@ import com.keystone.cold.fingerprint.FingerprintKit;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
 import com.keystone.cold.ui.fragment.main.AssetFragment;
+import com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment;
 import com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment;
 import com.keystone.cold.ui.fragment.setting.SettingFragment;
 import com.keystone.cold.ui.views.DrawerAdapter;
@@ -204,7 +205,7 @@ public class MainActivity extends FullScreenActivity {
                         if (mode.equals(MultiSigMode.LEGACY.getModeId())) {
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment);
                         } else {
-                            mNavController.navigate(R.id.action_to_multisigSelectionFragment);
+                            mNavController.navigate(R.id.action_to_casaMultisigFragment);
                         }
                     } else {
                         mNavController.navigate(R.id.action_to_multisigSelectionFragment);
@@ -313,7 +314,7 @@ public class MainActivity extends FullScreenActivity {
 
     static {
         mMainFragments.put(R.id.drawer_wallet, AssetFragment.TAG);
-        mMainFragments.put(R.id.drawer_multisig, MultisigMainFragment.TAG);
+        mMainFragments.put(R.id.drawer_multisig, MultiSigPreferenceFragment.TAG);
         mMainFragments.put(R.id.drawer_settings, SettingFragment.TAG);
         mMainFragments.put(R.id.drawer_about, AboutFragment.TAG);
     }

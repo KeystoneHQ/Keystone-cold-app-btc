@@ -47,7 +47,6 @@ import com.keystone.cold.databinding.XpubFileItemBinding;
 import com.keystone.cold.databinding.XpubInputBinding;
 import com.keystone.cold.databinding.XpubListBinding;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.FileUtils;
 import com.keystone.cold.viewmodel.CollectXpubViewModel;

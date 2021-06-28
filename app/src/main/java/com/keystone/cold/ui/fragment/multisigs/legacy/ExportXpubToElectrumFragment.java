@@ -34,7 +34,6 @@ import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.databinding.ExportXpubToElectrumBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;
 
