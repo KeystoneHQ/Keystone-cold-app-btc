@@ -15,7 +15,7 @@
  * in the file COPYING.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.keystone.cold.ui.fragment.main;
+package com.keystone.cold.ui.fragment.main.scan.legacy;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -47,6 +47,7 @@ import com.keystone.cold.scan.bean.ZxingConfig;
 import com.keystone.cold.scan.bean.ZxingConfigBuilder;
 import com.keystone.cold.scan.camera.CameraManager;
 import com.keystone.cold.ui.fragment.BaseFragment;
+import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubException;

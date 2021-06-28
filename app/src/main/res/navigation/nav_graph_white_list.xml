@@ -64,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@id/QRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.QRCodeScanFragment"
+        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
         android:label="QRCodeScanFragment"
         tools:layout="@layout/qrcode_scan_fragment" />
     <fragment

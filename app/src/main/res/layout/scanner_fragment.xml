@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <com.keystone.cold.scan.view.PreviewFrame
+        <com.keystone.cold.ui.fragment.main.scan.scanner.view.PreviewFrame
             android:id="@+id/frameView"
             android:layout_below="@id/toolbar"
             android:layout_width="match_parent"

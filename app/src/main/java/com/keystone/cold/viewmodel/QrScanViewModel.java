@@ -38,7 +38,7 @@ import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.protocol.ZipUtil;
 import com.keystone.cold.protocol.parser.ProtoParser;
-import com.keystone.cold.ui.fragment.main.QRCodeScanFragment;
+import com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment;
 import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
 import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;

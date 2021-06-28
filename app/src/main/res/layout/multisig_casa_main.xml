@@ -32,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:menu="@menu/main"
             app:navigationIcon="@drawable/menu"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/multisig_casa"
@@ -43,6 +44,7 @@
                 android:layout_height="20dp"
                 android:src="@drawable/arrow_right"
                 android:tint="@color/colorAccent" />
+
         </androidx.appcompat.widget.Toolbar>
 
         <include

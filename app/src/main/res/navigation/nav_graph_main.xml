@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/QRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.QRCodeScanFragment"
+        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
         android:label="QRCodeScanFragment"
         tools:layout="@layout/qrcode_scan_fragment">
         <action
@@ -359,13 +359,15 @@
         <action
             android:id="@+id/action_to_casaExportXPubFragment"
             app:destination="@id/casaExportXPubFragment" />
+        <action
+            android:id="@+id/action_to_scan"
+            app:destination="@id/QRCodeScanFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/casaExportXPubFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaExportXPubFragment"
-        android:label="CasaExportXPubFragment"
-        >
+        android:label="CasaExportXPubFragment">
 
     </fragment>
 
