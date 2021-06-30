@@ -84,13 +84,8 @@ public final class CaptureHandler extends Handler {
                 //done scan
                 if (decoder.getResult() != null) {
                     if (decoder.getResult().type == ResultType.SUCCESS) {
-                        try {
-                            Object result = decoder.getResult().ur.decodeFromRegistry();
-                            decodeComplete(result);
-                        } catch (UR.InvalidCBORException e) {
-                            e.printStackTrace();
-                            decodeComplete(text);
-                        }
+                        UR result = decoder.getResult().ur;
+                        decodeComplete(result);
                     } else {
                         decodeComplete(text);
                     }
@@ -112,7 +107,14 @@ public final class CaptureHandler extends Handler {
         });
     }
 
-    private void decodeComplete(Object result) {
+    private void decodeComplete(String result) {
+        AppExecutors.getInstance().mainThread().execute(() -> {
+            state = State.SUCCESS;
+            host.handleDecode(result);
+        });
+    }
+
+    private void decodeComplete(UR result) {
         AppExecutors.getInstance().mainThread().execute(() -> {
             state = State.SUCCESS;
             host.handleDecode(result);

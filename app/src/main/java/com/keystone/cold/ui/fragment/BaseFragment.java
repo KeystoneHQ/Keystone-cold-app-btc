@@ -31,7 +31,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
+
+import java.util.Objects;
 
 public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     private static final boolean DEBUG = false;
@@ -141,7 +144,22 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
 
+    public MutableLiveData<Object> getNavigationResult() {
+        return Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().getLiveData("result");
+    }
+
+    public MutableLiveData<Object> getNavigationResult(String key) {
+        return Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().getLiveData(key);
+    }
+
+    public void setNavigationResult(Object value) {
+        Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().set("result", value);
+    }
+
+    public void setNavigationResult(String key, Object value) {
+        Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().set(key, value);
     }
 
     public void popBackStack(@IdRes int id, boolean inclusive) {

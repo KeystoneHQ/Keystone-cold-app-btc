@@ -21,12 +21,15 @@ import android.os.Handler;
 
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfig;
 import com.keystone.cold.ui.fragment.main.scan.scanner.camera.CameraManager;
+import com.sparrowwallet.hummingbird.UR;
 
 
 public interface Host {
     ZxingConfig getConfig();
 
-    void handleDecode(Object res);
+    void handleDecode(String text);
+
+    void handleDecode(UR ur);
 
     void handleProgressPercent(double percent);
 

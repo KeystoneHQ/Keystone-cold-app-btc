@@ -21,7 +21,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -29,78 +28,43 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.keystone.coinlib.accounts.Account;
-import com.keystone.coinlib.accounts.MultiSig;
-import com.keystone.coinlib.exception.CoinNotFindException;
-import com.keystone.coinlib.exception.InvalidTransactionException;
-import com.keystone.coinlib.utils.Base43;
 import com.keystone.cold.R;
-import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.CommonModalBinding;
-import com.keystone.cold.databinding.QrcodeScanFragmentBinding;
 import com.keystone.cold.databinding.ScannerFragmentBinding;
 import com.keystone.cold.ui.fragment.BaseFragment;
-import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfig;
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfigBuilder;
 import com.keystone.cold.ui.fragment.main.scan.scanner.camera.CameraManager;
-import com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
-import com.keystone.cold.viewmodel.QrScanViewModel;
-import com.keystone.cold.viewmodel.SharedDataViewModel;
-import com.keystone.cold.viewmodel.WatchWallet;
-import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
-import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
-import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
-import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
-import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
-import com.sparrowwallet.hummingbird.registry.CryptoAccount;
-import com.sparrowwallet.hummingbird.registry.CryptoOutput;
+import com.sparrowwallet.hummingbird.UR;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.encoders.EncoderException;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import static com.keystone.coinlib.Util.getExpubFingerprint;
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.viewmodel.WatchWallet.getWatchWallet;
-import static com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel.decodeCaravanWalletFile;
-import static com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel.decodeColdCardWalletFile;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
 public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         implements SurfaceHolder.Callback, Host {
-
     private CameraManager mCameraManager;
     private CaptureHandler mHandler;
     private boolean hasSurface;
     private ZxingConfig mConfig;
     private SurfaceHolder mSurfaceHolder;
-
     private ModalDialog dialog;
-    private WatchWallet watchWallet;
+    private ArrayList<ScanResultTypes> desiredTypes;
 
     private ObjectAnimator scanLineAnimator;
 
     @Override
     protected int setView() {
-        return R.layout.qrcode_scan_fragment;
+        return R.layout.scanner_fragment;
     }
 
     @Override
     protected void init(View view) {
-        watchWallet = getWatchWallet(mActivity);
-        mBinding.scanHint.setText(getScanHint());
-        boolean isSetupVault = getArguments() != null && getArguments().getBoolean(IS_SETUP_VAULT);
-        String purpose = getArguments() != null ? getArguments().getString("purpose") : "";
+
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mConfig = new ZxingConfigBuilder()
                 .setIsFullScreenScan(true)
@@ -109,26 +73,18 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         mCameraManager = new CameraManager(mActivity, mConfig);
         mBinding.frameView.setCameraManager(mCameraManager);
         mBinding.frameView.setZxingConfig(mConfig);
-        QrScanViewModel.Factory factory = new QrScanViewModel.Factory(mActivity.getApplication(), isSetupVault);
-        if (!TextUtils.isEmpty(purpose)) {
-            mBinding.scanHint.setVisibility(View.GONE);
-        }
-        
         scanLineAnimator = ObjectAnimator.ofFloat(mBinding.scanLine, "translationY", 0, 600);
         scanLineAnimator.setDuration(2000L);
         scanLineAnimator.setRepeatCount(ValueAnimator.INFINITE);
-    }
 
-    private String getScanHint() {
-        switch (watchWallet) {
-            case ELECTRUM:
-                return getString(R.string.scan_electrum_hint);
-            case BLUE:
-                return getString(R.string.scan_blue_hint);
-            case WASABI:
-                return getString(R.string.scan_wasabi_hint);
+        ArrayList<String> desiredResults = requireArguments().getStringArrayList("desired_results");
+        if (desiredResults == null) {
+            throw new InvalidParameterException("no desired type passed to scanner");
+        } else {
+            ArrayList<ScanResultTypes> types = new ArrayList<>();
+            desiredResults.forEach(dr -> types.add(ScanResultTypes.valueOf(dr)));
+            this.desiredTypes = types;
         }
-        return "";
     }
 
     @Override
@@ -202,8 +158,18 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     }
 
     @Override
-    public void handleDecode(Object res) {
+    public void handleDecode(String text) {
 
+    }
+
+    @Override
+    public void handleDecode(UR ur) {
+        if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(ur))) {
+            setNavigationResult("scan_result", Hex.toHexString(ur.getCborBytes()));
+            navigateUp();
+        } else {
+            alert(getString(R.string.unsupported_qrcode));
+        }
     }
 
     @Override

@@ -36,6 +36,7 @@
             app:navigationIcon="@drawable/menu"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/multisig_casa"
+            app:contentInsetStartWithNavigation="0dp"
             app:titleTextColor="@color/white">
 
             <ImageView
@@ -43,7 +44,7 @@
                 android:layout_width="24dp"
                 android:layout_height="20dp"
                 android:src="@drawable/arrow_right"
-                android:tint="@color/colorAccent" />
+                app:tint="@color/colorAccent" />
 
         </androidx.appcompat.widget.Toolbar>
 

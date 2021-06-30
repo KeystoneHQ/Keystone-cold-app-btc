@@ -29,13 +29,13 @@
         tools:layout="@layout/web_auth">
         <action
             android:id="@+id/webAuth_to_QRCodeScan"
-            app:destination="@id/QRCodeScanFragment" />
+            app:destination="@id/LegacyQRCodeScanFragment" />
         <action
             android:id="@+id/action_webAuthFragment_to_setPasswordFragment"
             app:destination="@id/setPasswordFragment" />
     </fragment>
     <fragment
-        android:id="@id/QRCodeScanFragment"
+        android:id="@id/LegacyQRCodeScanFragment"
         android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
         android:label="QRCodeScanFragment"
         tools:layout="@layout/qrcode_scan_fragment">
@@ -309,7 +309,7 @@
         tools:layout="@layout/add_white_list">
         <action
             android:id="@id/add_white_list_scan"
-            app:destination="@id/QRCodeScanFragment"
+            app:destination="@id/LegacyQRCodeScanFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"

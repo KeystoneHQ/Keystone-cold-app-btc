@@ -55,4 +55,14 @@ public class SharedDataViewModel extends AndroidViewModel {
     public boolean verifyMnemonic(String mnemonic) {
         return new VerifyMnemonicCallable(mnemonic, null, 0).call();
     }
+
+    private final MutableLiveData<Object> scanResultObj = new MutableLiveData<>();
+
+    public void setScanResultObj(Object o) {
+        scanResultObj.setValue(o);
+    }
+
+    public MutableLiveData<Object> getScanResultObj(){
+        return scanResultObj;
+    }
 }
