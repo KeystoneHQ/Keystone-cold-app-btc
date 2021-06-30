@@ -97,6 +97,24 @@
                 </LinearLayout>
 
                 <include android:id="@+id/qrcode_layout" layout="@layout/dynamic_qrcode"/>
+                <TextView
+                    android:id="@+id/xpub"
+                    android:paddingHorizontal="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ypub6XsyMmCyC7o9aXNfXzxwFgz3XPub9HadNzaZraotUtYjRHkJR7YXvaPmdZvvxhrYh9ajWXBJaPNjPsEPo3M4uNG9LyrrPTaYuee44qgWJW3"
+                    android:textColor="@color/white40"
+                    android:textAlignment="center"
+                    />
+                <TextView
+                    android:id="@+id/path"
+                    android:layout_marginTop="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Path: m"
+                    android:textColor="@color/white40"
+                    android:textSize="20sp"
+                    />
 
                 <Button
                     android:id="@+id/done"

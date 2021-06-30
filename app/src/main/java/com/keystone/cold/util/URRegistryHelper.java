@@ -52,7 +52,6 @@ public class URRegistryHelper {
     public static CryptoHDKey generateCryptoHDKey(Account account, byte[] masterFingerprint, String xPub, boolean isMainNet) {
         ExtendedPublicKey extendedPublicKey = new ExtendedPublicKey(xPub);
         List<PathComponent> pathComponents = fromAccountToPathComponent(account);
-        List<ScriptExpression> scriptExpressions = fromAccountToScriptExpressions(account);
         CryptoKeypath origin = new CryptoKeypath(pathComponents, masterFingerprint, (int) extendedPublicKey.getDepth());
 
         return new CryptoHDKey(false, extendedPublicKey.getKey(),

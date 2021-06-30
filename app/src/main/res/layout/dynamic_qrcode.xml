@@ -32,6 +32,7 @@
         android:orientation="vertical">
 
         <FrameLayout
+            android:id="@+id/frame"
             android:layout_width="260dp"
             android:layout_height="260dp"
             android:layout_gravity="center_horizontal"

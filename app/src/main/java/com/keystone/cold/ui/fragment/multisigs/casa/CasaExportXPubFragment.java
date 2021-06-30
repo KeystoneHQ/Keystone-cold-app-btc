@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.MultisigCasaExportXpubBinding;
@@ -28,8 +30,11 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
         UR ur = cryptoHDKey.toUR();
         mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
         mBinding.qrcodeLayout.qrcode.setData(ur.toString());
+        mBinding.qrcodeLayout.frame.setLayoutParams(new LinearLayout.LayoutParams(320, 320));
         mBinding.done.setOnClickListener(v -> navigateUp());
         mBinding.scanHint.setOnClickListener(v -> showExportGuide());
+        mBinding.path.setText("Path: " + MultiSig.CASA.getPath());
+        mBinding.xpub.setText(casaMultiSigViewModel.getXPub(MultiSig.CASA));
     }
 
     @Override
