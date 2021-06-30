@@ -16,10 +16,14 @@ import androidx.lifecycle.ViewModelProviders;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.ui.MainActivity;
+import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.viewmodel.SharedDataViewModel;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
+
+import org.spongycastle.util.encoders.Base64;
+import org.spongycastle.util.encoders.Hex;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +65,12 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             navigate(R.id.action_to_scanner, data);
             getNavigationResult("scan_result").observe(this, v -> {
                 CryptoPSBT cryptoPSBT = (CryptoPSBT) ScanResultTypes.CRYPTO_PSBT.resolveURHex((String) v);
+                byte[] bytes = cryptoPSBT.getPsbt();
+                String psbtB64 = Base64.toBase64String(bytes);
+                Bundle bundle = new Bundle();
+                bundle.putString("psbt_base64", psbtB64);
+                bundle.putBoolean("multisig", true);
+                navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
             });
             return true;
         }
