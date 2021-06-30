@@ -38,11 +38,13 @@ import com.keystone.cold.databinding.ImportWalletBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
+import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.encoders.Hex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +137,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
                 array.getJSONObject(i).put("xpub", ExtendedPublicKeyVersion.convertXPubVersion(xpub, account.getXPubVersion()));
             }
 
-            return new MultiSigWalletEntity(walletInfo.getString("Name"),
+            return new MultiSigWalletEntity(walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(data.getString("wallet_info")))).substring(0, 6).toUpperCase()),
                     threshold, total, account.getPath(), array.toString(), "", "", "", creator);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -146,7 +148,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
     private void importWallet() {
         try {
-            viewModel.createMultisigWallet(threshold, account, walletInfo.getString("Name"), walletInfo.getJSONArray("Xpubs"), creator)
+            viewModel.createMultisigWallet(threshold, account, walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(walletInfo.toString()))).substring(0, 6).toUpperCase()), walletInfo.getJSONArray("Xpubs"), creator)
                     .observe(this, this::onImportWalletSuccess);
         } catch (XfpNotMatchException e) {
             e.printStackTrace();
