@@ -28,6 +28,7 @@ import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.db.AppDatabase;
 import com.keystone.cold.db.entity.AccountEntity;
 import com.keystone.cold.db.entity.AddressEntity;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
@@ -151,12 +152,24 @@ public class DataRepository {
         return mDb.txDao().load(txId);
     }
 
+    public LiveData<List<CasaSignature>> loadCasaSignatures() {
+        return mDb.casaDao().loadSignatures();
+    }
+
+    public LiveData<CasaSignature> loadCasaSignature(String id){
+        return mDb.casaDao().load(Long.parseLong(id));
+    }
+
     public TxEntity loadTxSync(String txId) {
         return mDb.txDao().loadSync(txId);
     }
 
     public void insertTx(TxEntity tx) {
         mDb.txDao().insert(tx);
+    }
+
+    public void insertCasaSignature(CasaSignature casaSignature){
+        mDb.casaDao().insert(casaSignature);
     }
 
     public void insertCoins(List<CoinEntity> coins) {

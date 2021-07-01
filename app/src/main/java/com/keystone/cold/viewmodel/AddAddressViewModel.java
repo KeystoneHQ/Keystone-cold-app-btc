@@ -89,18 +89,18 @@ public class AddAddressViewModel extends AndroidViewModel {
         return addComplete;
     }
 
-    static class AddAddressTask extends AsyncTask<Integer, Void, Void> {
+    public static class AddAddressTask extends AsyncTask<Integer, Void, Void> {
         private final CoinEntity coinEntity;
         private final DataRepository repo;
         private final Runnable onComplete;
         private final String xpub;
         private final int changeIndex;
 
-        AddAddressTask(CoinEntity coinEntity,
-                       DataRepository repo,
-                       Runnable onComplete,
-                       @NonNull String xpub,
-                       int changeIndex) {
+        public AddAddressTask(CoinEntity coinEntity,
+                              DataRepository repo,
+                              Runnable onComplete,
+                              @NonNull String xpub,
+                              int changeIndex) {
             this.coinEntity = coinEntity;
             this.repo = repo;
             this.onComplete = onComplete;
@@ -152,7 +152,7 @@ public class AddAddressViewModel extends AndroidViewModel {
             return null;
         }
 
-        static Btc.AddressType getAddressType(AccountEntity accountEntity) {
+        public static Btc.AddressType getAddressType(AccountEntity accountEntity) {
             String hdPath = accountEntity.getHdPath();
             if (Account.P2SH_P2WPKH.getPath().equals(hdPath)
                     || Account.P2SH_P2WPKH_TESTNET.getPath().equals(hdPath)) {

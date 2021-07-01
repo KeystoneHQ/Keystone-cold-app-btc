@@ -31,6 +31,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.db.dao.AccountDao;
 import com.keystone.cold.db.dao.AddressDao;
+import com.keystone.cold.db.dao.CasaDao;
 import com.keystone.cold.db.dao.CoinDao;
 import com.keystone.cold.db.dao.MultiSigAddressDao;
 import com.keystone.cold.db.dao.MultiSigWalletDao;
@@ -38,6 +39,7 @@ import com.keystone.cold.db.dao.TxDao;
 import com.keystone.cold.db.dao.WhiteListDao;
 import com.keystone.cold.db.entity.AccountEntity;
 import com.keystone.cold.db.entity.AddressEntity;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
@@ -47,7 +49,7 @@ import com.keystone.cold.db.entity.WhiteListEntity;
 @Database(entities = {CoinEntity.class, AddressEntity.class,
         TxEntity.class, WhiteListEntity.class,
         AccountEntity.class, MultiSigWalletEntity.class,
-        MultiSigAddressEntity.class}, version = 5)
+        MultiSigAddressEntity.class, CasaSignature.class}, version = 6)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "keystone-db";
     private static AppDatabase sInstance;
@@ -57,6 +59,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AddressDao addressDao();
 
     public abstract TxDao txDao();
+
+    public abstract CasaDao casaDao();
 
     public abstract WhiteListDao whiteListDao();
 

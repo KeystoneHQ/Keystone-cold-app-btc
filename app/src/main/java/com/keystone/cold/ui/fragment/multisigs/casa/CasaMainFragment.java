@@ -2,34 +2,33 @@ package com.keystone.cold.ui.fragment.multisigs.casa;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.LiveData;
 
+import com.google.android.material.tabs.TabLayout;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.ui.MainActivity;
-import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
-import com.keystone.cold.viewmodel.SharedDataViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
 import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.encoders.Hex;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMainBinding> {
     public static final String TAG = "MultisigEntry";
+
+    private LiveData<List<CasaSignature>> casaSignatureLiveData;
 
     @Override
     protected int setView() {
@@ -39,12 +38,39 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     @Override
     protected void init(View view) {
         super.init(view);
+        casaSignatureLiveData = casaMultiSigViewModel.allCasaSignatures();
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
         mBinding.toolbarModeSelection.setOnClickListener(l -> {
             showMultisigSelection();
         });
         mBinding.export.setOnClickListener(v -> navigate(R.id.action_to_casaExportXPubFragment));
+        mBinding.tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                if (position == 0) {
+                    mBinding.operations.setVisibility(View.VISIBLE);
+                } else {
+                    mBinding.signatures.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                if (position == 0) {
+                    mBinding.operations.setVisibility(View.GONE);
+                } else {
+                    mBinding.signatures.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
@@ -70,6 +96,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                 Bundle bundle = new Bundle();
                 bundle.putString("psbt_base64", psbtB64);
                 bundle.putBoolean("multisig", true);
+                bundle.putString("multisig_mode", MultiSigMode.CASA.name());
                 navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
             });
             return true;
