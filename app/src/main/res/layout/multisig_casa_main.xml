@@ -37,14 +37,20 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/multisig_casa"
             app:contentInsetStartWithNavigation="0dp"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
             app:titleTextColor="@color/white">
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/toolbar_mode_selection"
-                android:layout_width="24dp"
-                android:layout_height="20dp"
-                android:src="@drawable/arrow_right"
-                app:tint="@color/colorAccent" />
+                android:layout_width="40dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/arrow_right"
+                    app:tint="@color/colorAccent" />
+            </FrameLayout>
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -105,7 +111,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:text="@string/casa_operation_health_check"
                     android:textColor="@color/white"
-                    android:textSize="18sp" />
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -133,7 +139,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:text="@string/casa_operation_export"
                     android:textColor="@color/white"
-                    android:textSize="18sp" />
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"

@@ -35,17 +35,24 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/menu"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/multisig_legacy"
-            app:titleTextColor="@color/white"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            app:titleTextColor="@color/white">
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/toolbar_mode_selection"
-                android:layout_width="24dp"
-                android:layout_height="20dp"
-                android:src="@drawable/arrow_right"
-                android:tint="@color/colorAccent" />
+                android:layout_width="40dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/arrow_right"
+                    app:tint="@color/colorAccent" />
+            </FrameLayout>
         </androidx.appcompat.widget.Toolbar>
 
         <include
