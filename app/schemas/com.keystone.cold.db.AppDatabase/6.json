@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "d163fb1982a8343ee49f6e2edd24f749",
+    "identityHash": "d949c68a47798b84dfffe8fc5a3a8009",
     "entities": [
       {
         "tableName": "coins",
@@ -534,7 +534,7 @@
         ]
       },
       {
-        "tableName": "casa_signatures",
+        "tableName": "casa_signature",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `signedHex` TEXT, `signStatus` TEXT, `amount` TEXT, `from` TEXT, `to` TEXT, `fee` TEXT, `memo` TEXT)",
         "fields": [
           {
@@ -594,12 +594,12 @@
         },
         "indices": [
           {
-            "name": "index_casa_signatures_id",
-            "unique": false,
+            "name": "index_casa_signature_id",
+            "unique": true,
             "columnNames": [
               "id"
             ],
-            "createSql": "CREATE  INDEX `index_casa_signatures_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX `index_casa_signature_id` ON `${TABLE_NAME}` (`id`)"
           }
         ],
         "foreignKeys": []
@@ -608,7 +608,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd163fb1982a8343ee49f6e2edd24f749')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd949c68a47798b84dfffe8fc5a3a8009')"
     ]
   }
 }

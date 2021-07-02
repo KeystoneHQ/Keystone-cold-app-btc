@@ -31,18 +31,18 @@ import java.util.List;
 
 @Dao
 public interface CasaDao {
-    @Query("SELECT * FROM casa_signatures ORDER BY id DESC")
+    @Query("SELECT * FROM casa_signature ORDER BY id DESC")
     LiveData<List<CasaSignature>> loadSignatures();
 
-    @Query("SELECT * FROM casa_signatures")
+    @Query("SELECT * FROM casa_signature")
     List<CasaSignature> loadTxsSync();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(CasaSignature tx);
 
-    @Query("SELECT * FROM casa_signatures WHERE id = :id")
+    @Query("SELECT * FROM casa_signature WHERE id = :id")
     LiveData<CasaSignature> load(long id);
 
-    @Query("SELECT * FROM casa_signatures WHERE id = :id")
+    @Query("SELECT * FROM casa_signature WHERE id = :id")
     CasaSignature loadSync(int id);
 }

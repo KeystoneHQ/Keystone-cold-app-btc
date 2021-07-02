@@ -101,6 +101,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     }
                 })
                 .addMigrations(MIGRATION_1_5)
+                .addMigrations(MIGRATION_5_6)
                 .fallbackToDestructiveMigration()
                 .build();
     }
@@ -135,6 +136,27 @@ public abstract class AppDatabase extends RoomDatabase {
                         "FOREIGN KEY(`walletFingerPrint`) REFERENCES `multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
                 database.execSQL("CREATE UNIQUE INDEX index_multi_sig_address_id ON multi_sig_address (id)");
                 database.execSQL("CREATE INDEX index_multi_sig_address_walletFingerPrint ON multi_sig_address (walletFingerPrint)");
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+    private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `casa_signature` " +
+                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`signedHex` TEXT, " +
+                        "`signStatus` TEXT , " +
+                        "`amount` TEXT , " +
+                        "`from` TEXT  , " +
+                        "`to` TEXT  , " +
+                        "`fee` TEXT  , " +
+                        "`memo` TEXT )");
+                database.execSQL("CREATE UNIQUE INDEX index_casa_signature_id ON casa_signature (id)");
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

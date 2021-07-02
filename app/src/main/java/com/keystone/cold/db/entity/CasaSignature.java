@@ -1,13 +1,16 @@
 package com.keystone.cold.db.entity;
 
+import androidx.annotation.NonNull;
+
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "casa_signatures", indices = {@Index("id")})
+@Entity(tableName = "casa_signature", indices = {@Index(value = "id", unique = true)})
 public class CasaSignature {
     @PrimaryKey(autoGenerate = true)
-    public long id;
+    @NonNull
+    public Long id;
     private String signedHex;
     private String signStatus;
     private String amount;
