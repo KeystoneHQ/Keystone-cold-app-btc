@@ -38,7 +38,7 @@ public interface CasaDao {
     List<CasaSignature> loadTxsSync();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(CasaSignature tx);
+    Long insert(CasaSignature tx);
 
     @Query("SELECT * FROM casa_signature WHERE id = :id")
     LiveData<CasaSignature> load(long id);

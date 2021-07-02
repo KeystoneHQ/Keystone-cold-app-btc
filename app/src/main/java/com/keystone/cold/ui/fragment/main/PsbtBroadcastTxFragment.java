@@ -121,15 +121,16 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
         if (isMultisig) {
             if (multiSigMode.equals(MultiSigMode.LEGACY)) {
                 goHome = v -> popBackStack(R.id.legacyMultisigFragment, false);
+                mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
             } else {
                 goHome = v -> popBackStack(R.id.casaMultisigFragment, false);
+                mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(casaSignature));
             }
             mBinding.toolbarTitle.setText(getString(R.string.export_tx));
             mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
             mBinding.exportToSdcard.setVisibility(View.VISIBLE);
             mBinding.exportToSdcard.setOnClickListener(v ->
                     showExportPsbtDialog(mActivity, txEntity, null));
-            mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
             if (signed) {
                 mBinding.scanHint.setText(R.string.broadcast_multisig_tx_hint);
             } else {
@@ -180,6 +181,26 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
     }
 
     private String getSignStatus(TxEntity txEntity) {
+        String signStatus = txEntity.getSignStatus();
+
+        String[] splits = signStatus.split("-");
+        int sigNumber = Integer.parseInt(splits[0]);
+        int reqSigNumber = Integer.parseInt(splits[1]);
+
+        String text;
+        if (sigNumber == 0) {
+            text = getString(R.string.unsigned);
+        } else if (sigNumber < reqSigNumber) {
+            text = getString(R.string.partial_signed);
+        } else {
+            text = getString(R.string.signed);
+            signed = true;
+        }
+
+        return text;
+    }
+
+    private String getSignStatus(CasaSignature txEntity) {
         String signStatus = txEntity.getSignStatus();
 
         String[] splits = signStatus.split("-");

@@ -3,14 +3,18 @@ package com.keystone.cold.db.entity;
 import androidx.annotation.NonNull;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import com.keystone.cold.model.Tx;
+
 @Entity(tableName = "casa_signature", indices = {@Index(value = "id", unique = true)})
-public class CasaSignature {
+public class CasaSignature implements Tx {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     public Long id;
+    private String txId;
     private String signedHex;
     private String signStatus;
     private String amount;
@@ -18,6 +22,24 @@ public class CasaSignature {
     private String to;
     private String fee;
     private String memo;
+
+    public String getTxId() {
+        return txId;
+    }
+
+    @Override
+    public String getCoinId() {
+        return "";
+    }
+
+    @Override
+    public String getCoinCode() {
+        return "BTC";
+    }
+
+    public void setTxId(String txId) {
+        this.txId = txId;
+    }
 
     public CasaSignature(String signedHex, String signStatus, String amount, String from, String to, String fee, String memo) {
         this.signedHex = signedHex;
@@ -29,15 +51,26 @@ public class CasaSignature {
         this.memo = memo;
     }
 
+    @Ignore
     public CasaSignature() {
     }
 
-    public long getId() {
+    @NonNull
+    public Long getId() {
         return id;
     }
 
     public String getSignedHex() {
         return signedHex;
+    }
+
+    @Override
+    public long getTimeStamp() {
+        return 0;
+    }
+
+    public void setId(@NonNull Long id) {
+        this.id = id;
     }
 
     public String getSignStatus() {
@@ -90,5 +123,30 @@ public class CasaSignature {
 
     public String getMemo() {
         return memo;
+    }
+
+    @Override
+    public String getSignId() {
+        return "";
+    }
+
+    @Override
+    public String getBelongTo() {
+        return "";
+    }
+
+    @Override
+    public String toString() {
+        return "CasaSignature{" +
+                "id=" + id +
+                ", txId='" + txId + '\'' +
+                ", signedHex='" + signedHex + '\'' +
+                ", signStatus='" + signStatus + '\'' +
+                ", amount='" + amount + '\'' +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", fee='" + fee + '\'' +
+                ", memo='" + memo + '\'' +
+                '}';
     }
 }

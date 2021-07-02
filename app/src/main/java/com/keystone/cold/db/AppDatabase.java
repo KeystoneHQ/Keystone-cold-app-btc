@@ -149,6 +149,7 @@ public abstract class AppDatabase extends RoomDatabase {
             try {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `casa_signature` " +
                         "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`txId` TEXT, " +
                         "`signedHex` TEXT, " +
                         "`signStatus` TEXT , " +
                         "`amount` TEXT , " +

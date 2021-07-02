@@ -69,6 +69,14 @@ public class Util {
         return HDKeyDerivation.deriveChildKey(change, index).getPublicKeyAsHex();
     }
 
+    public static String deriveFromKey(String XPub, String[] childNumbers) {
+        DeterministicKey key = DeterministicKey.deserializeB58(XPub, MainNetParams.get());
+        for (String childNumber : childNumbers) {
+            key = HDKeyDerivation.deriveChildKey(key, Integer.parseInt(childNumber));
+        }
+        return key.getPublicKeyAsHex();
+    }
+
     public static String getPublicKeyHex(String exPub) {
         DeterministicKey key = DeterministicKey.deserializeB58(exPub, MainNetParams.get());
         return key.getPublicKeyAsHex();
@@ -77,7 +85,7 @@ public class Util {
     /**
      * Keccak-256 hash function.
      *
-     * @param input binary encoded input data
+     * @param input  binary encoded input data
      * @param offset of start of data
      * @param length of data
      * @return hash value
@@ -192,7 +200,10 @@ public class Util {
             throw new SignatureDecodeException(e);
         } finally {
             if (decoder != null)
-                try { decoder.close(); } catch (IOException x) {}
+                try {
+                    decoder.close();
+                } catch (IOException x) {
+                }
             Properties.removeThreadOverride("org.bouncycastle.asn1.allow_unsafe_integer");
         }
     }
@@ -206,7 +217,7 @@ public class Util {
 
     public static String reverseHex(String hex) {
         byte[] data = org.spongycastle.util.encoders.Hex.decode(hex);
-        for(int i = 0; i < data.length / 2; i++) {
+        for (int i = 0; i < data.length / 2; i++) {
             byte temp = data[i];
             data[i] = data[data.length - i - 1];
             data[data.length - i - 1] = temp;

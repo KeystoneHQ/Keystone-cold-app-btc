@@ -168,8 +168,8 @@ public class DataRepository {
         mDb.txDao().insert(tx);
     }
 
-    public void insertCasaSignature(CasaSignature casaSignature){
-        mDb.casaDao().insert(casaSignature);
+    public Long insertCasaSignature(CasaSignature casaSignature){
+        return mDb.casaDao().insert(casaSignature);
     }
 
     public void insertCoins(List<CoinEntity> coins) {

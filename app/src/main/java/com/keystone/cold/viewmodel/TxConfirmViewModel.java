@@ -121,7 +121,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
     private AuthenticateModal.OnVerify.VerifyToken token;
     private boolean isMultisig;
     private MultiSigWalletEntity wallet;
-    private MultiSigMode mode;
+    public MultiSigMode mode;
     private String mfp;
 
     public TxConfirmViewModel(@NonNull Application application) {
@@ -143,6 +143,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
         return observableTx;
     }
 
+    public MutableLiveData<CasaSignature> getObservableCasaSignature() {
+        return observableCasaSignature;
+    }
+
     public MutableLiveData<Exception> parseTxException() {
         return parseTxException;
     }
@@ -162,10 +166,12 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 boolean isMultisig = transaction.isMultisig();
                 String walletFingerprint = null;
                 if (isMultisig) {
-                    if (object.has("btcTx")) {
-                        walletFingerprint = object.getJSONObject("btcTx").getString("wallet_fingerprint");
-                    } else if (object.has("xtnTx")) {
-                        walletFingerprint = object.getJSONObject("xtnTx").getString("wallet_fingerprint");
+                    if (mode.equals(MultiSigMode.LEGACY)) {
+                        if (object.has("btcTx")) {
+                            walletFingerprint = object.getJSONObject("btcTx").getString("wallet_fingerprint");
+                        } else if (object.has("xtnTx")) {
+                            walletFingerprint = object.getJSONObject("xtnTx").getString("wallet_fingerprint");
+                        }
                     }
                 }
                 if (transaction instanceof UtxoTx) {
@@ -175,6 +181,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
                     if (mode.equals(MultiSigMode.LEGACY)) {
                         TxEntity tx = generateMultisigTxEntity(object, walletFingerprint);
                         observableTx.postValue(tx);
+                        if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
+                                || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
+                            feeAttackChecking(tx);
+                        }
                     } else {
                         CasaSignature sig = generateCasaSignature(object);
                         observableCasaSignature.postValue(sig);
@@ -182,13 +192,12 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 } else {
                     TxEntity tx = generateTxEntity(object);
                     observableTx.postValue(tx);
+                    if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
+                            || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
+                        feeAttackChecking(tx);
+                    }
                 }
-                TxEntity tx = isMultisig ? generateMultisigTxEntity(object, walletFingerprint) : generateTxEntity(object);
-                observableTx.postValue(tx);
-                if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
-                        || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
-                    feeAttackChecking(tx);
-                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -453,6 +462,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
     }
 
     private String getMultiSigFromAddress() {
+        if (mode.equals(MultiSigMode.CASA)) return "";
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String[] externalPath = Stream.of(paths)
                 .filter(this::isExternalMulisigPath)
@@ -734,7 +744,8 @@ public class TxConfirmViewModel extends AndroidViewModel {
                         Objects.requireNonNull(casaSignature);
                         updateCasaSignatureStatus(casaSignature);
                         casaSignature.setSignedHex(psbtB64);
-                        mRepository.insertCasaSignature(casaSignature);
+                        Long id = mRepository.insertCasaSignature(casaSignature);
+                        casaSignature.setId(id);
                     }
                     signState.postValue(STATE_SIGN_SUCCESS);
                     new ClearTokenCallable().call();
@@ -833,7 +844,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             return null;
         }
 
-        if (transaction.isMultisig()) {
+        if (transaction.isMultisig() && mode.equals(MultiSigMode.LEGACY)) {
             for (int i = 0; i < distinctPaths.length; i++) {
                 String path = distinctPaths[i].replace(wallet.getExPubPath() + "/", "");
                 String[] index = path.split("/");
@@ -842,6 +853,17 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 String pubKey = Util.getPublicKeyHex(
                         ExtendPubkeyFormat.convertExtendPubkey(expub, ExtendPubkeyFormat.xpub),
                         Integer.parseInt(index[0]), Integer.parseInt(index[1]));
+                signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
+            }
+        } else if (transaction.isMultisig() && mode.equals(MultiSigMode.CASA)) {
+            for (int i = 0; i < distinctPaths.length; i++) {
+                int point = distinctPaths[i].lastIndexOf("'");
+                String XPubPath = distinctPaths[i].substring(0, point+1);
+                String path = distinctPaths[i].replace(XPubPath + "/", "");
+                String[] index = path.split("/");
+                String expub = new GetExtendedPublicKeyCallable(XPubPath).call();
+                String pubKey = Util.deriveFromKey(
+                        expub, index);
                 signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
             }
         } else {
@@ -1055,7 +1077,9 @@ public class TxConfirmViewModel extends AndroidViewModel {
             object.put("inputs", inputs);
             object.put("outputs", outputs);
             object.put("multisig", true);
-            object.put("wallet_fingerprint", wallet != null ? wallet.getWalletFingerPrint() : null);
+            if (mode.equals(MultiSigMode.LEGACY)) {
+                object.put("wallet_fingerprint", wallet != null ? wallet.getWalletFingerPrint() : null);
+            }
             return object;
         }
 
@@ -1203,7 +1227,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 out.put("address", psbtOutput.getString("address"));
                 out.put("value", psbtOutput.getInt("value"));
                 JSONArray bip32Derivation = psbtOutput.optJSONArray("hdPath");
-                if (bip32Derivation != null) {
+                if (bip32Derivation != null && mode.equals(MultiSigMode.LEGACY)) {
                     for (int j = 0; j < bip32Derivation.length(); j++) {
                         JSONObject item = bip32Derivation.getJSONObject(j);
                         String hdPath = item.getString("path");
