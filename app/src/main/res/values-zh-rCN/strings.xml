@@ -493,6 +493,11 @@
     <string name="casa_operation_health_check">Perform Health Check</string>
     <string name="casa_operation_export">Export XPUB</string>
 
+    <string name="casa_sign_message">签名消息</string>
+    <string name="casa_sign_message_message">消息：</string>
+    <string name="casa_sign_message_address">关联地址: </string>
+    <string name="casa_sign_message_path">Using the key associated with address: </string>
+
     <string name="scan_qrcode_with_casa">使用Casa扫描二维码</string>
     <string name="scan_qrcode_with_casa_hint_title">Scan the QR code using Casa</string>
     <string name="scan_qrcode_with_casa_hint"><![CDATA[

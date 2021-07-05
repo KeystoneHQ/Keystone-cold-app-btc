@@ -193,6 +193,12 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                 }
             });
         } else {
+            mBinding.txDetail.network.setVisibility(View.VISIBLE);
+            if (viewModel.isCasaMainnet) {
+                mBinding.txDetail.networkText.setText("Mainnet");
+            } else {
+                mBinding.txDetail.networkText.setText("Testnet");
+            }
             viewModel.getObservableCasaSignature().observe(this, casaSignature -> {
                 if (casaSignature != null) {
                     dialog.dismiss();

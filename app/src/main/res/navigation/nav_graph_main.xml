@@ -356,6 +356,13 @@
     </fragment>
 
     <fragment
+        android:id="@+id/casaSignMessageFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaSignMessageFragment"
+        android:label="CasaSignMessageFragment">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/casaMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaMainFragment"
         android:label="MultisigEntry">
@@ -379,6 +386,13 @@
         <action
             android:id="@+id/action_to_psbtTxConfirmFragment"
             app:destination="@id/psbtTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_casaSignMessageFragment"
+            app:destination="@id/casaSignMessageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"

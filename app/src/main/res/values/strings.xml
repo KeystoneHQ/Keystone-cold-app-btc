@@ -129,6 +129,11 @@
     <string name="casa_operation_health_check">Perform Health Check</string>
     <string name="casa_operation_export">Export XPUB</string>
 
+    <string name="casa_sign_message">Sign Message</string>
+    <string name="casa_sign_message_message">Message: </string>
+    <string name="casa_sign_message_address">Associated Address: </string>
+    <string name="casa_sign_message_path">Using the key associated with address: </string>
+
     <string name="casa_operation">OPERATION</string>
     <string name="casa_signatures">SIGNATURES</string>
 

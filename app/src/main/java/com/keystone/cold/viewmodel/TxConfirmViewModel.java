@@ -124,6 +124,8 @@ public class TxConfirmViewModel extends AndroidViewModel {
     public MultiSigMode mode;
     private String mfp;
 
+    public boolean isCasaMainnet = true;
+
     public TxConfirmViewModel(@NonNull Application application) {
         super(application);
         observableTx.setValue(null);
@@ -832,6 +834,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
         }
     }
 
+    public String getPath() {
+        return transaction.getHdPath();
+    }
+
     private Signer[] initSigners() {
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String coinCode = transaction.getCoinCode();
@@ -858,7 +864,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
         } else if (transaction.isMultisig() && mode.equals(MultiSigMode.CASA)) {
             for (int i = 0; i < distinctPaths.length; i++) {
                 int point = distinctPaths[i].lastIndexOf("'");
-                String XPubPath = distinctPaths[i].substring(0, point+1);
+                String XPubPath = distinctPaths[i].substring(0, point + 1);
                 String path = distinctPaths[i].replace(XPubPath + "/", "");
                 String[] index = path.split("/");
                 String expub = new GetExtendedPublicKeyCallable(XPubPath).call();

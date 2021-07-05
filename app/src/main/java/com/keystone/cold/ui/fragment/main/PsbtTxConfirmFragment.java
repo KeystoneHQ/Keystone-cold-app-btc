@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.db.entity.TxEntity;
@@ -38,6 +39,8 @@ import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import org.spongycastle.util.encoders.Base64;
+
+import java.util.stream.Stream;
 
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
@@ -131,6 +134,20 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
             viewModel.setMultisigMode(multiSigMode);
         }
         viewModel.parsePsbtBase64(psbtBase64, multisig);
+        try {
+            String[] paths = viewModel.getPath().split(AbsTx.SEPARATOR);
+            String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
+            String first = distinctPaths[0];
+            String path = first.replace("m/", "");
+            String[] index = path.split("/");
+            if (index[1].equals("1'")) {
+                viewModel.isCasaMainnet = true;
+            } else {
+                viewModel.isCasaMainnet = false;
+            }
+        } catch (Exception e) {
+            viewModel.isCasaMainnet = false;
+        }
     }
 
     protected void onSignSuccess() {
@@ -141,8 +158,7 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
                 data.putString(KEY_TXID, viewModel.getTxId());
                 data.putString(KEY_MULTISIG_MODE, multiSigMode.name());
                 navigate(R.id.action_to_psbt_broadcast, data);
-            }
-            else {
+            } else {
                 Bundle data = new Bundle();
                 data.putString(KEY_TXID, viewModel.getCasaSignatureId());
                 data.putString(KEY_MULTISIG_MODE, multiSigMode.name());

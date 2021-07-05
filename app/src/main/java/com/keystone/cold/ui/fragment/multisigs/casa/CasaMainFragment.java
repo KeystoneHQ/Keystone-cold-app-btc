@@ -22,6 +22,12 @@ import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
 import org.spongycastle.util.encoders.Base64;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +77,26 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
 
             }
         });
+        mBinding.healthCheck.setOnClickListener(v -> {
+            Bundle data = new Bundle();
+            ArrayList<String> desiredResults = new ArrayList<>();
+            desiredResults.add(ScanResultTypes.PLAIN_TEXT.name());
+            data.putStringArrayList("desired_results", desiredResults);
+            navigate(R.id.action_to_scanner, data);
+            getNavigationResult("scan_result").observe(this, x -> {
+                try (BufferedReader reader = new BufferedReader(new StringReader((String) x))) {
+                    String message = reader.readLine();
+                    String path = reader.readLine();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("message", message);
+                    bundle.putString("path", path);
+                    navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                    getNavigationResult("scan_result").removeObservers(this);
+                } catch (Exception e) {
+
+                }
+            });
+        });
     }
 
     @Override
@@ -98,6 +124,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                 bundle.putBoolean("multisig", true);
                 bundle.putString("multisig_mode", MultiSigMode.CASA.name());
                 navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                getNavigationResult("scan_result").removeObservers(this);
             });
             return true;
         }

@@ -32,24 +32,28 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:contentInsetStartWithNavigation="0dp"
             app:menu="@menu/main"
             app:navigationIcon="@drawable/menu"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/multisig_casa"
-            app:contentInsetStartWithNavigation="0dp"
             app:titleTextAppearance="@style/Toolbar.TitleText"
             app:titleTextColor="@color/white">
 
             <FrameLayout
                 android:id="@+id/toolbar_mode_selection"
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
-                <ImageView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/arrow_right"
-                    app:tint="@color/colorAccent" />
+                    android:drawableEnd="@drawable/arrow_right"
+                    android:drawableTint="@color/colorAccent"
+                    android:gravity="center"
+                    android:text="@string/multisig_casa"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
             </FrameLayout>
 
         </androidx.appcompat.widget.Toolbar>
