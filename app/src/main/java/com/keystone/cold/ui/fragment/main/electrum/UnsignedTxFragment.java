@@ -420,49 +420,34 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void refreshFromList() {
+        String from;
         if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
-            String from = txEntity.getFrom();
-            List<TransactionItem> items = new ArrayList<>();
-            try {
-                JSONArray inputs = new JSONArray(from);
-                for (int i = 0; i < inputs.length(); i++) {
-                    JSONObject out = inputs.getJSONObject(i);
-                    items.add(new TransactionItem(i,
-                            out.getLong("value"),
-                            out.getString("address"),
-                            txEntity.getCoinCode()));
-                }
-            } catch (JSONException e) {
-                return;
-            }
-            TransactionItemAdapter adapter
-                    = new TransactionItemAdapter(mActivity,
-                    TransactionItem.ItemType.INPUT);
-            adapter.setItems(items);
-            mBinding.txDetail.fromList.setVisibility(View.VISIBLE);
-            mBinding.txDetail.fromList.setAdapter(adapter);
+            from = txEntity.getFrom();
         } else {
-            String from = casaSignature.getFrom();
-            List<TransactionItem> items = new ArrayList<>();
-            try {
-                JSONArray inputs = new JSONArray(from);
-                for (int i = 0; i < inputs.length(); i++) {
-                    JSONObject out = inputs.getJSONObject(i);
-                    items.add(new TransactionItem(i,
-                            out.getLong("value"),
-                            out.getString("address"),
-                            casaSignature.getCoinCode()));
-                }
-            } catch (JSONException e) {
-                return;
-            }
-            TransactionItemAdapter adapter
-                    = new TransactionItemAdapter(mActivity,
-                    TransactionItem.ItemType.INPUT);
-            adapter.setItems(items);
-            mBinding.txDetail.fromList.setVisibility(View.VISIBLE);
-            mBinding.txDetail.fromList.setAdapter(adapter);
+            from = casaSignature.getFrom();
         }
+        List<TransactionItem> items = new ArrayList<>();
+        try {
+            JSONArray inputs = new JSONArray(from);
+            for (int i = 0; i < inputs.length(); i++) {
+                JSONObject out = inputs.getJSONObject(i);
+                items.add(new TransactionItem(i,
+                        out.getLong("value"),
+                        out.getString("address"),
+                        casaSignature.getCoinCode()));
+            }
+        } catch (JSONException e) {
+            return;
+        }
+        if (items.size() == 0) {
+            mBinding.txDetail.arrowDown.setVisibility(View.GONE);
+        }
+        TransactionItemAdapter adapter
+                = new TransactionItemAdapter(mActivity,
+                TransactionItem.ItemType.INPUT);
+        adapter.setItems(items);
+        mBinding.txDetail.fromList.setVisibility(View.VISIBLE);
+        mBinding.txDetail.fromList.setAdapter(adapter);
     }
 
     protected void subscribeSignState() {
