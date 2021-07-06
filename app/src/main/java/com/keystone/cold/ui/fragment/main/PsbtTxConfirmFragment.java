@@ -158,12 +158,12 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
             String path = first.replace("m/", "");
             String[] index = path.split("/");
             if (index[1].equals("1'")) {
-                viewModel.isCasaMainnet = true;
-            } else {
                 viewModel.isCasaMainnet = false;
+            } else {
+                viewModel.isCasaMainnet = true;
             }
         } catch (Exception e) {
-            viewModel.isCasaMainnet = false;
+            viewModel.isCasaMainnet = true;
         }
     }
 
