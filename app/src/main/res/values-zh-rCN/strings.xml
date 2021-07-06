@@ -494,6 +494,8 @@
     <string name="casa_operation_export">Export XPUB</string>
 
     <string name="casa_sign_message">签名消息</string>
+    <string name="casa_sign_message_result">Export signature</string>
+    <string name="casa_sign_message_result_export">Using Casa scan the QR Code to get signature</string>
     <string name="casa_sign_message_message">消息：</string>
     <string name="casa_sign_message_address">关联地址: </string>
     <string name="casa_sign_message_path">Using the key associated with address: </string>

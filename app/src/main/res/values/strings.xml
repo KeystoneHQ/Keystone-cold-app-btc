@@ -130,6 +130,8 @@
     <string name="casa_operation_export">Export XPUB</string>
 
     <string name="casa_sign_message">Sign Message</string>
+    <string name="casa_sign_message_result">Export signature</string>
+    <string name="casa_sign_message_result_export">Using Casa scan the QR Code to get signature</string>
     <string name="casa_sign_message_message">Message: </string>
     <string name="casa_sign_message_address">Associated Address: </string>
     <string name="casa_sign_message_path">Using the key associated with address: </string>

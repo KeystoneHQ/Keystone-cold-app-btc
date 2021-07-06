@@ -10,11 +10,14 @@ import java.util.List;
 
 import co.nstant.in.cbor.CborDecoder;
 import co.nstant.in.cbor.CborException;
+import co.nstant.in.cbor.model.ByteString;
 import co.nstant.in.cbor.model.DataItem;
 
 public enum ScanResultTypes {
     PLAIN_TEXT,
-    CRYPTO_PSBT;
+    UR_BYTES,
+    UR_CRYPTO_PSBT;
+
 
     public boolean isType(String text) {
         return true;
@@ -24,8 +27,10 @@ public enum ScanResultTypes {
         try {
             Object decodeResult = ur.decodeFromRegistry();
             switch (this) {
-                case CRYPTO_PSBT:
+                case UR_CRYPTO_PSBT:
                     return decodeResult instanceof CryptoPSBT;
+                case UR_BYTES:
+                    return decodeResult instanceof byte[];
                 default:
                     return false;
             }
@@ -40,8 +45,10 @@ public enum ScanResultTypes {
             List<DataItem> items = CborDecoder.decode(cborPayload);
             DataItem dataItem = items.get(0);
             switch (this) {
-                case CRYPTO_PSBT:
+                case UR_CRYPTO_PSBT:
                     return CryptoPSBT.fromCbor(dataItem);
+                case UR_BYTES:
+                    return ((ByteString) dataItem).getBytes();
                 default:
                     return null;
             }

@@ -159,7 +159,13 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void handleDecode(String text) {
-
+        if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
+            setNavigationResult("scan_result", text);
+            navigateUp();
+        } else {
+            alert(getString(R.string.unsupported_qrcode));
+            mHandler.restartPreviewAndDecode();
+        }
     }
 
     @Override
@@ -169,6 +175,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
             navigateUp();
         } else {
             alert(getString(R.string.unsupported_qrcode));
+            mHandler.restartPreviewAndDecode();
         }
     }
 

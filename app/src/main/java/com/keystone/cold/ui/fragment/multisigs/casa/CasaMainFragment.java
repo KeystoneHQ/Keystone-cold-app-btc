@@ -123,20 +123,23 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         mBinding.healthCheck.setOnClickListener(v -> {
             Bundle data = new Bundle();
             ArrayList<String> desiredResults = new ArrayList<>();
-            desiredResults.add(ScanResultTypes.PLAIN_TEXT.name());
+            desiredResults.add(ScanResultTypes.UR_BYTES.name());
             data.putStringArrayList("desired_results", desiredResults);
             navigate(R.id.action_to_scanner, data);
             getNavigationResult("scan_result").observe(this, x -> {
-                try (BufferedReader reader = new BufferedReader(new StringReader((String) x))) {
+                byte[] bytes = (byte[]) ScanResultTypes.UR_BYTES.resolveURHex((String) x);
+                String signData = new String(bytes, StandardCharsets.UTF_8);
+                try (BufferedReader reader = new BufferedReader(new StringReader(signData))) {
                     String message = reader.readLine();
                     String path = reader.readLine();
                     Bundle bundle = new Bundle();
                     bundle.putString("message", message);
                     bundle.putString("path", path);
-                    navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                    navigate(R.id.action_to_casaSignMessageFragment, bundle);
                     getNavigationResult("scan_result").removeObservers(this);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
+                    getNavigationResult("scan_result").removeObservers(this);
                 }
             });
         });
@@ -161,11 +164,11 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         if (id == R.id.action_scan) {
             Bundle data = new Bundle();
             ArrayList<String> desiredResults = new ArrayList<>();
-            desiredResults.add(ScanResultTypes.CRYPTO_PSBT.name());
+            desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
             data.putStringArrayList("desired_results", desiredResults);
             navigate(R.id.action_to_scanner, data);
             getNavigationResult("scan_result").observe(this, v -> {
-                CryptoPSBT cryptoPSBT = (CryptoPSBT) ScanResultTypes.CRYPTO_PSBT.resolveURHex((String) v);
+                CryptoPSBT cryptoPSBT = (CryptoPSBT) ScanResultTypes.UR_CRYPTO_PSBT.resolveURHex((String) v);
                 byte[] bytes = cryptoPSBT.getPsbt();
                 String psbtB64 = Base64.toBase64String(bytes);
                 Bundle bundle = new Bundle();

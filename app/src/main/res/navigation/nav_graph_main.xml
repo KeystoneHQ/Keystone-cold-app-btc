@@ -356,10 +356,23 @@
     </fragment>
 
     <fragment
+        android:id="@+id/casaSignMessageResultFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaSignMessageResultFragment"
+        android:label="CasaSignMessageResultFragment">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/casaSignMessageFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaSignMessageFragment"
         android:label="CasaSignMessageFragment">
-
+        <action
+            android:id="@+id/action_to_casaSignMessageResultFragment"
+            app:destination="@id/casaSignMessageResultFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
