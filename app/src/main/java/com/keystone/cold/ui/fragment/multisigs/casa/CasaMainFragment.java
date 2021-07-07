@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.keystone.cold.ui.fragment.multisigs.casa.SignedCasaFragment.KEY_ID;
 
@@ -38,6 +39,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     private SignatureAdapter signatureAdapter;
     private CasaCallback casaCallback;
     private boolean isShowSignature;
+    private int position;
 
     private LiveData<List<CasaSignature>> casaSignatureLiveData;
 
@@ -67,7 +69,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             public void onChanged() {
                 super.onChanged();
                 if (isShowSignature) {
-                    if (signatureAdapter.getItemCount() == 0) {
+                    if (position == 0) {
                         mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
                         mBinding.signaturesList.setVisibility(View.GONE);
                     } else {
@@ -80,7 +82,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         mBinding.tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
+                position = tab.getPosition();
                 if (position == 0) {
                     isShowSignature = false;
                     mBinding.operations.setVisibility(View.VISIBLE);
@@ -138,6 +140,12 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                 }
             });
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Objects.requireNonNull(mBinding.tab.getTabAt(position)).select();
     }
 
     @Override
