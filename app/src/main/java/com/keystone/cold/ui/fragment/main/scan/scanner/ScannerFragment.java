@@ -22,23 +22,20 @@ import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 
 import com.keystone.cold.R;
-import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ScannerFragmentBinding;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfig;
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfigBuilder;
 import com.keystone.cold.ui.fragment.main.scan.scanner.camera.CameraManager;
-import com.keystone.cold.ui.modal.ModalDialog;
 import com.sparrowwallet.hummingbird.UR;
 
+import org.json.JSONException;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
@@ -52,7 +49,6 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     private boolean hasSurface;
     private ZxingConfig mConfig;
     private SurfaceHolder mSurfaceHolder;
-    private ModalDialog dialog;
     private ArrayList<ScanResultTypes> desiredTypes;
 
     private ObjectAnimator scanLineAnimator;
@@ -159,24 +155,36 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void handleDecode(String text) {
-        if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
-            setNavigationResult("scan_result", text);
-            navigateUp();
-        } else {
-            alert(getString(R.string.unsupported_qrcode));
+        try {
+            if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
+                setScanResult(ScanResult.createJSON(ScanResultTypes.PLAIN_TEXT, text));
+                navigateUp();
+            } else {
+                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                mHandler.restartPreviewAndDecode();
+            }
+        } catch (JSONException e) {
+            alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
             mHandler.restartPreviewAndDecode();
         }
     }
 
     @Override
     public void handleDecode(UR ur) {
-        if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(ur))) {
-            setNavigationResult("scan_result", Hex.toHexString(ur.getCborBytes()));
-            navigateUp();
-        } else {
-            alert(getString(R.string.unsupported_qrcode));
+        try {
+            ScanResultTypes srt = this.desiredTypes.stream().filter(dt -> dt.isType(ur)).findFirst().orElse(null);
+            if (srt != null) {
+                setScanResult(ScanResult.createJSON(srt, Hex.toHexString(ur.getCborBytes())));
+                navigateUp();
+            } else {
+                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                mHandler.restartPreviewAndDecode();
+            }
+        } catch (JSONException e) {
+            alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
             mHandler.restartPreviewAndDecode();
         }
+
     }
 
     @Override
@@ -194,40 +202,6 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         return mHandler;
     }
 
-    private void alert(String message) {
-        alert(null, message);
-    }
-
-    private void alert(String title, String message) {
-        alert(title, message, null);
-    }
-
-    private void alert(String title, String message, Runnable run) {
-        dialog = ModalDialog.newInstance();
-        CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.common_modal, null, false);
-        if (title != null) {
-            binding.title.setText(title);
-        } else {
-            binding.title.setText(R.string.scan_failed);
-        }
-        binding.subTitle.setText(message);
-        binding.close.setVisibility(View.GONE);
-        binding.confirm.setText(R.string.know);
-        binding.confirm.setOnClickListener(v -> {
-            dialog.dismiss();
-            if (run != null) {
-                run.run();
-            } else {
-                mBinding.scanProgress.setText("");
-                if (mHandler != null) {
-                    mHandler.restartPreviewAndDecode();
-                }
-            }
-        });
-        dialog.setBinding(binding);
-        dialog.show(mActivity.getSupportFragmentManager(), "scan fail");
-    }
 }
 
 

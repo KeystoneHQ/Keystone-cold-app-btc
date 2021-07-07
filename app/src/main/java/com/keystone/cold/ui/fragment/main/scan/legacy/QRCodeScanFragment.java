@@ -391,28 +391,8 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
         return mHandler;
     }
 
-    private void alert(String message) {
-        alert(null, message);
-    }
-
-    private void alert(String title, String message) {
-        alert(title, message, null);
-    }
-
-    private void alert(String title, String message, Runnable run) {
-        dialog = ModalDialog.newInstance();
-        CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.common_modal, null, false);
-        if (title != null) {
-            binding.title.setText(title);
-        } else {
-            binding.title.setText(R.string.scan_failed);
-        }
-        binding.subTitle.setText(message);
-        binding.close.setVisibility(View.GONE);
-        binding.confirm.setText(R.string.know);
-        binding.confirm.setOnClickListener(v -> {
-            dialog.dismiss();
+    protected void alert(String title, String message, Runnable run) {
+        super.alert(title, message, () -> {
             if (run != null) {
                 run.run();
             } else {
@@ -422,10 +402,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
                 }
             }
         });
-        dialog.setBinding(binding);
-        dialog.show(mActivity.getSupportFragmentManager(), "scan fail");
     }
-
 }
 
 

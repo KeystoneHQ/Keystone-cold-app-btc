@@ -44,9 +44,16 @@ import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
+import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
+import org.spongycastle.util.encoders.Hex;
+
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
@@ -208,8 +215,34 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
 
     private void scanQrCode() {
         Bundle data = new Bundle();
-        data.putString("purpose", "multisig_tx");
-        navigate(R.id.action_to_scan, data);
+        ArrayList<String> desiredResults = new ArrayList<>();
+        desiredResults.add(ScanResultTypes.UR_BYTES.name());
+        desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
+        data.putStringArrayList("desired_results", desiredResults);
+        navigate(R.id.action_to_scanner, data);
+        getScanResult().observe(this, v -> {
+            try {
+                ScanResult result = ScanResult.newInstance(v);
+                String psbt = null;
+                if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
+                    byte[] bytes = (byte[]) result.resolve();
+                    String hex = Hex.toHexString(bytes);
+                    if (hex.startsWith(Hex.toHexString("psbt".getBytes()))) {
+                        psbt = hex;
+                    }
+                } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
+                    CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
+                    psbt = Hex.toHexString(cryptoPSBT.getPsbt());
+                }
+                if (psbt == null) {
+                    alert(getString(R.string.unsupported_qrcode));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                alert(getString(R.string.unsupported_qrcode));
+            }
+            getScanResult().removeObservers(this);
+        });
     }
 
 
