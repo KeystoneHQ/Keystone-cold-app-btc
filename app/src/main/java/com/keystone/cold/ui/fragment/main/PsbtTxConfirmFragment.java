@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.ui.fragment.main.electrum.UnsignedTxFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
@@ -61,6 +62,22 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
     }
 
     public static void showExportPsbtDialog(AppCompatActivity activity, TxEntity tx,
+                                            Runnable onExportSuccess) {
+
+        String signStatus = tx.getSignStatus();
+        boolean signed = true;
+        if (!TextUtils.isEmpty(signStatus)) {
+            String[] splits = signStatus.split("-");
+            int sigNumber = Integer.parseInt(splits[0]);
+            int reqSigNumber = Integer.parseInt(splits[1]);
+            signed = sigNumber >= reqSigNumber;
+        }
+
+        showExportPsbtDialog(activity, signed,
+                tx.getTxId(), tx.getSignedHex(), onExportSuccess);
+    }
+
+    public static void showExportPsbtDialog(AppCompatActivity activity, CasaSignature tx,
                                             Runnable onExportSuccess) {
 
         String signStatus = tx.getSignStatus();

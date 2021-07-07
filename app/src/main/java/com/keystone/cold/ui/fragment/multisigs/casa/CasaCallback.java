@@ -15,33 +15,10 @@
  * in the file COPYING.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.keystone.cold.db.dao;
-
-
-import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
+package com.keystone.cold.ui.fragment.multisigs.casa;
 
 import com.keystone.cold.db.entity.CasaSignature;
 
-import java.util.List;
-
-@Dao
-public interface CasaDao {
-    @Query("SELECT * FROM casa_signature ORDER BY id DESC")
-    LiveData<List<CasaSignature>> loadSignatures();
-
-    @Query("SELECT * FROM casa_signature")
-    List<CasaSignature> loadTxsSync();
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Long insert(CasaSignature tx);
-
-    @Query("SELECT * FROM casa_signature WHERE id = :id")
-    LiveData<CasaSignature> load(long id);
-
-    @Query("SELECT * FROM casa_signature WHERE id = :id")
-    CasaSignature loadSync(int id);
+public interface CasaCallback {
+    void onClick(CasaSignature cs);
 }

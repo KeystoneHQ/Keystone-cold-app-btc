@@ -49,7 +49,7 @@ public class ElectrumBroadcastTxFragment extends BaseFragment<BroadcastElectrumT
     private TxEntity txEntity;
     private boolean isMultisig;
 
-    static void showElectrumInfo(AppCompatActivity activity) {
+    public static void showElectrumInfo(AppCompatActivity activity) {
         ModalDialog modalDialog = ModalDialog.newInstance();
         CommonModalBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(activity), R.layout.common_modal,

@@ -1,6 +1,7 @@
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,12 +10,15 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.keystone.cold.R;
+import com.keystone.cold.databinding.CasaListItemBinding;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.ui.MainActivity;
+import com.keystone.cold.ui.common.FilterableBaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
@@ -23,16 +27,17 @@ import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 import org.spongycastle.util.encoders.Base64;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.keystone.cold.ui.fragment.multisigs.casa.SignedCasaFragment.KEY_ID;
+
 public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMainBinding> {
     public static final String TAG = "MultisigEntry";
+    private SignatureAdapter signatureAdapter;
+    private CasaCallback casaCallback;
+    private boolean isShowSignature;
 
     private LiveData<List<CasaSignature>> casaSignatureLiveData;
 
@@ -51,14 +56,46 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             showMultisigSelection();
         });
         mBinding.export.setOnClickListener(v -> navigate(R.id.action_to_casaExportXPubFragment));
+        casaCallback = cx -> {
+            Bundle bundle = new Bundle();
+            bundle.putLong(KEY_ID, cx.getId());
+            navigate(R.id.action_to_psbtSignedCasaFragment, bundle);
+        };
+        signatureAdapter = new SignatureAdapter(mActivity);
+        signatureAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (isShowSignature) {
+                    if (signatureAdapter.getItemCount() == 0) {
+                        mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
+                        mBinding.signaturesList.setVisibility(View.GONE);
+                    } else {
+                        mBinding.signaturesEmpty.setVisibility(View.GONE);
+                        mBinding.signaturesList.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
         mBinding.tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int position = tab.getPosition();
                 if (position == 0) {
+                    isShowSignature = false;
                     mBinding.operations.setVisibility(View.VISIBLE);
                 } else {
-                    mBinding.signatures.setVisibility(View.VISIBLE);
+                    isShowSignature = true;
+                    casaSignatureLiveData.observe(CasaMainFragment.this, casaSignatures -> {
+                        casaSignatures = new ArrayList<>(casaSignatures);
+                        signatureAdapter.setItems(casaSignatures);
+                        if (casaSignatures.isEmpty()) {
+                            mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            mBinding.signaturesList.setAdapter(signatureAdapter);
+                            mBinding.signaturesList.setVisibility(View.VISIBLE);
+                        }
+                    });
                 }
             }
 
@@ -68,7 +105,11 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                 if (position == 0) {
                     mBinding.operations.setVisibility(View.GONE);
                 } else {
-                    mBinding.signatures.setVisibility(View.GONE);
+                    if (casaSignatureLiveData.getValue() == null || casaSignatureLiveData.getValue().isEmpty()) {
+                        mBinding.signaturesEmpty.setVisibility(View.GONE);
+                    } else {
+                        mBinding.signaturesList.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -129,5 +170,23 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             return true;
         }
         return false;
+    }
+
+    class SignatureAdapter extends FilterableBaseBindingAdapter<CasaSignature, CasaListItemBinding> {
+
+        SignatureAdapter(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected int getLayoutResId(int viewType) {
+            return R.layout.casa_list_item;
+        }
+
+        @Override
+        protected void onBindItem(CasaListItemBinding binding, CasaSignature item) {
+            binding.setCs(item);
+            binding.setCasaCallback(casaCallback);
+        }
     }
 }

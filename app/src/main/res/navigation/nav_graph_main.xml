@@ -397,6 +397,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtSignedCasaFragment"
+            app:destination="@id/psbtSignedCasaFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -756,7 +763,12 @@
     <fragment
         android:id="@+id/psbtSignedTxFragment"
         android:name="com.keystone.cold.ui.fragment.main.PsbtSignedTxFragment"
-        android:label="PsbtSignedTxFragment"></fragment>
+        android:label="PsbtSignedTxFragment" />
+
+    <fragment
+        android:id="@+id/psbtSignedCasaFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.PsbtSignedCasaFragment"
+        android:label="PsbtSignedCasaFragment" />
 
     <fragment
         android:id="@+id/exportXpubGuideFragment"

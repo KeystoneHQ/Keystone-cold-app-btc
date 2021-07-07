@@ -1,5 +1,7 @@
 package com.keystone.cold.db.entity;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 import androidx.room.Entity;
@@ -10,7 +12,7 @@ import androidx.room.PrimaryKey;
 import com.keystone.cold.model.Tx;
 
 @Entity(tableName = "casa_signature", indices = {@Index(value = "id", unique = true)})
-public class CasaSignature implements Tx {
+public class CasaSignature implements Tx, FilterableItem {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     public Long id;
@@ -148,5 +150,17 @@ public class CasaSignature implements Tx {
                 ", fee='" + fee + '\'' +
                 ", memo='" + memo + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean filter(String s) {
+        if (TextUtils.isEmpty(s)) {
+            return true;
+        }
+        s = s.toLowerCase();
+        return from.toLowerCase().contains(s)
+                || to.toLowerCase().contains(s)
+                || txId.toLowerCase().contains(s)
+                || memo.toLowerCase().contains(s);
     }
 }
