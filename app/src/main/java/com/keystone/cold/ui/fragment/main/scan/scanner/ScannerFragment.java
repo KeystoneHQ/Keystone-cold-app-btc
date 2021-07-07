@@ -81,6 +81,8 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
             desiredResults.forEach(dr -> types.add(ScanResultTypes.valueOf(dr)));
             this.desiredTypes = types;
         }
+
+        mBinding.scanHint.setVisibility(View.GONE);
     }
 
     @Override

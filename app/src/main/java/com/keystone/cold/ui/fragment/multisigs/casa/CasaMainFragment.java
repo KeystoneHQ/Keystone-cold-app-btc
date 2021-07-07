@@ -31,6 +31,7 @@ import org.spongycastle.util.encoders.Base64;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
