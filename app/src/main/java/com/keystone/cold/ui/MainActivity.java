@@ -49,7 +49,6 @@ import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
 import com.keystone.cold.ui.fragment.main.AssetFragment;
 import com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment;
-import com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment;
 import com.keystone.cold.ui.fragment.setting.SettingFragment;
 import com.keystone.cold.ui.views.DrawerAdapter;
 import com.keystone.cold.ui.views.FullScreenDrawer;

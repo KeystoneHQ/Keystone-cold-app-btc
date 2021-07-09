@@ -10,10 +10,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.keystone.cold.R;
+import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.databinding.CasaListItemBinding;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.db.entity.CasaSignature;
@@ -21,18 +23,23 @@ import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.FilterableBaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
-import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
+import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
-import org.json.JSONException;
 import org.spongycastle.util.encoders.Base64;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -125,14 +132,9 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             }
         });
         mBinding.healthCheck.setOnClickListener(v -> {
-            Bundle data = new Bundle();
-            ArrayList<String> desiredResults = new ArrayList<>();
-            desiredResults.add(ScanResultTypes.UR_BYTES.name());
-            data.putStringArrayList("desired_results", desiredResults);
-            navigate(R.id.action_to_scanner, data);
-            getScanResult().observe(this, x -> {
-                try {
-                    ScanResult result = ScanResult.newInstance(x);
+            ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
+                @Override
+                public void handleScanResult(ScanResult result) throws IOException, XfpNotMatchException {
                     if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                         byte[] bytes = (byte[]) result.resolve();
                         String signData = new String(bytes, StandardCharsets.UTF_8);
@@ -140,15 +142,29 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         String message = reader.readLine();
                         String path = reader.readLine();
                         Bundle bundle = new Bundle();
+                        String mfp = new GetMasterFingerprintCallable().call();
                         bundle.putString("message", message);
-                        bundle.putString("path", path);
-                        navigate(R.id.action_to_casaSignMessageFragment, bundle);
+                        String xfp = message.substring(0, 8);
+                        if(xfp.equals(mfp)) {
+                            bundle.putString("path", path);
+                            mFragment.navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
+                        }
+                        else {
+                            throw new XfpNotMatchException("Master fingerprint not match");
+                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                getScanResult().removeObservers(this);
+
+                @Override
+                public boolean handleException(Exception e) {
+                    if (e instanceof XfpNotMatchException) {
+                        mFragment.alert("Master fingerprint not match");
+                        return true;
+                    }
+                    return false;
+                }
             });
+            navigate(R.id.action_to_scanner);
         });
     }
 
@@ -173,10 +189,9 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             ArrayList<String> desiredResults = new ArrayList<>();
             desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
             data.putStringArrayList("desired_results", desiredResults);
-            navigate(R.id.action_to_scanner, data);
-            getScanResult().observe(this, v -> {
-                try {
-                    ScanResult result = ScanResult.newInstance(v);
+            ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_CRYPTO_PSBT)) {
+                @Override
+                public void handleScanResult(ScanResult result) {
                     if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
                         CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
                         byte[] bytes = cryptoPSBT.getPsbt();
@@ -185,13 +200,11 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         bundle.putString("psbt_base64", psbtB64);
                         bundle.putBoolean("multisig", true);
                         bundle.putString("multisig_mode", MultiSigMode.CASA.name());
-                        navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                        mFragment.navigate(R.id.action_scanner_to_psbtTxConfirmFragment, bundle);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-                getScanResult().removeObservers(this);
             });
+            navigate(R.id.action_to_scanner, data);
             return true;
         }
         return false;

@@ -25,7 +25,20 @@
         android:name="com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment"
         android:label="ScannerFragment"
         tools:layout="@layout/qrcode_scan_fragment">
-
+        <action
+            android:id="@+id/action_scanner_to_casaSignMessageFragment"
+            app:destination="@id/casaSignMessageFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_scanner_to_psbtTxConfirmFragment"
+            app:destination="@id/psbtTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/LegacyQRCodeScanFragment"

@@ -61,12 +61,15 @@ public class SignViewModel extends AndroidViewModel {
             AbsCoin coin = AbsCoin.newInstance("BTC");
             Objects.requireNonNull(coin);
             String result = coin.signMessage(message, getSigner(path));
+            Log.d(TAG, "handleSignMessage: " + result);
             if (!TextUtils.isEmpty(result)) {
                 signStatus.setValue(STATE_SIGN_SUCCESS);
                 signMessageSignature.setValue(result);
+            } else {
+                signStatus.setValue(STATE_SIGN_FAIL);
             }
-            signStatus.setValue(STATE_SIGN_FAIL);
         } catch (Exception e) {
+            e.printStackTrace();
             signStatus.setValue(STATE_SIGN_FAIL);
         }
     }
@@ -104,7 +107,7 @@ public class SignViewModel extends AndroidViewModel {
             Log.w(TAG, "authToken null");
             return null;
         }
-        int point = distinctPath.lastIndexOf("'");
+        int point = Math.max(distinctPath.lastIndexOf("'"), 0);
         String XPubPath = distinctPath.substring(0, point + 1);
         String path = distinctPath.replace(XPubPath + "/", "");
         String[] index = path.split("/");

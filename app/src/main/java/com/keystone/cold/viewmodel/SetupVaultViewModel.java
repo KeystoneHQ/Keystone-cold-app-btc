@@ -21,6 +21,7 @@ import android.app.Application;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableField;
@@ -100,7 +101,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
         AppExecutors.getInstance().diskIO().execute(() -> {
             Bundle bundle = getApplication().getContentResolver().call(
                     Uri.parse("content://settings"), "web_auth_priv_key", null, null);
-            String rsaPrivKey = bundle == null? "null" :  bundle.getString("key");
+            String rsaPrivKey = bundle == null ? "null" : bundle.getString("key");
             String authCode = new WebAuthCallableUpgrade(Base64.decode(data),
                     rsaPrivKey,
                     Hex.decode(BuildConfig.WEB_AUTH_R1_PUBLIC_KEY)).call();
@@ -187,7 +188,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
             try {
                 byte[] masterSeed = new SharedSecret().combineWithoutDecrypt(shares.toArray(new String[0]));
                 vaultCreateState.postValue(VAULT_STATE_CREATING);
-                if(new WriteMnemonicCallable(masterSeed,
+                if (new WriteMnemonicCallable(masterSeed,
                         firstShare.id, firstShare.iteration_exponent, password).call()) {
                     vaultId = new GetVaultIdCallable().call();
                     mRepository.clearDb();
@@ -314,7 +315,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
     public void resetSharding() {
         sequence = 0;
         isShardingMnemonic = false;
-        if (shares!= null) {
+        if (shares != null) {
             shares.clear();
         }
         firstShare = null;
@@ -348,7 +349,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
     public void generateMnemonicFromDiceRolls(byte[] diceRolls) {
         //Use the same algorithm as https://iancoleman.io/bip39/
         StringBuilder rolls = new StringBuilder();
-        for (byte b: diceRolls) {
+        for (byte b : diceRolls) {
             rolls.append(b % 6);
         }
         String entropy = Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(rolls.toString())));
@@ -385,10 +386,10 @@ public class SetupVaultViewModel extends AndroidViewModel {
                     account.setExPub(xPub);
                     mRepository.insertAccount(account);
                     new AddAddressViewModel.AddAddressTask(coinEntity, mRepository,
-                            null, xPub,0)
+                            null, xPub, 0)
                             .execute(1);
                     new AddAddressViewModel.AddAddressTask(coinEntity, mRepository,
-                            null, xPub,1)
+                            null, xPub, 1)
                             .execute(1);
                 }
             }

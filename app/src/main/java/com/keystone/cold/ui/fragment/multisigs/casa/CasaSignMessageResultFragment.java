@@ -13,11 +13,14 @@ import java.nio.charset.StandardCharsets;
 public class CasaSignMessageResultFragment extends BaseFragment<MultisigCasaSignMessageResultBinding> {
     @Override
     protected int setView() {
-        return R.layout.multisig_casa_sign_message;
+        return R.layout.multisig_casa_sign_message_result;
     }
 
     @Override
     protected void init(View view) {
+        mBinding.toolbar.setNavigationOnClickListener(v -> {
+            navigateUp();
+        });
         mBinding.complete.setOnClickListener(v -> {
             popBackStack(R.id.casaMultisigFragment, false);
         });

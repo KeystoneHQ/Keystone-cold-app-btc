@@ -23,12 +23,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.accounts.Account;
@@ -38,7 +36,6 @@ import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.utils.Base43;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
-import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.QrcodeScanFragmentBinding;
 import com.keystone.cold.scan.CaptureHandler;
 import com.keystone.cold.scan.Host;
@@ -391,7 +388,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
         return mHandler;
     }
 
-    protected void alert(String title, String message, Runnable run) {
+    public void alert(String title, String message, Runnable run) {
         super.alert(title, message, () -> {
             if (run != null) {
                 run.run();

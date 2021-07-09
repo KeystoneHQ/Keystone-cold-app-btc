@@ -26,6 +26,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ScannerFragmentBinding;
@@ -35,23 +36,26 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfigBuilder;
 import com.keystone.cold.ui.fragment.main.scan.scanner.camera.CameraManager;
 import com.sparrowwallet.hummingbird.UR;
 
-import org.json.JSONException;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         implements SurfaceHolder.Callback, Host {
+    public static final String TAG = "ScannerFragment";
     private CameraManager mCameraManager;
     private CaptureHandler mHandler;
     private boolean hasSurface;
     private ZxingConfig mConfig;
     private SurfaceHolder mSurfaceHolder;
-    private ArrayList<ScanResultTypes> desiredTypes;
+    private List<ScanResultTypes> desiredTypes;
 
     private ObjectAnimator scanLineAnimator;
+
+    private ScannerViewModel scannerViewModel;
+    private ScannerState scannerState;
 
     @Override
     protected int setView() {
@@ -59,8 +63,13 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     }
 
     @Override
-    protected void init(View view) {
+    public void onDestroy() {
+        super.onDestroy();
+        scannerViewModel.reset();
+    }
 
+    @Override
+    protected void init(View view) {
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mConfig = new ZxingConfigBuilder()
                 .setIsFullScreenScan(true)
@@ -73,15 +82,17 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         scanLineAnimator.setDuration(2000L);
         scanLineAnimator.setRepeatCount(ValueAnimator.INFINITE);
 
-        ArrayList<String> desiredResults = requireArguments().getStringArrayList("desired_results");
-        if (desiredResults == null) {
-            throw new InvalidParameterException("no desired type passed to scanner");
-        } else {
-            ArrayList<ScanResultTypes> types = new ArrayList<>();
-            desiredResults.forEach(dr -> types.add(ScanResultTypes.valueOf(dr)));
-            this.desiredTypes = types;
+        scannerViewModel = ViewModelProviders.of(mActivity).get(ScannerViewModel.class);
+        scannerState = scannerViewModel.getState();
+        scannerState.bindFragment(this);
+        scannerState.style(this.mBinding);
+        desiredTypes = scannerState.getDesiredResults();
+        if (scannerState == null) {
+            throw new InvalidParameterException("No ScannerState found when initial ScannerFragment");
         }
-
+        if (desiredTypes == null) {
+            throw new InvalidParameterException("no desired type passed to scanner");
+        }
         mBinding.scanHint.setVisibility(View.GONE);
     }
 
@@ -159,15 +170,16 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     public void handleDecode(String text) {
         try {
             if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
-                setScanResult(ScanResult.createJSON(ScanResultTypes.PLAIN_TEXT, text));
-                navigateUp();
+                scannerState.handleScanResult(new ScanResult(ScanResultTypes.PLAIN_TEXT, text));
             } else {
                 alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
                 mHandler.restartPreviewAndDecode();
             }
-        } catch (JSONException e) {
-            alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-            mHandler.restartPreviewAndDecode();
+        } catch (Exception e) {
+            if (!scannerState.handleException(e)) {
+                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                mHandler.restartPreviewAndDecode();
+            }
         }
     }
 
@@ -176,15 +188,16 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         try {
             ScanResultTypes srt = this.desiredTypes.stream().filter(dt -> dt.isType(ur)).findFirst().orElse(null);
             if (srt != null) {
-                setScanResult(ScanResult.createJSON(srt, Hex.toHexString(ur.getCborBytes())));
-                navigateUp();
+                scannerState.handleScanResult(new ScanResult(srt, Hex.toHexString(ur.getCborBytes())));
             } else {
                 alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
                 mHandler.restartPreviewAndDecode();
             }
-        } catch (JSONException e) {
-            alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-            mHandler.restartPreviewAndDecode();
+        } catch (Exception e) {
+            if (!scannerState.handleException(e)) {
+                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                mHandler.restartPreviewAndDecode();
+            }
         }
 
     }

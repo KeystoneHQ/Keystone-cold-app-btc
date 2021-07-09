@@ -36,7 +36,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
-import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 
 import java.util.Objects;
@@ -180,15 +179,15 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
         return mActivity;
     }
 
-    protected void alert(String message) {
+    public void alert(String message) {
         alert(null, message);
     }
 
-    protected void alert(String title, String message) {
+    public void alert(String title, String message) {
         alert(title, message, null);
     }
 
-    protected void alert(String title, String message, Runnable run) {
+    public void alert(String title, String message, Runnable run) {
         dialog = ModalDialog.newInstance();
         CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                 R.layout.common_modal, null, false);

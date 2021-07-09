@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.coinlib.Util;
 import com.keystone.coinlib.accounts.ExtendedPublicKey;
 import com.keystone.coinlib.utils.B58;
 import com.keystone.cold.R;
@@ -18,6 +19,8 @@ import com.keystone.cold.ui.fragment.setup.PreImportFragment;
 import com.keystone.cold.ui.modal.SigningDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.viewmodel.multisigs.SignViewModel;
+
+import org.spongycastle.util.encoders.Hex;
 
 import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
 import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
@@ -47,12 +50,19 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
         Bundle data = requireArguments();
         message = data.getString("message");
         path = data.getString("path");
-        String xPub = new GetExtendedPublicKeyCallable(path).call();
-        ExtendedPublicKey key = new ExtendedPublicKey(xPub);
-        address = new B58().encodeToStringChecked(key.getKey(), 0);
+        int point = Math.max(path.lastIndexOf("'"), 0);
+        String hardenedPath = path.substring(0, point + 1);
+        String nonHardenedPath = path.substring(point + 2);
+        String xPub = new GetExtendedPublicKeyCallable(hardenedPath).call();
+        String pubKey = Util.deriveFromKey(
+                xPub, nonHardenedPath.split("/"));
+        address = new B58().encodeToStringChecked(Hex.decode(pubKey), 0);
         mBinding.message.setText(message);
         mBinding.path.setText(path);
         mBinding.address.setText(address);
+        mBinding.toolbar.setNavigationOnClickListener(v -> {
+            navigateUp();
+        });
         mBinding.sign.setOnClickListener(v -> {
             handleSignMessage();
         });

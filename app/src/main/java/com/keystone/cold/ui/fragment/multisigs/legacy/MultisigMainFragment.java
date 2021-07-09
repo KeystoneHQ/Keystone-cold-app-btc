@@ -46,7 +46,6 @@ import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
-import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
