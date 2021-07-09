@@ -24,6 +24,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -183,7 +184,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
         ProgressModalDialog dialog = new ProgressModalDialog();
         dialog.show(mActivity.getSupportFragmentManager(), "");
         parseTx();
-        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+        if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             viewModel.getObservableTx().observe(this, txEntity -> {
                 if (txEntity != null) {
                     dialog.dismiss();
@@ -193,14 +194,14 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                 }
             });
         } else {
-            mBinding.txDetail.network.setVisibility(View.VISIBLE);
-            if (viewModel.isCasaMainnet) {
-                mBinding.txDetail.networkText.setText("Mainnet");
-            } else {
-                mBinding.txDetail.networkText.setText("Testnet");
-            }
             viewModel.getObservableCasaSignature().observe(this, casaSignature -> {
                 if (casaSignature != null) {
+                    mBinding.txDetail.network.setVisibility(View.VISIBLE);
+                    if (viewModel.isCasaMainnet) {
+                        mBinding.txDetail.networkText.setText("Mainnet");
+                    } else {
+                        mBinding.txDetail.networkText.setText("Testnet");
+                    }
                     dialog.dismiss();
                     this.casaSignature = casaSignature;
                     mBinding.setTx(casaSignature);

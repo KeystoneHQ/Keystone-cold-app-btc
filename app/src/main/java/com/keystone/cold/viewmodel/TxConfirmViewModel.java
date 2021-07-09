@@ -1237,7 +1237,13 @@ public class TxConfirmViewModel extends AndroidViewModel {
             for (int i = 0; i < psbtOutputs.length(); i++) {
                 JSONObject psbtOutput = psbtOutputs.getJSONObject(i);
                 JSONObject out = new JSONObject();
-                out.put("address", psbtOutput.getString("address"));
+                String address = psbtOutput.getString("address");
+                if(mode.equals(MultiSigMode.CASA)){
+                    if(!isCasaMainnet) {
+                        address = Util.convertAddressToTestnet(address);
+                    }
+                }
+                out.put("address", address);
                 out.put("value", psbtOutput.getInt("value"));
                 JSONArray bip32Derivation = psbtOutput.optJSONArray("hdPath");
                 if (bip32Derivation != null && mode.equals(MultiSigMode.LEGACY)) {

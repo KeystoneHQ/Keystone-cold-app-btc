@@ -18,12 +18,14 @@
 package com.keystone.coinlib;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.path.AddressIndex;
 import com.keystone.coinlib.path.Change;
 import com.keystone.coinlib.path.CoinPath;
 
+import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.SignatureDecodeException;
@@ -84,6 +86,13 @@ public class Util {
             key = HDKeyDerivation.deriveChildKey(key, Integer.parseInt(childNumber));
         }
         return LegacyAddress.fromPubKeyHash(MainNetParams.get(), key.getPubKeyHash()).toBase58();
+    }
+
+    public static String convertAddressToTestnet(String address) {
+        byte[] versionAndDataBytes = Base58.decodeChecked(address);
+        byte[] data = new byte[20];
+        System.arraycopy(versionAndDataBytes, 1, data, 0, 20);
+        return Base58.encodeChecked(196, data);
     }
 
     public static String getPublicKeyHex(String exPub) {
