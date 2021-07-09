@@ -32,6 +32,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.keystone.coinlib.utils.Coins;
@@ -44,15 +45,23 @@ import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
+import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
+import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
+import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
@@ -213,15 +222,9 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     }
 
     private void scanQrCode() {
-        Bundle data = new Bundle();
-        ArrayList<String> desiredResults = new ArrayList<>();
-        desiredResults.add(ScanResultTypes.UR_BYTES.name());
-        desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
-        data.putStringArrayList("desired_results", desiredResults);
-        navigate(R.id.action_to_scanner, data);
-        getScanResult().observe(this, v -> {
-            try {
-                ScanResult result = ScanResult.newInstance(v);
+        ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Arrays.asList(ScanResultTypes.UR_BYTES, ScanResultTypes.UR_CRYPTO_PSBT)) {
+            @Override
+            public void handleScanResult(ScanResult result) throws Exception {
                 String psbt = null;
                 if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                     byte[] bytes = (byte[]) result.resolve();
@@ -234,14 +237,16 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
                     psbt = Hex.toHexString(cryptoPSBT.getPsbt());
                 }
                 if (psbt == null) {
-                    alert(getString(R.string.unsupported_qrcode));
+                    throw new Exception("no psbt data found");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                alert(getString(R.string.unsupported_qrcode));
+                Bundle bundle = new Bundle();
+                bundle.putString("psbt_base64", Base64.toBase64String(Hex.decode(psbt)));
+                bundle.putBoolean("multisig", true);
+                bundle.putString("multisig_mode", MultiSigMode.LEGACY.name());
+                mFragment.navigate(R.id.action_scanner_to_psbtTxConfirmFragment, bundle);
             }
-            getScanResult().removeObservers(this);
         });
+        navigate(R.id.action_to_scanner);
     }
 
 

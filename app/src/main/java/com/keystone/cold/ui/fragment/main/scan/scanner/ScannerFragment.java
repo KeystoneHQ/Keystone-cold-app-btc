@@ -84,12 +84,13 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
         scannerViewModel = ViewModelProviders.of(mActivity).get(ScannerViewModel.class);
         scannerState = scannerViewModel.getState();
-        scannerState.bindFragment(this);
-        scannerState.style(this.mBinding);
-        desiredTypes = scannerState.getDesiredResults();
         if (scannerState == null) {
             throw new InvalidParameterException("No ScannerState found when initial ScannerFragment");
         }
+        scannerState.bindFragment(this);
+        scannerState.style(this.mBinding);
+        desiredTypes = scannerState.getDesiredResults();
+
         if (desiredTypes == null) {
             throw new InvalidParameterException("no desired type passed to scanner");
         }
@@ -173,12 +174,10 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 scannerState.handleScanResult(new ScanResult(ScanResultTypes.PLAIN_TEXT, text));
             } else {
                 alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-                mHandler.restartPreviewAndDecode();
             }
         } catch (Exception e) {
             if (!scannerState.handleException(e)) {
                 alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-                mHandler.restartPreviewAndDecode();
             }
         }
     }
@@ -191,16 +190,38 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 scannerState.handleScanResult(new ScanResult(srt, Hex.toHexString(ur.getCborBytes())));
             } else {
                 alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-                mHandler.restartPreviewAndDecode();
             }
         } catch (Exception e) {
             if (!scannerState.handleException(e)) {
                 alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-                mHandler.restartPreviewAndDecode();
             }
         }
-
     }
+
+    @Override
+    public void alert(String message) {
+        alert(null, message);
+    }
+
+    @Override
+    public void alert(String title, String message) {
+        alert(title, message, null);
+    }
+
+    @Override
+    public void alert(String title, String message, Runnable run) {
+        super.alert(title, message, () -> {
+            if (run != null) {
+                run.run();
+            } else {
+                mBinding.scanProgress.setText("");
+                if (mHandler != null) {
+                    mHandler.restartPreviewAndDecode();
+                }
+            }
+        });
+    }
+
 
     @Override
     public void handleProgressPercent(double percent) {

@@ -14,7 +14,10 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.keystone.coinlib.Util;
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
+import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.databinding.CasaListItemBinding;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
@@ -36,9 +39,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -134,7 +135,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         mBinding.healthCheck.setOnClickListener(v -> {
             ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
                 @Override
-                public void handleScanResult(ScanResult result) throws IOException, XfpNotMatchException {
+                public void handleScanResult(ScanResult result) throws IOException {
                     if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                         byte[] bytes = (byte[]) result.resolve();
                         String signData = new String(bytes, StandardCharsets.UTF_8);
@@ -142,16 +143,9 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         String message = reader.readLine();
                         String path = reader.readLine();
                         Bundle bundle = new Bundle();
-                        String mfp = new GetMasterFingerprintCallable().call();
                         bundle.putString("message", message);
-                        String xfp = message.substring(0, 8);
-                        if(xfp.equals(mfp)) {
-                            bundle.putString("path", path);
-                            mFragment.navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
-                        }
-                        else {
-                            throw new XfpNotMatchException("Master fingerprint not match");
-                        }
+                        bundle.putString("path", path);
+                        mFragment.navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
                     }
                 }
 

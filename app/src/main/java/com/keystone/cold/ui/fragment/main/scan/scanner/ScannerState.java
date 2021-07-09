@@ -19,7 +19,7 @@ public class ScannerState {
         return desiredResults;
     }
 
-    public void handleScanResult(ScanResult result) throws IOException, XfpNotMatchException {
+    public void handleScanResult(ScanResult result) throws Exception {
     }
 
     public void style(ScannerFragmentBinding binding) {

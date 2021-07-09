@@ -729,7 +729,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
 
                 @Override
                 public void onSuccess(String txId, String psbtB64) {
-                    if (mode.equals(MultiSigMode.LEGACY)) {
+                    if (mode == null || mode.equals(MultiSigMode.LEGACY)) {
                         TxEntity tx = observableTx.getValue();
                         Objects.requireNonNull(tx);
                         if (isMultisig) {
@@ -744,7 +744,11 @@ public class TxConfirmViewModel extends AndroidViewModel {
                     } else {
                         CasaSignature casaSignature = observableCasaSignature.getValue();
                         Objects.requireNonNull(casaSignature);
+                        if (TextUtils.isEmpty(txId)) {
+                            txId = "unknown_txid_" + Math.abs(casaSignature.hashCode());
+                        }
                         updateCasaSignatureStatus(casaSignature);
+                        casaSignature.setTxId(txId);
                         casaSignature.setSignedHex(psbtB64);
                         Long id = mRepository.insertCasaSignature(casaSignature);
                         casaSignature.setId(id);
