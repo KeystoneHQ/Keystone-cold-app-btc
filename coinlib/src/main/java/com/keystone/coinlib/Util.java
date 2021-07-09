@@ -25,6 +25,7 @@ import com.keystone.coinlib.path.Change;
 import com.keystone.coinlib.path.CoinPath;
 
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.SignatureDecodeException;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
@@ -75,6 +76,14 @@ public class Util {
             key = HDKeyDerivation.deriveChildKey(key, Integer.parseInt(childNumber));
         }
         return key.getPublicKeyAsHex();
+    }
+
+    public static String deriveAddress(String XPub, String[] childNumbers) {
+        DeterministicKey key = DeterministicKey.deserializeB58(XPub, MainNetParams.get());
+        for (String childNumber : childNumbers) {
+            key = HDKeyDerivation.deriveChildKey(key, Integer.parseInt(childNumber));
+        }
+        return LegacyAddress.fromPubKeyHash(MainNetParams.get(), key.getPubKeyHash()).toBase58();
     }
 
     public static String getPublicKeyHex(String exPub) {

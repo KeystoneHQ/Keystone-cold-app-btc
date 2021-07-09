@@ -20,6 +20,7 @@ import com.keystone.cold.ui.modal.SigningDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.viewmodel.multisigs.SignViewModel;
 
+import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
 
 import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
@@ -54,9 +55,7 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
         String hardenedPath = path.substring(0, point + 1);
         String nonHardenedPath = path.substring(point + 2);
         String xPub = new GetExtendedPublicKeyCallable(hardenedPath).call();
-        String pubKey = Util.deriveFromKey(
-                xPub, nonHardenedPath.split("/"));
-        address = new B58().encodeToStringChecked(Hex.decode(pubKey), 0);
+        address = Util.deriveAddress(xPub, nonHardenedPath.split("/"));
         mBinding.message.setText(message);
         mBinding.path.setText(path);
         mBinding.address.setText(address);
@@ -128,13 +127,14 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
 
     private String constructResult(String signature) {
         StringBuilder sb = new StringBuilder();
+        String sigB64 = Base64.toBase64String(Hex.decode(signature));
         sb.append("-----BEGIN BITCOIN SIGNED MESSAGE-----\n");
         sb.append(message);
         sb.append("\n");
         sb.append("-----BEGIN SIGNATURE-----\n");
         sb.append(address);
         sb.append("\n");
-        sb.append(signature);
+        sb.append(sigB64);
         sb.append("\n");
         sb.append("-----END BITCOIN SIGNED MESSAGE-----");
         return sb.toString();
