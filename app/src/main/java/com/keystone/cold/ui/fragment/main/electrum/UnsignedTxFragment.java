@@ -430,7 +430,8 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
         if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
             from = txEntity.getFrom();
         } else {
-            from = casaSignature.getFrom();
+            mBinding.txDetail.arrowDown.setVisibility(View.GONE);
+            return;
         }
         List<TransactionItem> items = new ArrayList<>();
         try {
