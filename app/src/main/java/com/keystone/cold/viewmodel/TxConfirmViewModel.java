@@ -1175,6 +1175,9 @@ public class TxConfirmViewModel extends AndroidViewModel {
                         if (!hdPath.startsWith(MultiSig.CASA.getPath())) {
                             hdPath = MultiSig.CASA.getPath() + hdPath.substring(1);
                         }
+                        String path = hdPath.replace("m/", "");
+                        String[] index = path.split("/");
+                        isCasaMainnet = !index[1].equals("1'");
                         utxo.put("publicKey", myCasaKey);
                         utxo.put("value", psbtInput.optInt("value"));
                         in.put("utxo", utxo);

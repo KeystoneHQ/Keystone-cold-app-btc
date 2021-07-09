@@ -14,7 +14,6 @@ public class ScannerViewModel extends AndroidViewModel {
     }
 
     public void setState(ScannerState state) {
-        Log.d("sora", "setState: " + state);
         this.state = state;
     }
 

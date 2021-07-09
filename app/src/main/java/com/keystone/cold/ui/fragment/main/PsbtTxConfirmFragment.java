@@ -151,20 +151,6 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
             viewModel.setMultisigMode(multiSigMode);
         }
         viewModel.parsePsbtBase64(psbtBase64, multisig);
-        try {
-            String[] paths = viewModel.getPath().split(AbsTx.SEPARATOR);
-            String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
-            String first = distinctPaths[0];
-            String path = first.replace("m/", "");
-            String[] index = path.split("/");
-            if (index[1].equals("1'")) {
-                viewModel.isCasaMainnet = false;
-            } else {
-                viewModel.isCasaMainnet = true;
-            }
-        } catch (Exception e) {
-            viewModel.isCasaMainnet = true;
-        }
     }
 
     protected void onSignSuccess() {
