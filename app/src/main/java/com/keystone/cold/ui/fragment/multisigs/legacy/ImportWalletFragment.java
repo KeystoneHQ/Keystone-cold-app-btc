@@ -147,7 +147,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
     private void importWallet() {
         try {
-            legacyMultiSigViewModel.createMultisigWallet(threshold, account, walletInfo.getString("Name"), walletInfo.getJSONArray("Xpubs"), creator)
+            legacyMultiSigViewModel.createMultisigWallet(threshold, account, dummyWallet.getWalletName(), walletInfo.getJSONArray("Xpubs"), creator)
                     .observe(this, this::onImportWalletSuccess);
         } catch (XfpNotMatchException e) {
             e.printStackTrace();
