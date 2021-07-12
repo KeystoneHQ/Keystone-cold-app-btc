@@ -30,9 +30,11 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.ui.modal.ModalDialog;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.keystone.cold.ui.fragment.setting.FingerprintPreferenceFragment.FINGERPRINT_UNLOCK;
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
 
 public class Utilities {
     private static final String PREFERENCE_SECRET = "secret";
@@ -188,12 +190,12 @@ public class Utilities {
 
     public static void setAttackDetected(Context context, boolean attacked) {
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_SECRET, MODE_PRIVATE);
-        sp.edit().putBoolean(ATTACK_DETECTED,attacked).apply();
+        sp.edit().putBoolean(ATTACK_DETECTED, attacked).apply();
     }
 
     static boolean isAttackDetected(Context context) {
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_SECRET, MODE_PRIVATE);
-        return sp.getBoolean(ATTACK_DETECTED,false);
+        return sp.getBoolean(ATTACK_DETECTED, false);
     }
 
 
@@ -206,10 +208,22 @@ public class Utilities {
     }
 
     public static void setDefaultMultisigWallet(Context context, String xfp, String walletFingerprint) {
-        getPrefs(context).edit().putString(xfp+"_default",walletFingerprint).apply();
+        getPrefs(context).edit().putString(xfp + "_default", walletFingerprint).apply();
     }
 
     public static String getDefaultMultisigWallet(Context context, String xfp) {
-        return getPrefs(context).getString(xfp+"_default","");
+        return getPrefs(context).getString(xfp + "_default", "");
+    }
+
+    public static boolean hasMultiSigMode(Context context) {
+        return getPrefs(context).contains(SETTING_MULTI_SIG_MODE);
+    }
+
+    public static String getMultiSigMode(Context context) {
+        return getPrefs(context).getString(SETTING_MULTI_SIG_MODE, MultiSigMode.LEGACY.getModeId());
+    }
+
+    public static void setMultiSigMode(Context context, String modeId) {
+        getPrefs(context).edit().putString(SETTING_MULTI_SIG_MODE, modeId).apply();
     }
 }

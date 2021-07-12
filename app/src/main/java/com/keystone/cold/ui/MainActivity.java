@@ -65,7 +65,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
 import static com.keystone.cold.update.utils.Storage.hasSdcard;
 
 public class MainActivity extends FullScreenActivity {
@@ -80,6 +79,8 @@ public class MainActivity extends FullScreenActivity {
 
     private String belongTo;
     private String vaultId;
+    private boolean hasMultiSigMode;
+    private String multiSigMode;
 
     int currentFragmentIndex = R.id.drawer_wallet;
     private DrawerAdapter drawerAdapter;
@@ -97,6 +98,8 @@ public class MainActivity extends FullScreenActivity {
         prefs = Utilities.getPrefs(this);
         belongTo = Utilities.getCurrentBelongTo(this);
         vaultId = Utilities.getVaultId(this);
+        hasMultiSigMode = Utilities.hasMultiSigMode(this);
+        multiSigMode = Utilities.getMultiSigMode(this);
 
         if (savedInstanceState == null) {
             if (hasSdcard()) {
@@ -198,9 +201,8 @@ public class MainActivity extends FullScreenActivity {
                     break;
                 case R.id.drawer_multisig:
                     mNavController.navigateUp();
-                    if (prefs.contains(SETTING_MULTI_SIG_MODE)) {
-                        String mode = prefs.getString(SETTING_MULTI_SIG_MODE, "0");
-                        if (mode.equals(MultiSigMode.LEGACY.getModeId())) {
+                    if (hasMultiSigMode) {
+                        if (multiSigMode.equals(MultiSigMode.LEGACY.getModeId())) {
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment);
                         } else {
                             mNavController.navigate(R.id.action_to_casaMultisigFragment);

@@ -263,11 +263,11 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
                 handleFingerprintSetting();
                 break;
             case SETTING_SYSTEM:
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.action_to_systemSettingFragment);
                 break;
             case SETTING_WHITE_LIST:
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.action_settingFragment_to_whiteListFragment);
                 break;
             case SETTING_MNEMONIC_ENTRY:
@@ -290,7 +290,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
                 break;
             case SETTING_VERSION:
                 if (manifest == null) {
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(R.id.action_to_versionFragment);
                 } else {
                     update();
@@ -299,14 +299,14 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
             case SETTING_CHOOSE_WATCH_WALLET:
                 Bundle data = new Bundle();
                 data.putInt(Constants.KEY_TITLE, R.string.choose_watch_only_wallet);
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.action_to_chooseWatchOnly, data);
 
                 break;
             case SETTING_TESTNET:
                 Bundle bundle = new Bundle();
                 bundle.putInt(Constants.KEY_TITLE, R.string.select_network);
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.action_to_switchNetwork, bundle);
                 break;
             case SETTING_CHECK_MNEMONIC:
@@ -314,7 +314,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
                         token -> {
                             Bundle bundle1 = new Bundle();
                             bundle1.putString(ACTION, PreImportFragment.ACTION_CHECK);
-                            Navigation.findNavController(Objects.requireNonNull(getView()))
+                            Navigation.findNavController(requireView())
                                     .navigate(R.id.action_to_preImportFragment, bundle1);
                         }, forgetPassword);
                 break;
@@ -328,7 +328,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
     private final Runnable forgetPassword = () -> {
         Bundle bundle = new Bundle();
         bundle.putString(ACTION, PreImportFragment.ACTION_RESET_PWD);
-        Navigation.findNavController(Objects.requireNonNull(getView()))
+        Navigation.findNavController(requireView())
                 .navigate(R.id.action_to_preImportFragment, bundle);
     };
 
@@ -336,7 +336,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
         boolean fingerprint = new FingerprintPolicyCallable(READ, TYPE_PASSPHRASE).call();
         AuthenticateModal.show(mActivity, getString(R.string.password_modal_title), "", fingerprint,
                 token -> {
-                    NavController navController = Navigation.findNavController(Objects.requireNonNull(getView()));
+                    NavController navController = Navigation.findNavController(requireView());
                     if (token.password != null) {
                         navController.navigate(R.id.action_settingFragment_to_passphraseFragment,
                                 Bundle.forPair(PASSWORD, token.password));
@@ -373,7 +373,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
                         navId = R.id.action_to_fingerprintGuideFragment;
                     }
 
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(navId, Bundle.forPair(PASSWORD, password.password));
                 },
                 forgetPassword
@@ -443,7 +443,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
         AuthenticateModal.show(mActivity, getString(R.string.password_modal_title), "", password -> {
             Bundle data = new Bundle();
             data.putString(PASSWORD, password.password);
-            Navigation.findNavController(Objects.requireNonNull(getView()))
+            Navigation.findNavController(requireView())
                     .navigate(R.id.action_to_change_password, data);
         }, forgetPassword);
     }
@@ -454,7 +454,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
             Utilities.clearPatternUnlock(mActivity);
         } else {
             AuthenticateModal.show(mActivity, getString(R.string.password_modal_title), "", token ->
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(R.id.action_to_setPatternUnlock), forgetPassword);
         }
     }
@@ -463,7 +463,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
         Bundle data = new Bundle();
         data.putString(KEY_URL, url);
         data.putString(KEY_TITLE, title);
-        Navigation.findNavController(Objects.requireNonNull(getView()))
+        Navigation.findNavController(requireView())
                 .navigate(R.id.action_to_licenseFragment, data);
     }
 }

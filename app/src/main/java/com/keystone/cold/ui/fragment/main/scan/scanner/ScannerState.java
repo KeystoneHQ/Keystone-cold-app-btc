@@ -1,9 +1,6 @@
 package com.keystone.cold.ui.fragment.main.scan.scanner;
 
 import com.keystone.cold.databinding.ScannerFragmentBinding;
-import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
-
-import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.List;
 

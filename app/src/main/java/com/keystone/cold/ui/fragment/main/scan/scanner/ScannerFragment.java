@@ -28,6 +28,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ScannerFragmentBinding;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -167,35 +168,62 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         return mConfig;
     }
 
+    private void runInMainThread(Runnable runnable) {
+        AppExecutors.getInstance().mainThread().execute(runnable);
+    }
+
+    private void runInSubThread(Runnable runnable) {
+        AppExecutors.getInstance().diskIO().execute(runnable);
+    }
+
+    @Override
+    public void navigateUp() {
+        runInMainThread(super::navigateUp);
+    }
+
+    @Override
+    public void navigate(int id) {
+        runInMainThread(() -> super.navigate(id));
+    }
+
+    @Override
+    public void navigate(int id, Bundle data) {
+        runInMainThread(() -> super.navigate(id, data));
+    }
+
     @Override
     public void handleDecode(String text) {
-        try {
-            if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
-                scannerState.handleScanResult(new ScanResult(ScanResultTypes.PLAIN_TEXT, text));
-            } else {
-                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+        runInSubThread(() -> {
+            try {
+                if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
+                    scannerState.handleScanResult(new ScanResult(ScanResultTypes.PLAIN_TEXT, text));
+                } else {
+                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                }
+            } catch (Exception e) {
+                if (!scannerState.handleException(e)) {
+                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                }
             }
-        } catch (Exception e) {
-            if (!scannerState.handleException(e)) {
-                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-            }
-        }
+        });
     }
 
     @Override
     public void handleDecode(UR ur) {
-        try {
-            ScanResultTypes srt = this.desiredTypes.stream().filter(dt -> dt.isType(ur)).findFirst().orElse(null);
-            if (srt != null) {
-                scannerState.handleScanResult(new ScanResult(srt, Hex.toHexString(ur.getCborBytes())));
-            } else {
-                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+        runInSubThread(() -> {
+            try {
+                ScanResultTypes srt = this.desiredTypes.stream().filter(dt -> dt.isType(ur)).findFirst().orElse(null);
+                if (srt != null) {
+                    scannerState.handleScanResult(new ScanResult(srt, Hex.toHexString(ur.getCborBytes())));
+                } else {
+                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                }
+            } catch (Exception e) {
+                if (!scannerState.handleException(e)) {
+                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                }
             }
-        } catch (Exception e) {
-            if (!scannerState.handleException(e)) {
-                alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
-            }
-        }
+        });
     }
 
     @Override
@@ -210,15 +238,17 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void alert(String title, String message, Runnable run) {
-        super.alert(title, message, () -> {
-            if (run != null) {
-                run.run();
-            } else {
-                mBinding.scanProgress.setText("");
-                if (mHandler != null) {
-                    mHandler.restartPreviewAndDecode();
+        runInMainThread(() -> {
+            super.alert(title, message, () -> {
+                if (run != null) {
+                    run.run();
+                } else {
+                    mBinding.scanProgress.setText("");
+                    if (mHandler != null) {
+                        mHandler.restartPreviewAndDecode();
+                    }
                 }
-            }
+            });
         });
     }
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsCoin;
 import com.keystone.coinlib.interfaces.Signer;
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.callables.GetMessageCallable;
 import com.keystone.cold.callables.GetPasswordTokenCallable;
@@ -29,10 +30,10 @@ public class SignViewModel extends AndroidViewModel {
     public static final String STATE_SIGN_FAIL = "signing_fail";
     public static final String STATE_SIGN_SUCCESS = "signing_success";
     public static final String TAG = "SignViewModel";
-    private MutableLiveData<String> signStatus;
+    private final MutableLiveData<String> signStatus;
     private AuthenticateModal.OnVerify.VerifyToken token;
 
-    private MutableLiveData<String> signMessageSignature;
+    private final MutableLiveData<String> signMessageSignature;
 
     public MutableLiveData<String> getSignStatus() {
         return signStatus;
@@ -45,33 +46,35 @@ public class SignViewModel extends AndroidViewModel {
     public SignViewModel(@NonNull Application application) {
         super(application);
         signStatus = new MutableLiveData<>();
-        signStatus.setValue(STATE_NONE);
+        signStatus.postValue(STATE_NONE);
         signMessageSignature = new MutableLiveData<>();
-        signMessageSignature.setValue(null);
+        signMessageSignature.postValue(null);
     }
 
     public void resetAllState() {
-        signStatus.setValue(STATE_NONE);
-        signMessageSignature.setValue(null);
+        signStatus.postValue(STATE_NONE);
+        signMessageSignature.postValue(null);
     }
 
     public void handleSignMessage(String message, String path) {
-        try {
-            signStatus.setValue(STATE_SIGNING);
-            AbsCoin coin = AbsCoin.newInstance("BTC");
-            Objects.requireNonNull(coin);
-            String result = coin.signMessage(message, getSigner(path));
-            Log.d(TAG, "handleSignMessage: " + result);
-            if (!TextUtils.isEmpty(result)) {
-                signStatus.setValue(STATE_SIGN_SUCCESS);
-                signMessageSignature.setValue(result);
-            } else {
-                signStatus.setValue(STATE_SIGN_FAIL);
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                signStatus.postValue(STATE_SIGNING);
+                AbsCoin coin = AbsCoin.newInstance("BTC");
+                Objects.requireNonNull(coin);
+                String result = coin.signMessage(message, getSigner(path));
+                Log.d(TAG, "handleSignMessage: " + result);
+                if (!TextUtils.isEmpty(result)) {
+                    signStatus.postValue(STATE_SIGN_SUCCESS);
+                    signMessageSignature.postValue(result);
+                } else {
+                    signStatus.postValue(STATE_SIGN_FAIL);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                signStatus.postValue(STATE_SIGN_FAIL);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            signStatus.setValue(STATE_SIGN_FAIL);
-        }
+        });
     }
 
     private String getAuthToken() {

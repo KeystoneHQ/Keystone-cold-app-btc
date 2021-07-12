@@ -1,7 +1,6 @@
 package com.keystone.cold.ui.fragment.multisigs;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
@@ -23,12 +22,9 @@ import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
-
 public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePreferenceBinding> implements ListPreferenceCallback {
     public static final String TAG = "MultisigEntry";
     private Adapter adapter;
-    protected SharedPreferences prefs;
     protected CharSequence[] values;
     protected String value;
     protected CharSequence[] entries;
@@ -42,12 +38,11 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
     @Override
     protected void init(View view) {
-        prefs = Utilities.getPrefs(mActivity);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
         adapter = new Adapter(mActivity);
         mBinding.list.setAdapter(adapter);
         mBinding.confirm.setOnClickListener(v -> {
-            prefs.edit().putString(getKey(), value).apply();
+            Utilities.setMultiSigMode(mActivity, value);
             navigateUp();
             if (value.equals(MultiSigMode.LEGACY.getModeId())) {
                 navigate(R.id.action_to_legacyMultisigFragment);
@@ -57,7 +52,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         });
         entries = getResources().getStringArray(getEntries());
         values = getResources().getStringArray(getValues());
-        value = prefs.getString(getKey(), defaultValue());
+        value = Utilities.getMultiSigMode(mActivity);
         displayItems = new ArrayList<>();
         for (int i = 0; i < entries.length; i++) {
             displayItems.add(Pair.create(values[i].toString(), entries[i].toString()));
@@ -71,10 +66,6 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
     protected int getValues() {
         return R.array.multisig_mode_list_values;
-    }
-
-    protected String getKey() {
-        return SETTING_MULTI_SIG_MODE;
     }
 
     protected String defaultValue() {

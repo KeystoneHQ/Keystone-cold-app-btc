@@ -47,15 +47,12 @@ import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
-
 public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> implements ListPreferenceCallback {
     protected LegacyMultiSigViewModel legacyMultiSigViewModel;
     protected CasaMultiSigViewModel casaMultiSigViewModel;
     private BottomSheetDialog dialog;
     private Adapter adapter;
-    private SharedPreferences preferences;
 
     @Override
     protected void init(View view) {
@@ -63,13 +60,11 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         casaMultiSigViewModel = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class);
         dialog = new BottomSheetDialog(mActivity);
         adapter = new Adapter(mActivity);
-        preferences = Utilities.getPrefs(mActivity);
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        SharedPreferences preferences = Utilities.getPrefs(mActivity);
-        String modeId = preferences.getString(getKey(), defaultValue());
+        String modeId = Utilities.getMultiSigMode(mActivity);
         String[] entries = getResources().getStringArray(getEntries());
         String[] values = getResources().getStringArray(getValues());
         List<Pair<String, String>> displayItems = new ArrayList<>();
@@ -97,14 +92,6 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         return R.array.multisig_mode_list_values;
     }
 
-    private String getKey() {
-        return SETTING_MULTI_SIG_MODE;
-    }
-
-    private String defaultValue() {
-        return MultiSigMode.LEGACY.getModeId();
-    }
-
     protected void showMultisigSelection() {
         dialog.show();
     }
@@ -114,15 +101,13 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         navigateUp();
         String _modeId = String.valueOf(modeId);
         if (_modeId.equals(MultiSigMode.LEGACY.getModeId())) {
-            if (preferences.edit().putString(getKey(), MultiSigMode.LEGACY.getModeId()).commit()) {
-                dialog.dismiss();
-                navigate(R.id.action_to_legacyMultisigFragment);
-            }
+            Utilities.setMultiSigMode(mActivity, MultiSigMode.LEGACY.getModeId());
+            dialog.dismiss();
+            navigate(R.id.action_to_legacyMultisigFragment);
         } else {
-            if (preferences.edit().putString(getKey(), MultiSigMode.CASA.getModeId()).commit()) {
-                dialog.dismiss();
-                navigate(R.id.action_to_casaMultisigFragment);
-            }
+            Utilities.setMultiSigMode(mActivity, MultiSigMode.CASA.getModeId());
+            dialog.dismiss();
+            navigate(R.id.action_to_casaMultisigFragment);
         }
     }
 
