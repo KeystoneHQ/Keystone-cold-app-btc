@@ -140,7 +140,7 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
         total = bundle.getInt("total");
         threshold = bundle.getInt("threshold");
         path = bundle.getString("path");
-        account = com.keystone.coinlib.accounts.MultiSig.ofPath(path, !Utilities.isMainNet(mActivity)).get(0);
+        account = com.keystone.coinlib.accounts.MultiSig.ofPath(path, Utilities.isMainNet(mActivity)).get(0);
     }
 
     private String getAddressTypeString(Account account) {
