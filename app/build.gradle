@@ -160,7 +160,6 @@ android {
 dependencies {
     compileOnly files('libs/cvos.jar')
     implementation 'co.nstant.in:cbor:0.9'
-    implementation 'com.github.CoboVault:bc32-java:v0.0.6-alpha'
     implementation 'com.sparrowwallet:hummingbird:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
