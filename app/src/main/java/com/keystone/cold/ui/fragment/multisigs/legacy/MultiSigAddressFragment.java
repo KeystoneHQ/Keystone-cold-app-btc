@@ -30,7 +30,6 @@ import com.keystone.cold.databinding.AddressFragmentBinding;
 import com.keystone.cold.databinding.MultisigAddressItemBinding;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 
 import java.util.List;
 import java.util.Objects;
@@ -100,7 +99,7 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
             address.removeObservers(this);
             address = null;
         }
-        address = viewModel.getMultiSigAddress(walletFingerprint);
+        address = legacyMultiSigViewModel.getMultiSigAddress(walletFingerprint);
         subscribeUi(address);
     }
 
@@ -117,9 +116,9 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
     private void updateAddressList(List<MultiSigAddressEntity> entities) {
 
         if (isChangeAddress) {
-            mAddressAdapter.setItems(viewModel.filterChangeAddress(entities));
+            mAddressAdapter.setItems(legacyMultiSigViewModel.filterChangeAddress(entities));
         } else {
-            mAddressAdapter.setItems(viewModel.filterReceiveAddress(entities));
+            mAddressAdapter.setItems(legacyMultiSigViewModel.filterReceiveAddress(entities));
         }
     }
 

@@ -33,7 +33,6 @@ import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.MultisigWalletInfoBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.util.Keyboard;
 
@@ -68,7 +67,7 @@ public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWal
     }
 
     private void subscribeGetWallet(Bundle data) {
-        viewModel.getWalletEntity(data.getString("wallet_fingerprint"))
+        legacyMultiSigViewModel.getWalletEntity(data.getString("wallet_fingerprint"))
                 .observe(this, w -> {
                     wallet = w;
                     setBindings(w);

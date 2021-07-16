@@ -32,6 +32,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.keystone.coinlib.utils.Coins;
@@ -44,17 +45,31 @@ import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
+import com.keystone.cold.ui.fragment.main.QrScanPurpose;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
+import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
+import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
+import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
+import org.spongycastle.util.encoders.Base64;
+import org.spongycastle.util.encoders.Hex;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBinding>
+public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMainBinding>
         implements NumberPickerCallback {
-    public static final String TAG = "MultisigMainFragment";
+    public static final String TAG = "MultisigEntry";
 
     private MultiSigAddressFragment[] fragments;
     private String[] title;
@@ -75,7 +90,7 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
         coinId = Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId();
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
-        viewModel.getCurrentWallet().observe(this, w -> {
+        legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
             if (w != null) {
                 isEmpty = false;
                 wallet = w;
@@ -83,6 +98,9 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
                 isEmpty = true;
             }
             refreshUI();
+        });
+        mBinding.toolbarModeSelection.setOnClickListener(l -> {
+            showMultisigSelection();
         });
     }
 
@@ -161,8 +179,8 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
         Handler handler = new Handler();
         AppExecutors.getInstance().diskIO().execute(() -> {
             int tabPosition = mBinding.tab.getSelectedTabPosition();
-            viewModel.addAddress(wallet.getWalletFingerPrint(), value, tabPosition);
-            handler.post(() -> viewModel.getObservableAddState().observe(this, complete -> {
+            legacyMultiSigViewModel.addAddress(wallet.getWalletFingerPrint(), value, tabPosition);
+            handler.post(() -> legacyMultiSigViewModel.getObservableAddState().observe(this, complete -> {
                 if (complete) {
                     handler.postDelayed(dialog::dismiss, 500);
                 }
@@ -204,9 +222,31 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
     }
 
     private void scanQrCode() {
-        Bundle data = new Bundle();
-        data.putString("purpose", "multisig_tx");
-        navigate(R.id.action_to_scan, data);
+        ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Arrays.asList(ScanResultTypes.UR_BYTES, ScanResultTypes.UR_CRYPTO_PSBT)) {
+            @Override
+            public void handleScanResult(ScanResult result) throws Exception {
+                String psbt = null;
+                if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
+                    byte[] bytes = (byte[]) result.resolve();
+                    String hex = Hex.toHexString(bytes);
+                    if (hex.startsWith(Hex.toHexString("psbt".getBytes()))) {
+                        psbt = hex;
+                    }
+                } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
+                    CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
+                    psbt = Hex.toHexString(cryptoPSBT.getPsbt());
+                }
+                if (psbt == null) {
+                    throw new Exception("no psbt data found");
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("psbt_base64", Base64.toBase64String(Hex.decode(psbt)));
+                bundle.putBoolean("multisig", true);
+                bundle.putString("multisig_mode", MultiSigMode.LEGACY.name());
+                mFragment.navigate(R.id.action_scanner_to_psbtTxConfirmFragment, bundle);
+            }
+        });
+        navigate(R.id.action_to_scanner);
     }
 
 
@@ -247,22 +287,22 @@ public class MultisigMainFragment extends MultiSigBaseFragment<MultisigMainBindi
     private void showBottomSheetMenu() {
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
         MultisigBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.multisig_bottom_sheet,null,false);
-        binding.exportXpub.setOnClickListener(v-> {
+                R.layout.multisig_bottom_sheet, null, false);
+        binding.exportXpub.setOnClickListener(v -> {
             dialog.dismiss();
             navigate(R.id.export_export_multisig_expub);
         });
-        binding.createMultisig.setOnClickListener(v-> {
+        binding.createMultisig.setOnClickListener(v -> {
             navigate(R.id.create_multisig_wallet);
             dialog.dismiss();
         });
 
-        binding.importMultisig.setOnClickListener(v-> {
+        binding.importMultisig.setOnClickListener(v -> {
             navigate(R.id.import_multisig_file_list);
             dialog.dismiss();
         });
 
-        binding.manageMultisig.setOnClickListener(v-> {
+        binding.manageMultisig.setOnClickListener(v -> {
             navigate(R.id.manage_multisig_wallet);
             dialog.dismiss();
         });

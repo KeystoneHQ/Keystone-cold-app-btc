@@ -34,7 +34,6 @@ import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.AddAddressBottomSheetBinding;
 import com.keystone.cold.databinding.PreCreateMultisigWalletBinding;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.viewmodel.CollectXpubViewModel;
 
 import java.util.List;
@@ -84,7 +83,7 @@ public class PreCreateMultiSigWalletFragment extends MultiSigBaseFragment<PreCre
         List<CollectXpubViewModel.XpubInfo> info = vm.getXpubInfo();
         for (int i = 1; i <= total; i++) {
             if (i == 1) {
-                info.add(new CollectXpubViewModel.XpubInfo(1, viewModel.getXfp(), viewModel.getXPub(account)));
+                info.add(new CollectXpubViewModel.XpubInfo(1, legacyMultiSigViewModel.getXfp(), legacyMultiSigViewModel.getXPub(account)));
             } else {
                 info.add(new CollectXpubViewModel.XpubInfo(i,null,null));
             }
@@ -99,7 +98,7 @@ public class PreCreateMultiSigWalletFragment extends MultiSigBaseFragment<PreCre
     private void updateUI() {
         mBinding.total.setRemindText(String.valueOf(total));
         mBinding.threshold.setRemindText(String.valueOf(threshold));
-        mBinding.addressType.setRemindText(viewModel.getAddressTypeString(account));
+        mBinding.addressType.setRemindText(legacyMultiSigViewModel.getAddressTypeString(account));
     }
 
 

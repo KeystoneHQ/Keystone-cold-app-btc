@@ -24,6 +24,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -39,6 +40,7 @@ import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.config.FeatureFlags;
 import com.keystone.cold.databinding.ElectrumTxConfirmFragmentBinding;
 import com.keystone.cold.databinding.ProgressModalBinding;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -58,6 +60,8 @@ import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.exceptions.XpubNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
+import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,6 +91,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     protected TxConfirmViewModel viewModel;
     private SigningDialog signingDialog;
     private TxEntity txEntity;
+    private CasaSignature casaSignature;
     private ModalDialog addingAddressDialog;
     private List<String> changeAddress = new ArrayList<>();
     private int feeAttackCheckingState;
@@ -130,14 +135,13 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
             return;
         }
         if (signed) {
-            ModalDialog.showCommonModal(mActivity,getString(R.string.broadcast_tx),
+            ModalDialog.showCommonModal(mActivity, getString(R.string.broadcast_tx),
                     getString(R.string.multisig_already_signed), getString(R.string.know), null);
             return;
         }
 
         boolean fingerprintSignEnable = new FingerprintPolicyCallable(READ, TYPE_SIGN_TX).call();
-
-        if (txEntity != null) {
+        if (txEntity != null || casaSignature != null) {
             if (FeatureFlags.ENABLE_WHITE_LIST) {
                 if (isAddressInWhiteList()) {
                     AuthenticateModal.show(mActivity,
@@ -162,6 +166,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
         } else {
             navigate(R.id.action_to_home);
         }
+
     }
 
     protected AuthenticateModal.OnVerify signWithVerifyInfo() {
@@ -179,14 +184,31 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
         ProgressModalDialog dialog = new ProgressModalDialog();
         dialog.show(mActivity.getSupportFragmentManager(), "");
         parseTx();
-        viewModel.getObservableTx().observe(this, txEntity -> {
-            if (txEntity != null) {
-                dialog.dismiss();
-                this.txEntity = txEntity;
-                mBinding.setTx(txEntity);
-                refreshUI();
-            }
-        });
+        if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
+            viewModel.getObservableTx().observe(this, txEntity -> {
+                if (txEntity != null) {
+                    dialog.dismiss();
+                    this.txEntity = txEntity;
+                    mBinding.setTx(txEntity);
+                    refreshUI();
+                }
+            });
+        } else {
+            viewModel.getObservableCasaSignature().observe(this, casaSignature -> {
+                if (casaSignature != null) {
+                    mBinding.txDetail.network.setVisibility(View.VISIBLE);
+                    if (viewModel.isCasaMainnet) {
+                        mBinding.txDetail.networkText.setText("Mainnet");
+                    } else {
+                        mBinding.txDetail.networkText.setText("Testnet");
+                    }
+                    dialog.dismiss();
+                    this.casaSignature = casaSignature;
+                    mBinding.setTx(casaSignature);
+                    refreshUI();
+                }
+            });
+        }
         observeParseTx(dialog);
     }
 
@@ -196,40 +218,73 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
         refreshReceiveList();
         refreshSignStatus();
         checkBtcFee();
-
     }
 
     private void checkBtcFee() {
-        if (txEntity.getCoinCode().equals(Coins.BTC.coinCode())) {
-            float fee = Float.parseFloat(txEntity.getFee().split(" ")[0]);
-            if (fee > 0.01) {
-                mBinding.txDetail.fee.setTextColor(Color.RED);
+        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+            if (txEntity.getCoinCode().equals(Coins.BTC.coinCode())) {
+                float fee = Float.parseFloat(txEntity.getFee().split(" ")[0]);
+                if (fee > 0.01) {
+                    mBinding.txDetail.fee.setTextColor(Color.RED);
+                }
+            }
+        } else {
+            if (casaSignature.getCoinCode().equals(Coins.BTC.coinCode())) {
+                float fee = Float.parseFloat(casaSignature.getFee().split(" ")[0]);
+                if (fee > 0.01) {
+                    mBinding.txDetail.fee.setTextColor(Color.RED);
+                }
             }
         }
     }
 
     private void refreshSignStatus() {
-        if (!TextUtils.isEmpty(txEntity.getSignStatus())) {
-            mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
-            String signStatus = txEntity.getSignStatus();
+        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+            if (!TextUtils.isEmpty(txEntity.getSignStatus())) {
+                mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
+                String signStatus = txEntity.getSignStatus();
 
-            String[] splits = signStatus.split("-");
-            int sigNumber = Integer.parseInt(splits[0]);
-            int reqSigNumber = Integer.parseInt(splits[1]);
+                String[] splits = signStatus.split("-");
+                int sigNumber = Integer.parseInt(splits[0]);
+                int reqSigNumber = Integer.parseInt(splits[1]);
 
-            String text;
-            if (sigNumber == 0) {
-                text = getString(R.string.unsigned);
-            } else if(sigNumber < reqSigNumber) {
-                text = getString(R.string.partial_signed);
+                String text;
+                if (sigNumber == 0) {
+                    text = getString(R.string.unsigned);
+                } else if (sigNumber < reqSigNumber) {
+                    text = getString(R.string.partial_signed);
+                } else {
+                    text = getString(R.string.signed);
+                    signed = true;
+                }
+
+                mBinding.txDetail.signStatus.setText(text);
             } else {
-                text = getString(R.string.signed);
-                signed = true;
+                mBinding.txDetail.txSource.setVisibility(View.VISIBLE);
             }
-
-            mBinding.txDetail.signStatus.setText(text);
         } else {
-            mBinding.txDetail.txSource.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(casaSignature.getSignStatus())) {
+                mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
+                String signStatus = casaSignature.getSignStatus();
+
+                String[] splits = signStatus.split("-");
+                int sigNumber = Integer.parseInt(splits[0]);
+                int reqSigNumber = Integer.parseInt(splits[1]);
+
+                String text;
+                if (sigNumber == 0) {
+                    text = getString(R.string.unsigned);
+                } else if (sigNumber < reqSigNumber) {
+                    text = getString(R.string.partial_signed);
+                } else {
+                    text = getString(R.string.signed);
+                    signed = true;
+                }
+
+                mBinding.txDetail.signStatus.setText(text);
+            } else {
+                mBinding.txDetail.txSource.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -241,7 +296,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                 String title = getString(R.string.electrum_decode_txn_fail);
                 String errorMessage = getString(R.string.incorrect_tx_data);
                 String buttonText = getString(R.string.confirm);
-                if (ex instanceof XpubNotMatchException || ex instanceof WatchWalletNotMatchException) {
+                if (ex instanceof XpubNotMatchException || ex instanceof WatchWalletNotMatchException || ex instanceof NotMyCasaKeyException) {
                     errorMessage = getString(R.string.master_pubkey_not_match);
                 }
 
@@ -266,7 +321,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                 ModalDialog.showCommonModal(mActivity,
                         title,
                         errorMessage,
-                        buttonText,null);
+                        buttonText, null);
                 navigateUp();
             }
         });
@@ -298,44 +353,87 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void refreshAmount() {
-        SpannableStringBuilder style = new SpannableStringBuilder(txEntity.getAmount());
-        style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                0, txEntity.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mBinding.txDetail.amount.setText(style);
+        if (viewModel.mode.equals(MultiSigMode.CASA)) {
+            SpannableStringBuilder style = new SpannableStringBuilder(casaSignature.getAmount());
+            style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
+                    0, casaSignature.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mBinding.txDetail.amount.setText(style);
+        } else {
+            SpannableStringBuilder style = new SpannableStringBuilder(txEntity.getAmount());
+            style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
+                    0, txEntity.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mBinding.txDetail.amount.setText(style);
+        }
     }
 
     private void refreshReceiveList() {
-        String to = txEntity.getTo();
-        List<TransactionItem> items = new ArrayList<>();
-        try {
-            JSONArray outputs = new JSONArray(to);
-            for (int i = 0; i < outputs.length(); i++) {
-                JSONObject output = outputs.getJSONObject(i);
-                boolean isChange = output.optBoolean("isChange");
-                String changePath = null;
-                if (isChange) {
-                    changePath = output.getString("changeAddressPath");
-                }
+        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+            String to = txEntity.getTo();
+            List<TransactionItem> items = new ArrayList<>();
+            try {
+                JSONArray outputs = new JSONArray(to);
+                for (int i = 0; i < outputs.length(); i++) {
+                    JSONObject output = outputs.getJSONObject(i);
+                    boolean isChange = output.optBoolean("isChange");
+                    String changePath = null;
+                    if (isChange) {
+                        changePath = output.getString("changeAddressPath");
+                    }
 
-                items.add(new TransactionItem(i,
-                        output.getLong("value"),
-                        output.getString("address"),
-                        txEntity.getCoinCode(),changePath));
+                    items.add(new TransactionItem(i,
+                            output.getLong("value"),
+                            output.getString("address"),
+                            txEntity.getCoinCode(), changePath));
+                }
+            } catch (JSONException e) {
+                return;
             }
-        } catch (JSONException e) {
-            return;
+            TransactionItemAdapter adapter
+                    = new TransactionItemAdapter(mActivity,
+                    TransactionItem.ItemType.OUTPUT,
+                    changeAddress);
+            adapter.setItems(items);
+            mBinding.txDetail.toList.setVisibility(View.VISIBLE);
+            mBinding.txDetail.toList.setAdapter(adapter);
+        } else {
+            String to = casaSignature.getTo();
+            List<TransactionItem> items = new ArrayList<>();
+            try {
+                JSONArray outputs = new JSONArray(to);
+                for (int i = 0; i < outputs.length(); i++) {
+                    JSONObject output = outputs.getJSONObject(i);
+                    boolean isChange = output.optBoolean("isChange");
+                    String changePath = null;
+                    if (isChange) {
+                        changePath = output.getString("changeAddressPath");
+                    }
+
+                    items.add(new TransactionItem(i,
+                            output.getLong("value"),
+                            output.getString("address"),
+                            casaSignature.getCoinCode(), changePath));
+                }
+            } catch (JSONException e) {
+                return;
+            }
+            TransactionItemAdapter adapter
+                    = new TransactionItemAdapter(mActivity,
+                    TransactionItem.ItemType.OUTPUT,
+                    changeAddress);
+            adapter.setItems(items);
+            mBinding.txDetail.toList.setVisibility(View.VISIBLE);
+            mBinding.txDetail.toList.setAdapter(adapter);
         }
-        TransactionItemAdapter adapter
-                = new TransactionItemAdapter(mActivity,
-                TransactionItem.ItemType.OUTPUT,
-                changeAddress);
-        adapter.setItems(items);
-        mBinding.txDetail.toList.setVisibility(View.VISIBLE);
-        mBinding.txDetail.toList.setAdapter(adapter);
     }
 
     private void refreshFromList() {
-        String from = txEntity.getFrom();
+        String from;
+        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+            from = txEntity.getFrom();
+        } else {
+            mBinding.txDetail.arrowDown.setVisibility(View.GONE);
+            return;
+        }
         List<TransactionItem> items = new ArrayList<>();
         try {
             JSONArray inputs = new JSONArray(from);
@@ -344,10 +442,13 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                 items.add(new TransactionItem(i,
                         out.getLong("value"),
                         out.getString("address"),
-                        txEntity.getCoinCode()));
+                        casaSignature.getCoinCode()));
             }
         } catch (JSONException e) {
             return;
+        }
+        if (items.size() == 0) {
+            mBinding.txDetail.arrowDown.setVisibility(View.GONE);
         }
         TransactionItemAdapter adapter
                 = new TransactionItemAdapter(mActivity,

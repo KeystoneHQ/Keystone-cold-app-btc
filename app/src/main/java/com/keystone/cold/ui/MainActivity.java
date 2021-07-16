@@ -17,6 +17,7 @@
 
 package com.keystone.cold.ui;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -47,13 +48,14 @@ import com.keystone.cold.fingerprint.FingerprintKit;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
 import com.keystone.cold.ui.fragment.main.AssetFragment;
-import com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment;
+import com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment;
 import com.keystone.cold.ui.fragment.setting.SettingFragment;
 import com.keystone.cold.ui.views.DrawerAdapter;
 import com.keystone.cold.ui.views.FullScreenDrawer;
 import com.keystone.cold.ui.views.UpdatingHelper;
 import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.update.data.UpdateManifest;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 
 import java.util.Arrays;
@@ -70,11 +72,15 @@ public class MainActivity extends FullScreenActivity {
     private ActivityMainBinding mBinding;
     private NavController mNavController;
 
+    private SharedPreferences prefs;
+
     private Toolbar toolbar;
     private final Handler mHandler = new Handler();
 
     private String belongTo;
     private String vaultId;
+    private boolean hasMultiSigMode;
+    private String multiSigMode;
 
     int currentFragmentIndex = R.id.drawer_wallet;
     private DrawerAdapter drawerAdapter;
@@ -89,8 +95,11 @@ public class MainActivity extends FullScreenActivity {
         }
         initViews();
         initNavController();
+        prefs = Utilities.getPrefs(this);
         belongTo = Utilities.getCurrentBelongTo(this);
         vaultId = Utilities.getVaultId(this);
+        hasMultiSigMode = Utilities.hasMultiSigMode(this);
+        multiSigMode = Utilities.getMultiSigMode(this);
 
         if (savedInstanceState == null) {
             if (hasSdcard()) {
@@ -192,7 +201,15 @@ public class MainActivity extends FullScreenActivity {
                     break;
                 case R.id.drawer_multisig:
                     mNavController.navigateUp();
-                    mNavController.navigate(R.id.action_to_multisigFragment);
+                    if (hasMultiSigMode) {
+                        if (multiSigMode.equals(MultiSigMode.LEGACY.getModeId())) {
+                            mNavController.navigate(R.id.action_to_legacyMultisigFragment);
+                        } else {
+                            mNavController.navigate(R.id.action_to_casaMultisigFragment);
+                        }
+                    } else {
+                        mNavController.navigate(R.id.action_to_multisigSelectionFragment);
+                    }
                     break;
                 case R.id.drawer_settings:
                     mNavController.navigateUp();
@@ -297,7 +314,7 @@ public class MainActivity extends FullScreenActivity {
 
     static {
         mMainFragments.put(R.id.drawer_wallet, AssetFragment.TAG);
-        mMainFragments.put(R.id.drawer_multisig, MultisigMainFragment.TAG);
+        mMainFragments.put(R.id.drawer_multisig, MultiSigPreferenceFragment.TAG);
         mMainFragments.put(R.id.drawer_settings, SettingFragment.TAG);
         mMainFragments.put(R.id.drawer_about, AboutFragment.TAG);
     }

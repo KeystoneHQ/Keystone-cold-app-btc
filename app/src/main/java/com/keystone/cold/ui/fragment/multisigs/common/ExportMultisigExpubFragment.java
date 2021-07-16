@@ -40,6 +40,7 @@ import com.keystone.cold.databinding.ExportMultisigExpubBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.databinding.SwitchXpubBottomSheetBinding;
 import com.keystone.cold.databinding.XpubEncodingHintBinding;
+import com.keystone.cold.ui.fragment.multisigs.legacy.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ExportToSdcardDialog;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;
@@ -83,7 +84,7 @@ public class ExportMultisigExpubFragment extends MultiSigBaseFragment<ExportMult
         ModalDialog dialog = new ModalDialog();
         XpubEncodingHintBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                 R.layout.xpub_encoding_hint, null, false);
-        binding.pub2.setText(ExtendPubkeyFormat.convertExtendPubkey(viewModel.getXPub(account),
+        binding.pub2.setText(ExtendPubkeyFormat.convertExtendPubkey(legacyMultiSigViewModel.getXPub(account),
                 isTestnet ? ExtendPubkeyFormat.tpub : ExtendPubkeyFormat.xpub));
         binding.close.setOnClickListener(v -> dialog.dismiss());
         dialog.setBinding(binding);
@@ -95,7 +96,7 @@ public class ExportMultisigExpubFragment extends MultiSigBaseFragment<ExportMult
         if (storage == null || storage.getExternalDir() == null) {
             showNoSdcardModal(mActivity);
         } else {
-            String fileName = viewModel.getExportXpubFileName(account);
+            String fileName = legacyMultiSigViewModel.getExportXpubFileName(account);
             ModalDialog dialog = new ModalDialog();
             ModalWithTwoButtonBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                     R.layout.modal_with_two_button,
@@ -109,7 +110,7 @@ public class ExportMultisigExpubFragment extends MultiSigBaseFragment<ExportMult
             binding.right.setText(R.string.export);
             binding.right.setOnClickListener(v -> {
                 dialog.dismiss();
-                boolean result = writeToSdcard(storage, viewModel.getExportXpubInfo(account), fileName);
+                boolean result = writeToSdcard(storage, legacyMultiSigViewModel.getExportXpubInfo(account), fileName);
                 showExportResult(mActivity, null, result);
             });
             dialog.setBinding(binding);
@@ -122,8 +123,8 @@ public class ExportMultisigExpubFragment extends MultiSigBaseFragment<ExportMult
         if (storage == null || storage.getExternalDir() == null) {
             showNoSdcardModal(mActivity);
         } else {
-            String fileName = viewModel.getExportAllXpubFileName();
-            boolean success = writeToSdcard(storage, viewModel.getExportAllXpubInfo(), fileName);
+            String fileName = legacyMultiSigViewModel.getExportAllXpubFileName();
+            boolean success = writeToSdcard(storage, legacyMultiSigViewModel.getExportAllXpubInfo(), fileName);
             ExportToSdcardDialog dialog = ExportToSdcardDialog.newInstance(fileName, success);
             dialog.show(mActivity.getSupportFragmentManager(), "");
             new Handler().postDelayed(dialog::dismiss, 1000);
@@ -132,12 +133,12 @@ public class ExportMultisigExpubFragment extends MultiSigBaseFragment<ExportMult
 
 
     private void updateUI() {
-        String accountType = viewModel.getAddressTypeString(account);
-        String xpub = viewModel.getXPub(account);
+        String accountType = legacyMultiSigViewModel.getAddressTypeString(account);
+        String xpub = legacyMultiSigViewModel.getXPub(account);
         mBinding.addressType.setText(String.format("%s ", accountType));
         mBinding.expub.setText(getString(R.string.text_with_info_icon, xpub));
         mBinding.path.setText(String.format("(%s)", account.getPath()));
-        mBinding.qrcode.setData(viewModel.getCryptoAccount(account).toUR().toString().toUpperCase());
+        mBinding.qrcode.setData(legacyMultiSigViewModel.getCryptoAccount(account).toUR().toString().toUpperCase());
     }
 
     @Override
@@ -170,9 +171,9 @@ public class ExportMultisigExpubFragment extends MultiSigBaseFragment<ExportMult
                         new Account[]{MULTI_P2WSH, MULTI_P2SH_P2WSH, MULTI_P2SH}
                         : new Account[]{MULTI_P2WSH_TEST, MULTI_P2SH_P2WSH_TEST, MULTI_P2SH_TEST};
         for (Account a : accounts) {
-            info.append(String.format("%s(%s)", viewModel.getAddressTypeString(a), a.getScript())).append("<br>")
+            info.append(String.format("%s(%s)", legacyMultiSigViewModel.getAddressTypeString(a), a.getScript())).append("<br>")
                     .append(a.getPath()).append("<br>")
-                    .append(viewModel.getXPub(a)).append("<br><br>");
+                    .append(legacyMultiSigViewModel.getXPub(a)).append("<br><br>");
         }
 
         return info.toString();

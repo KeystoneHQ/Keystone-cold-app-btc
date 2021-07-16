@@ -15,7 +15,7 @@
  * in the file COPYING.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.keystone.cold.ui.fragment.main;
+package com.keystone.cold.ui.fragment.main.scan.legacy;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -23,12 +23,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.accounts.Account;
@@ -38,7 +36,6 @@ import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.utils.Base43;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
-import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.QrcodeScanFragmentBinding;
 import com.keystone.cold.scan.CaptureHandler;
 import com.keystone.cold.scan.Host;
@@ -47,6 +44,7 @@ import com.keystone.cold.scan.bean.ZxingConfig;
 import com.keystone.cold.scan.bean.ZxingConfigBuilder;
 import com.keystone.cold.scan.camera.CameraManager;
 import com.keystone.cold.ui.fragment.BaseFragment;
+import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
@@ -390,28 +388,8 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
         return mHandler;
     }
 
-    private void alert(String message) {
-        alert(null, message);
-    }
-
-    private void alert(String title, String message) {
-        alert(title, message, null);
-    }
-
-    private void alert(String title, String message, Runnable run) {
-        dialog = ModalDialog.newInstance();
-        CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.common_modal, null, false);
-        if (title != null) {
-            binding.title.setText(title);
-        } else {
-            binding.title.setText(R.string.scan_failed);
-        }
-        binding.subTitle.setText(message);
-        binding.close.setVisibility(View.GONE);
-        binding.confirm.setText(R.string.know);
-        binding.confirm.setOnClickListener(v -> {
-            dialog.dismiss();
+    public void alert(String title, String message, Runnable run) {
+        super.alert(title, message, () -> {
             if (run != null) {
                 run.run();
             } else {
@@ -421,10 +399,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
                 }
             }
         });
-        dialog.setBinding(binding);
-        dialog.show(mActivity.getSupportFragmentManager(), "scan fail");
     }
-
 }
 
 

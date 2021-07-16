@@ -30,7 +30,6 @@ import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportWalletToCosignerBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;
 
@@ -68,18 +67,18 @@ public class ExportWalletToCosignerFragment extends MultiSigBaseFragment<ExportW
             Bundle bundle = getArguments();
             bundle.putBoolean("isImportMultisig", true);
             //View.OnClickListener onClickListener = v -> navigate(R.id.action_export_wallet_to_electrum, bundle);
-            View.OnClickListener onClickListener = v -> popBackStack(R.id.multisigFragment, false);
+            View.OnClickListener onClickListener = v -> popBackStack(R.id.legacyMultisigFragment, false);
             mBinding.skip.setOnClickListener(onClickListener);
             mBinding.exportToElectrum.setOnClickListener(onClickListener);
         }
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
-        viewModel.exportWalletToCosigner(walletFingerprint).observe(this, s -> {
+        legacyMultiSigViewModel.exportWalletToCosigner(walletFingerprint).observe(this, s -> {
             walletFileContent = s;
             mBinding.qrcodeLayout.qrcode.setData(Hex.toHexString(s.getBytes(StandardCharsets.UTF_8)));
         });
 
-        viewModel.getWalletEntity(walletFingerprint).observe(this,
+        legacyMultiSigViewModel.getWalletEntity(walletFingerprint).observe(this,
                 w -> {
                     walletEntity = w;
                     mBinding.verifyCode.setText(getString(R.string.wallet_verification_code, w.getVerifyCode()));

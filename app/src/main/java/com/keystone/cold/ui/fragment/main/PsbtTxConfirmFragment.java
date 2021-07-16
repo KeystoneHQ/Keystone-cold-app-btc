@@ -26,8 +26,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.ui.fragment.main.electrum.UnsignedTxFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
@@ -35,12 +37,14 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.update.utils.Storage;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import org.spongycastle.util.encoders.Base64;
 
-import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
 import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
 import static com.keystone.cold.viewmodel.GlobalViewModel.showExportResult;
 import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
@@ -50,6 +54,7 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
 
     private String psbtBase64;
     private boolean multisig;
+    private MultiSigMode multiSigMode;
 
     @Override
     protected void init(View view) {
@@ -57,6 +62,22 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
     }
 
     public static void showExportPsbtDialog(AppCompatActivity activity, TxEntity tx,
+                                            Runnable onExportSuccess) {
+
+        String signStatus = tx.getSignStatus();
+        boolean signed = true;
+        if (!TextUtils.isEmpty(signStatus)) {
+            String[] splits = signStatus.split("-");
+            int sigNumber = Integer.parseInt(splits[0]);
+            int reqSigNumber = Integer.parseInt(splits[1]);
+            signed = sigNumber >= reqSigNumber;
+        }
+
+        showExportPsbtDialog(activity, signed,
+                tx.getTxId(), tx.getSignedHex(), onExportSuccess);
+    }
+
+    public static void showExportPsbtDialog(AppCompatActivity activity, CasaSignature tx,
                                             Runnable onExportSuccess) {
 
         String signStatus = tx.getSignStatus();
@@ -121,16 +142,32 @@ public class PsbtTxConfirmFragment extends UnsignedTxFragment {
 
     @Override
     protected void parseTx() {
-        Bundle bundle = Objects.requireNonNull(getArguments());
+        Bundle bundle = requireArguments();
         multisig = bundle.getBoolean("multisig");
         psbtBase64 = bundle.getString("psbt_base64");
         viewModel.setIsMultisig(multisig);
+        if (multisig) {
+            multiSigMode = MultiSigMode.valueOf(bundle.getString("multisig_mode"));
+            viewModel.setMultisigMode(multiSigMode);
+        }
         viewModel.parsePsbtBase64(psbtBase64, multisig);
     }
 
     protected void onSignSuccess() {
         WatchWallet wallet = WatchWallet.getWatchWallet(mActivity);
-        if (multisig || wallet == WatchWallet.BTCPAY || wallet == WatchWallet.BLUE || wallet == WatchWallet.GENERIC || wallet == WatchWallet.SPARROW) {
+        if (multisig) {
+            if (multiSigMode.equals(MultiSigMode.LEGACY)) {
+                Bundle data = new Bundle();
+                data.putString(KEY_TXID, viewModel.getTxId());
+                data.putString(KEY_MULTISIG_MODE, multiSigMode.name());
+                navigate(R.id.action_to_psbt_broadcast, data);
+            } else {
+                Bundle data = new Bundle();
+                data.putString(KEY_TXID, viewModel.getCasaSignatureId());
+                data.putString(KEY_MULTISIG_MODE, multiSigMode.name());
+                navigate(R.id.action_to_psbt_broadcast, data);
+            }
+        } else if (wallet == WatchWallet.BTCPAY || wallet == WatchWallet.BLUE || wallet == WatchWallet.GENERIC || wallet == WatchWallet.SPARROW) {
             Bundle data = new Bundle();
             data.putString(KEY_TXID, viewModel.getTxId());
             navigate(R.id.action_to_psbt_broadcast, data);

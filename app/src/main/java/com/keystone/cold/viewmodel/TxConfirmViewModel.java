@@ -29,6 +29,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.googlecode.protobuf.format.JsonFormat;
 import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.Util;
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.coinlib.coins.AbsCoin;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.Btc;
@@ -56,6 +57,7 @@ import com.keystone.cold.callables.GetPasswordTokenCallable;
 import com.keystone.cold.callables.VerifyFingerprintCallable;
 import com.keystone.cold.db.entity.AccountEntity;
 import com.keystone.cold.db.entity.AddressEntity;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
@@ -67,6 +69,8 @@ import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
+import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,6 +110,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
     public static final String TAG = "Vault.TxConfirm";
     private final DataRepository mRepository;
     private final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
+    private final MutableLiveData<CasaSignature> observableCasaSignature = new MutableLiveData<>();
     private final MutableLiveData<Exception> parseTxException = new MutableLiveData<>();
     private final MutableLiveData<Boolean> addingAddress = new MutableLiveData<>();
     private final MutableLiveData<Integer> feeAttachCheckingResult = new MutableLiveData<>();
@@ -116,11 +121,17 @@ public class TxConfirmViewModel extends AndroidViewModel {
     private AuthenticateModal.OnVerify.VerifyToken token;
     private boolean isMultisig;
     private MultiSigWalletEntity wallet;
+    public MultiSigMode mode;
+    private String mfp;
+
+    public boolean isCasaMainnet = true;
 
     public TxConfirmViewModel(@NonNull Application application) {
         super(application);
         observableTx.setValue(null);
+        observableCasaSignature.setValue(null);
         mRepository = MainApplication.getApplication().getRepository();
+        mfp = new GetMasterFingerprintCallable().call();
     }
 
     public static <T> T[] concat(T[] first, T[] second) {
@@ -132,6 +143,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
 
     public MutableLiveData<TxEntity> getObservableTx() {
         return observableTx;
+    }
+
+    public MutableLiveData<CasaSignature> getObservableCasaSignature() {
+        return observableCasaSignature;
     }
 
     public MutableLiveData<Exception> parseTxException() {
@@ -153,21 +168,38 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 boolean isMultisig = transaction.isMultisig();
                 String walletFingerprint = null;
                 if (isMultisig) {
-                    if (object.has("btcTx")) {
-                        walletFingerprint = object.getJSONObject("btcTx").getString("wallet_fingerprint");
-                    } else if (object.has("xtnTx")) {
-                        walletFingerprint = object.getJSONObject("xtnTx").getString("wallet_fingerprint");
+                    if (mode.equals(MultiSigMode.LEGACY)) {
+                        if (object.has("btcTx")) {
+                            walletFingerprint = object.getJSONObject("btcTx").getString("wallet_fingerprint");
+                        } else if (object.has("xtnTx")) {
+                            walletFingerprint = object.getJSONObject("xtnTx").getString("wallet_fingerprint");
+                        }
                     }
                 }
                 if (transaction instanceof UtxoTx) {
                     if (!checkUtxoChangeAddress()) return;
                 }
-                TxEntity tx = isMultisig ? generateMultisigTxEntity(object, walletFingerprint) : generateTxEntity(object);
-                observableTx.postValue(tx);
-                if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
-                        || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
-                    feeAttackChecking(tx);
+                if (isMultisig) {
+                    if (mode.equals(MultiSigMode.LEGACY)) {
+                        TxEntity tx = generateMultisigTxEntity(object, walletFingerprint);
+                        observableTx.postValue(tx);
+                        if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
+                                || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
+                            feeAttackChecking(tx);
+                        }
+                    } else {
+                        CasaSignature sig = generateCasaSignature(object);
+                        observableCasaSignature.postValue(sig);
+                    }
+                } else {
+                    TxEntity tx = generateTxEntity(object);
+                    observableTx.postValue(tx);
+                    if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
+                            || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
+                        feeAttackChecking(tx);
+                    }
                 }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -256,6 +288,25 @@ public class TxConfirmViewModel extends AndroidViewModel {
         return tx;
     }
 
+    private CasaSignature generateCasaSignature(JSONObject object) throws JSONException {
+        CasaSignature sig = new CasaSignature();
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(20);
+        sig.setFrom(getMultiSigFromAddress());
+        sig.setTo(getToAddress());
+        sig.setAmount(nf.format(transaction.getAmount()) + " " + transaction.getUnit());
+        sig.setFee(nf.format(transaction.getFee()) + " BTC");
+        sig.setMemo(transaction.getMemo());
+        String signStatus = null;
+        if (object.has("btcTx")) {
+            signStatus = object.getJSONObject("btcTx").getString("signStatus");
+        } else if (object.has("xtnTx")) {
+            signStatus = object.getJSONObject("xtnTx").getString("signStatus");
+        }
+        sig.setSignStatus(signStatus);
+        return sig;
+    }
+
     public void parsePsbtBase64(String psbtBase64, boolean multisig) {
         AppExecutors.getInstance().networkIO().execute(() -> {
             Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
@@ -294,7 +345,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             } catch (JSONException e) {
                 e.printStackTrace();
                 parseTxException.postValue(new InvalidTransactionException("adapt failed,invalid psbt data"));
-            } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException e) {
+            } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException | NotMyCasaKeyException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             }
@@ -413,6 +464,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
     }
 
     private String getMultiSigFromAddress() {
+        if (mode.equals(MultiSigMode.CASA)) return "";
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String[] externalPath = Stream.of(paths)
                 .filter(this::isExternalMulisigPath)
@@ -677,17 +729,30 @@ public class TxConfirmViewModel extends AndroidViewModel {
 
                 @Override
                 public void onSuccess(String txId, String psbtB64) {
-                    TxEntity tx = observableTx.getValue();
-                    Objects.requireNonNull(tx);
-                    if (isMultisig) {
-                        updateTxSignStatus(tx);
+                    if (mode == null || mode.equals(MultiSigMode.LEGACY)) {
+                        TxEntity tx = observableTx.getValue();
+                        Objects.requireNonNull(tx);
+                        if (isMultisig) {
+                            updateTxSignStatus(tx);
+                        }
+                        if (TextUtils.isEmpty(txId)) {
+                            txId = "unknown_txid_" + Math.abs(tx.hashCode());
+                        }
+                        tx.setTxId(txId);
+                        tx.setSignedHex(psbtB64);
+                        mRepository.insertTx(tx);
+                    } else {
+                        CasaSignature casaSignature = observableCasaSignature.getValue();
+                        Objects.requireNonNull(casaSignature);
+                        if (TextUtils.isEmpty(txId)) {
+                            txId = "unknown_txid_" + Math.abs(casaSignature.hashCode());
+                        }
+                        updateCasaSignatureStatus(casaSignature);
+                        casaSignature.setTxId(txId);
+                        casaSignature.setSignedHex(psbtB64);
+                        Long id = mRepository.insertCasaSignature(casaSignature);
+                        casaSignature.setId(id);
                     }
-                    if (TextUtils.isEmpty(txId)) {
-                        txId = "unknown_txid_" + Math.abs(tx.hashCode());
-                    }
-                    tx.setTxId(txId);
-                    tx.setSignedHex(psbtB64);
-                    mRepository.insertTx(tx);
                     signState.postValue(STATE_SIGN_SUCCESS);
                     new ClearTokenCallable().call();
                 }
@@ -704,6 +769,15 @@ public class TxConfirmViewModel extends AndroidViewModel {
                     int reqSigNumber = Integer.parseInt(splits[1]);
                     int keyNumber = Integer.parseInt(splits[2]);
                     tx.setSignStatus((sigNumber + 1) + "-" + reqSigNumber + "-" + keyNumber);
+                }
+
+                private void updateCasaSignatureStatus(CasaSignature casaSignature) {
+                    String signStatus = casaSignature.getSignStatus();
+                    String[] splits = signStatus.split("-");
+                    int sigNumber = Integer.parseInt(splits[0]);
+                    int reqSigNumber = Integer.parseInt(splits[1]);
+                    int keyNumber = Integer.parseInt(splits[2]);
+                    casaSignature.setSignStatus((sigNumber + 1) + "-" + reqSigNumber + "-" + keyNumber);
                 }
             };
             callback.startSign();
@@ -764,6 +838,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
         }
     }
 
+    public String getPath() {
+        return transaction.getHdPath();
+    }
+
     private Signer[] initSigners() {
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String coinCode = transaction.getCoinCode();
@@ -776,7 +854,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             return null;
         }
 
-        if (transaction.isMultisig()) {
+        if (transaction.isMultisig() && mode.equals(MultiSigMode.LEGACY)) {
             for (int i = 0; i < distinctPaths.length; i++) {
                 String path = distinctPaths[i].replace(wallet.getExPubPath() + "/", "");
                 String[] index = path.split("/");
@@ -785,6 +863,17 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 String pubKey = Util.getPublicKeyHex(
                         ExtendPubkeyFormat.convertExtendPubkey(expub, ExtendPubkeyFormat.xpub),
                         Integer.parseInt(index[0]), Integer.parseInt(index[1]));
+                signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
+            }
+        } else if (transaction.isMultisig() && mode.equals(MultiSigMode.CASA)) {
+            for (int i = 0; i < distinctPaths.length; i++) {
+                int point = distinctPaths[i].lastIndexOf("'");
+                String XPubPath = distinctPaths[i].substring(0, point + 1);
+                String path = distinctPaths[i].replace(XPubPath + "/", "");
+                String[] index = path.split("/");
+                String expub = new GetExtendedPublicKeyCallable(XPubPath).call();
+                String pubKey = Util.deriveFromKey(
+                        expub, index);
                 signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
             }
         } else {
@@ -843,8 +932,16 @@ public class TxConfirmViewModel extends AndroidViewModel {
         return observableTx.getValue();
     }
 
+    public CasaSignature getSignedCasaSignature() {
+        return observableCasaSignature.getValue();
+    }
+
     public String getTxId() {
         return Objects.requireNonNull(observableTx.getValue()).getTxId();
+    }
+
+    public String getCasaSignatureId() {
+        return String.valueOf(Objects.requireNonNull(observableCasaSignature.getValue()).getId());
     }
 
     public String getTxHex() {
@@ -862,6 +959,10 @@ public class TxConfirmViewModel extends AndroidViewModel {
 
     public void setIsMultisig(boolean multisig) {
         this.isMultisig = multisig;
+    }
+
+    public void setMultisigMode(MultiSigMode multisigMode) {
+        mode = multisigMode;
     }
 
     static class PsbtTxAdapter {
@@ -974,7 +1075,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
         private String fingerprintsHash;
         private JSONObject object;
 
-        JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWalletException {
+        JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWalletException, NotMyCasaKeyException {
             object = new JSONObject();
             JSONArray inputs = new JSONArray();
             JSONArray outputs = new JSONArray();
@@ -986,11 +1087,13 @@ public class TxConfirmViewModel extends AndroidViewModel {
             object.put("inputs", inputs);
             object.put("outputs", outputs);
             object.put("multisig", true);
-            object.put("wallet_fingerprint", wallet != null ? wallet.getWalletFingerPrint() : null);
+            if (mode.equals(MultiSigMode.LEGACY)) {
+                object.put("wallet_fingerprint", wallet != null ? wallet.getWalletFingerPrint() : null);
+            }
             return object;
         }
 
-        private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException, NoMatchedMultisigWalletException {
+        private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException, NoMatchedMultisigWalletException, NotMyCasaKeyException {
             for (int i = 0; i < psbtInputs.length(); i++) {
                 JSONObject psbtInput = psbtInputs.getJSONObject(i);
                 JSONObject in = new JSONObject();
@@ -1027,46 +1130,74 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 //all input should have the same xpub info
                 if (!fingerprintsHash(fps).equals(fingerprintsHash)) break;
 
-                //find the exists multisig wallet match the xpub info
-                if (wallet == null) {
-                    List<MultiSigWalletEntity> wallets = mRepository.loadAllMultiSigWalletSync()
-                            .stream()
-                            .filter(w -> w.getTotal() == total && w.getThreshold() == threshold)
-                            .collect(Collectors.toList());
-                    for (MultiSigWalletEntity w : wallets) {
-                        if (w.getTotal() != total || w.getThreshold() != threshold) continue;
-                        JSONArray array = new JSONArray(w.getExPubs());
-                        List<String> walletFps = new ArrayList<>();
-                        List<String> walletRootXfps = new ArrayList<>();
-                        for (int k = 0; k < array.length(); k++) {
-                            JSONObject xpub = array.getJSONObject(k);
-                            walletFps.add(getExpubFingerprint(xpub.getString("xpub")));
-                            walletRootXfps.add(xpub.getString("xfp"));
-                        }
-                        if (fingerprintsHash(walletFps).equalsIgnoreCase(fingerprintsHash)
-                                || (fingerprintsHash(walletRootXfps).equalsIgnoreCase(fingerprintsHash)
-                                && hdPath.startsWith(w.getExPubPath()))) {
-                            wallet = w;
-                            break;
+                if (mode.equals(MultiSigMode.LEGACY)) {
+                    //find the exists multisig wallet match the xpub info
+                    if (wallet == null) {
+                        List<MultiSigWalletEntity> wallets = mRepository.loadAllMultiSigWalletSync()
+                                .stream()
+                                .filter(w -> w.getTotal() == total && w.getThreshold() == threshold)
+                                .collect(Collectors.toList());
+                        for (MultiSigWalletEntity w : wallets) {
+                            if (w.getTotal() != total || w.getThreshold() != threshold) continue;
+                            JSONArray array = new JSONArray(w.getExPubs());
+                            List<String> walletFps = new ArrayList<>();
+                            List<String> walletRootXfps = new ArrayList<>();
+                            for (int k = 0; k < array.length(); k++) {
+                                JSONObject xpub = array.getJSONObject(k);
+                                walletFps.add(getExpubFingerprint(xpub.getString("xpub")));
+                                walletRootXfps.add(xpub.getString("xfp"));
+                            }
+                            if (fingerprintsHash(walletFps).equalsIgnoreCase(fingerprintsHash)
+                                    || (fingerprintsHash(walletRootXfps).equalsIgnoreCase(fingerprintsHash)
+                                    && hdPath.startsWith(w.getExPubPath()))) {
+                                wallet = w;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if (wallet != null) {
-                    if (!hdPath.startsWith(wallet.getExPubPath())) {
-                        hdPath = wallet.getExPubPath() + hdPath.substring(1);
+                    if (wallet != null) {
+                        if (!hdPath.startsWith(wallet.getExPubPath())) {
+                            hdPath = wallet.getExPubPath() + hdPath.substring(1);
+                        }
+                        utxo.put("publicKey", findMyPubKey(bip32Derivation));
+                        utxo.put("value", psbtInput.optInt("value"));
+                        in.put("utxo", utxo);
+                        in.put("ownerKeyPath", hdPath);
+                        in.put("masterFingerprint", wallet.getBelongTo());
+                        inputs.put(in);
+                    } else {
+                        throw new NoMatchedMultisigWalletException("no matched multisig wallet");
                     }
-                    utxo.put("publicKey", findMyPubKey(bip32Derivation));
-                    utxo.put("value", psbtInput.optInt("value"));
-                    in.put("utxo", utxo);
-                    in.put("ownerKeyPath", hdPath);
-                    in.put("masterFingerprint", wallet.getBelongTo());
-                    inputs.put(in);
                 } else {
-                    throw new NoMatchedMultisigWalletException("no matched multisig wallet");
+                    String myCasaKey = findMyCasaKey(bip32Derivation);
+                    if (myCasaKey != null) {
+                        if (!hdPath.startsWith(MultiSig.CASA.getPath())) {
+                            hdPath = MultiSig.CASA.getPath() + hdPath.substring(1);
+                        }
+                        String path = hdPath.replace("m/", "");
+                        String[] index = path.split("/");
+                        isCasaMainnet = !index[1].equals("1'");
+                        utxo.put("publicKey", myCasaKey);
+                        utxo.put("value", psbtInput.optInt("value"));
+                        in.put("utxo", utxo);
+                        in.put("ownerKeyPath", hdPath);
+                        in.put("masterFingerprint", mfp);
+                        inputs.put(in);
+                    } else {
+                        throw new NotMyCasaKeyException("no matched casa key found");
+                    }
                 }
-
             }
+        }
+
+        private String findMyCasaKey(JSONArray bip32Derivation) throws JSONException {
+            for (int i = 0; i < bip32Derivation.length(); i++) {
+                if (mfp.equalsIgnoreCase(bip32Derivation.getJSONObject(i).getString("masterFingerprint"))) {
+                    return bip32Derivation.getJSONObject(i).getString("pubkey");
+                }
+            }
+            return null;
         }
 
         private String findMyPubKey(JSONArray bip32Derivation)
@@ -1106,10 +1237,16 @@ public class TxConfirmViewModel extends AndroidViewModel {
             for (int i = 0; i < psbtOutputs.length(); i++) {
                 JSONObject psbtOutput = psbtOutputs.getJSONObject(i);
                 JSONObject out = new JSONObject();
-                out.put("address", psbtOutput.getString("address"));
+                String address = psbtOutput.getString("address");
+                if(mode.equals(MultiSigMode.CASA)){
+                    if(!isCasaMainnet) {
+                        address = Util.convertAddressToTestnet(address);
+                    }
+                }
+                out.put("address", address);
                 out.put("value", psbtOutput.getInt("value"));
                 JSONArray bip32Derivation = psbtOutput.optJSONArray("hdPath");
-                if (bip32Derivation != null) {
+                if (bip32Derivation != null && mode.equals(MultiSigMode.LEGACY)) {
                     for (int j = 0; j < bip32Derivation.length(); j++) {
                         JSONObject item = bip32Derivation.getJSONObject(j);
                         String hdPath = item.getString("path");

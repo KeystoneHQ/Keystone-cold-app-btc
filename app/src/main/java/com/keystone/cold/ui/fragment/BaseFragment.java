@@ -31,10 +31,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.keystone.cold.R;
+import com.keystone.cold.databinding.CommonModalBinding;
+import com.keystone.cold.ui.modal.ModalDialog;
+
+import java.util.Objects;
 
 public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     private static final boolean DEBUG = false;
+    private ModalDialog dialog;
     protected final String TAG = getClass().getSimpleName();
 
     protected T mBinding;
@@ -141,7 +149,14 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
 
+    public MutableLiveData<String> getScanResult() {
+        return Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().getLiveData("scan_result");
+    }
+
+    public void setScanResult(String value) {
+        Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().set("scan_result", value);
     }
 
     public void popBackStack(@IdRes int id, boolean inclusive) {
@@ -162,6 +177,36 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     public AppCompatActivity getHostActivity() {
         return mActivity;
+    }
+
+    public void alert(String message) {
+        alert(null, message);
+    }
+
+    public void alert(String title, String message) {
+        alert(title, message, null);
+    }
+
+    public void alert(String title, String message, Runnable run) {
+        dialog = ModalDialog.newInstance();
+        CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
+                R.layout.common_modal, null, false);
+        if (title != null) {
+            binding.title.setText(title);
+        } else {
+            binding.title.setText(R.string.fail);
+        }
+        binding.subTitle.setText(message);
+        binding.close.setVisibility(View.GONE);
+        binding.confirm.setText(R.string.know);
+        binding.confirm.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (run != null) {
+                run.run();
+            }
+        });
+        dialog.setBinding(binding);
+        dialog.show(mActivity.getSupportFragmentManager(), "failed");
     }
 }
 

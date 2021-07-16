@@ -22,6 +22,7 @@ package com.keystone.cold.ui.fragment.multisigs.legacy;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,6 @@ import com.keystone.cold.databinding.XpubFileItemBinding;
 import com.keystone.cold.databinding.XpubInputBinding;
 import com.keystone.cold.databinding.XpubListBinding;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.FileUtils;
 import com.keystone.cold.viewmodel.CollectXpubViewModel;
@@ -120,7 +120,7 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     array.put(xpub);
                 }
             }
-            viewModel.createMultisigWallet(threshold, account, null, array, "Keystone")
+            legacyMultiSigViewModel.createMultisigWallet(threshold, account, null, array, "Keystone")
                     .observe(this, walletEntity -> {
                         if (walletEntity != null) {
                             Bundle data = new Bundle();
@@ -140,7 +140,7 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
         total = bundle.getInt("total");
         threshold = bundle.getInt("threshold");
         path = bundle.getString("path");
-        account = com.keystone.coinlib.accounts.MultiSig.ofPath(path, !Utilities.isMainNet(mActivity)).get(0);
+        account = com.keystone.coinlib.accounts.MultiSig.ofPath(path, Utilities.isMainNet(mActivity)).get(0);
     }
 
     private String getAddressTypeString(Account account) {

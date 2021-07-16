@@ -34,7 +34,6 @@ import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.databinding.MultisigWalletItemBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.fragment.setup.PreImportFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
@@ -60,7 +59,7 @@ public class ManageWalletFragment extends MultiSigBaseFragment<ManageWalletBindi
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         adapter = new Adapter(mActivity);
         mBinding.list.setAdapter(adapter);
-        viewModel.getAllMultiSigWallet().observe(this, multiSigWalletEntities -> {
+        legacyMultiSigViewModel.getAllMultiSigWallet().observe(this, multiSigWalletEntities -> {
             multiSigWalletEntities = filterNetwork(multiSigWalletEntities);
             if (!multiSigWalletEntities.isEmpty()) {
                 adapter.setItems(multiSigWalletEntities);
@@ -84,7 +83,7 @@ public class ManageWalletFragment extends MultiSigBaseFragment<ManageWalletBindi
     }
 
     private void subscribeGetCurrentWallet() {
-        viewModel.getCurrentWallet().observe(this, w -> {
+        legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
             if (w != null) {
                 defaultWalletFp = w.getWalletFingerPrint();
                 adapter.notifyDataSetChanged();
@@ -111,7 +110,7 @@ public class ManageWalletFragment extends MultiSigBaseFragment<ManageWalletBindi
 
             AuthenticateModal.show(mActivity, getString(R.string.password_modal_title), "",
                     token -> AppExecutors.getInstance().diskIO().execute(() -> {
-                        viewModel.deleteWallet(item.getWalletFingerPrint());
+                        legacyMultiSigViewModel.deleteWallet(item.getWalletFingerPrint());
                         mActivity.runOnUiThread(ManageWalletFragment.this::subscribeGetCurrentWallet);
                     }),
                     forgetPassword);
@@ -147,7 +146,7 @@ public class ManageWalletFragment extends MultiSigBaseFragment<ManageWalletBindi
             });
             binding.root.setOnClickListener(v -> {
                 defaultWalletFp = item.getWalletFingerPrint();
-                Utilities.setDefaultMultisigWallet(mActivity, viewModel.getXfp(), defaultWalletFp);
+                Utilities.setDefaultMultisigWallet(mActivity, legacyMultiSigViewModel.getXfp(), defaultWalletFp);
                 adapter.notifyDataSetChanged();
             });
         }

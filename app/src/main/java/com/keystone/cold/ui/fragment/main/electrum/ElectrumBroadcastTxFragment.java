@@ -49,7 +49,7 @@ public class ElectrumBroadcastTxFragment extends BaseFragment<BroadcastElectrumT
     private TxEntity txEntity;
     private boolean isMultisig;
 
-    static void showElectrumInfo(AppCompatActivity activity) {
+    public static void showElectrumInfo(AppCompatActivity activity) {
         ModalDialog modalDialog = ModalDialog.newInstance();
         CommonModalBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(activity), R.layout.common_modal,
@@ -84,7 +84,7 @@ public class ElectrumBroadcastTxFragment extends BaseFragment<BroadcastElectrumT
                 mBinding.status.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
             }
             if (isMultisig) {
-                navUp = v -> popBackStack(R.id.multisigFragment, false);
+                navUp = v -> popBackStack(R.id.legacyMultisigFragment, false);
                 mBinding.toolbar.setNavigationOnClickListener(navUp);
                 mBinding.complete.setOnClickListener(navUp);
             }
@@ -94,7 +94,7 @@ public class ElectrumBroadcastTxFragment extends BaseFragment<BroadcastElectrumT
             if (txEntity != null) {
                 Runnable onSuccess;
                 if (isMultisig) {
-                    onSuccess = () -> popBackStack(R.id.multisigFragment, false);
+                    onSuccess = () -> popBackStack(R.id.legacyMultisigFragment, false);
                 } else {
                     onSuccess = () -> popBackStack(R.id.assetFragment, false);
                 }

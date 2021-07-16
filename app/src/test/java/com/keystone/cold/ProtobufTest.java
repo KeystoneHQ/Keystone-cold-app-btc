@@ -182,6 +182,7 @@ public class ProtobufTest {
         System.out.println(Hex.toHexString(index));
         System.out.println(Hex.toHexString(key));
         System.out.println(Hex.toHexString(chainCode));
+        System.out.println(Hex.toHexString(new B58().encodeToBytes(xpubBytes)));
     }
 
     public static byte[] encrypt( byte[] content, byte[] publicKey ) throws Exception {

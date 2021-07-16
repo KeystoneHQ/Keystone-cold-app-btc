@@ -17,7 +17,7 @@
  *
  */
 
-package com.keystone.cold.ui.fragment.multisigs.common;
+package com.keystone.cold.ui.fragment.multisigs.legacy;
 
 import android.os.Bundle;
 import android.view.View;
@@ -30,15 +30,16 @@ import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 
 public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> {
-    protected LegacyMultiSigViewModel viewModel;
+    protected LegacyMultiSigViewModel legacyMultiSigViewModel;
 
     @Override
     protected void init(View view) {
-        viewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+        legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-
     }
+
+
 }

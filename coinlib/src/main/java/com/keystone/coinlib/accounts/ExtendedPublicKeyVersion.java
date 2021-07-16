@@ -56,13 +56,7 @@ public enum ExtendedPublicKeyVersion {
     }
 
     public static String convertXPubVersion(String xPub, ExtendedPublicKeyVersion targetVersion) {
-        int header = targetVersion.getVersion();
-        byte[] bytes = Base58.decodeChecked(xPub);
-        byte[] result = new byte[bytes.length + 4];
-        System.arraycopy(int2bytes(header), 0, bytes, 0, 4);
-        byte[] checksum = Sha256Hash.hashTwice(bytes, 0, bytes.length);
-        System.arraycopy(bytes, 0, result, 0, bytes.length);
-        System.arraycopy(checksum, 0, result, bytes.length, 4);
-        return Base58.encode(result);
+        ExtendedPublicKey extendedPublicKey = new ExtendedPublicKey(xPub);
+        return extendedPublicKey.toVersion(targetVersion);
     }
 }

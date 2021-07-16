@@ -12,13 +12,13 @@ public enum Account {
     SINGLE_P2SH_P2WPKH_TEST("m/49'/1'/0'", "P2SH-P2WPKH", false, false),
     SINGLE_P2WPKH_TEST("m/84'/1'/0'", "P2WPKH", false, false),
 
-    MULTI_P2WSH("m/48'/0'/0'/2'", "P2WSH", true, true),
-    MULTI_P2SH_P2WSH("m/48'/0'/0'/1'", "P2SH-P2WSH", true, true),
     MULTI_P2SH("m/45'", "P2SH", true, true),
+    MULTI_P2SH_P2WSH("m/48'/0'/0'/1'", "P2SH-P2WSH", true, true),
+    MULTI_P2WSH("m/48'/0'/0'/2'", "P2WSH", true, true),
 
-    MULTI_P2WSH_TEST("m/48'/1'/0'/2'", "P2WSH", true, false),
-    MULTI_P2SH_P2WSH_TEST("m/48'/1'/0'/1'", "P2SH-P2WSH", true, false),
     MULTI_P2SH_TEST("m/45'", "P2SH", true, false),
+    MULTI_P2SH_P2WSH_TEST("m/48'/1'/0'/1'", "P2SH-P2WSH", true, false),
+    MULTI_P2WSH_TEST("m/48'/1'/0'/2'", "P2WSH", true, false),
 
     MULTI_CASA("m", "P2SH-P2WSH", true, true);
 

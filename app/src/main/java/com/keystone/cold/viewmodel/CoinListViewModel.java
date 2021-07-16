@@ -29,6 +29,7 @@ import com.keystone.cold.AppExecutors;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.db.entity.AccountEntity;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.protocol.EncodeConfig;
@@ -51,6 +52,10 @@ public class CoinListViewModel extends AndroidViewModel {
 
     public LiveData<TxEntity> loadTx(String txId) {
         return mRepository.loadTx(txId);
+    }
+
+    public LiveData<CasaSignature> loadCasaSignature(String id) {
+        return mRepository.loadCasaSignature(id);
     }
 
     public LiveData<List<TxEntity>> loadTxs(String coinId) {

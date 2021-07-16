@@ -68,6 +68,7 @@
     <string name="version_update_hint"><![CDATA[Please visit: <font color="#00cdc3">https://keyst.one/fw<font/> to check for firmware updates. If you are not using the latest firmware, download it from the official Keystone website and save it on a microSD card (FAT32 format). Transfer the file to your device as shown in the image below. (microSD card not included with purchase.)]]></string>
     <string name="version">Version </string>
     <string name="setting_language">Language</string>
+    <string name="setting_multisig_mode">Select Wallet</string>
     <string name="setting_vibrator">Vibrate On / Off</string>
     <string name="setting_brightness">Screen Brightness</string>
     <string name="setting_screen_off_time">Screen Timeout Length</string>
@@ -122,6 +123,30 @@
         <item>1</item>
     </string-array>
 
+    <string name="multisig_legacy">Generic</string>
+    <string name="multisig_casa">Casa</string>
+
+    <string name="casa_operation_health_check">Perform Health Check</string>
+    <string name="casa_operation_export">Export XPUB</string>
+
+    <string name="casa_sign_message">Sign Message</string>
+    <string name="casa_sign_message_result">Export signature</string>
+    <string name="casa_sign_message_result_export">Using Casa scan the QR Code to get signature</string>
+    <string name="casa_sign_message_message">Message: </string>
+    <string name="casa_sign_message_address">Associated Address: </string>
+    <string name="casa_sign_message_path">Using the key associated with address: </string>
+
+    <string name="casa_operation">OPERATION</string>
+    <string name="casa_signatures">SIGNATURES</string>
+
+    <string name="scan_qrcode_with_casa">Scan the QR code using Casa</string>
+    <string name="scan_qrcode_with_casa_hint_title">How to export XPub to Casa</string>
+    <string name="scan_qrcode_with_casa_hint"><![CDATA[
+        1. Open Casa;<br>
+        2. Touch Hardware Key;<br>
+        3. Select "Using QR Code(Keystone)"<br>
+        4. ouch "Scan QR Code of XPUB" and scan the QR Code displayed on Keystone.<br>
+    ]]></string>
 
     <string-array name="address_format">
         <item>Nested SegWit（P2SH-P2WPKH）</item>

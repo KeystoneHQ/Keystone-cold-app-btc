@@ -34,7 +34,6 @@ import com.keystone.cold.databinding.FileListBinding;
 import com.keystone.cold.databinding.FileListItemBinding;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.electrum.Callback;
-import com.keystone.cold.ui.fragment.multisigs.common.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 
 import org.json.JSONObject;
@@ -77,7 +76,7 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
             mBinding.emptyMessage.setText(R.string.no_sdcard_hint);
         } else {
             mBinding.list.setAdapter(adapter);
-            viewModel.loadWalletFile().observe(this, files -> {
+            legacyMultiSigViewModel.loadWalletFile().observe(this, files -> {
                 walletFiles = files;
                 if (files.size() > 0) {
                     List<String> fileNames = new ArrayList<>(files.keySet());

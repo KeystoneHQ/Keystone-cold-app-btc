@@ -38,7 +38,7 @@ import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.protocol.ZipUtil;
 import com.keystone.cold.protocol.parser.ProtoParser;
-import com.keystone.cold.ui.fragment.main.QRCodeScanFragment;
+import com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment;
 import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
 import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
@@ -46,6 +46,7 @@ import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoCoinInfo;
 import com.sparrowwallet.hummingbird.registry.CryptoHDKey;
@@ -302,8 +303,12 @@ public class QrScanViewModel extends AndroidViewModel {
 
     private void handleSignPsbt(String hex) {
         Bundle bundle = new Bundle();
+        boolean isMultisig = fragment.getPurpose() == QrScanPurpose.MULTISIG_TX;
         bundle.putString("psbt_base64", Base64.toBase64String(Hex.decode(hex)));
-        bundle.putBoolean("multisig", fragment.getPurpose() == QrScanPurpose.MULTISIG_TX);
+        bundle.putBoolean("multisig", isMultisig);
+        if(isMultisig){
+            bundle.putString("multisig_mode", MultiSigMode.LEGACY.name());
+        }
         fragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
     }
 

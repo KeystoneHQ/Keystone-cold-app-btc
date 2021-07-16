@@ -28,11 +28,13 @@ import androidx.lifecycle.ViewModelProviders;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.BroadcastPsbtTxFragmentBinding;
 import com.keystone.cold.databinding.CommonModalBinding;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.viewmodel.CoinListViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
 import org.spongycastle.util.encoders.Base64;
@@ -49,9 +51,12 @@ import static com.keystone.cold.viewmodel.WatchWallet.getWatchWallet;
 public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmentBinding> {
 
     public static final String KEY_TXID = "txId";
+    public static final String KEY_MULTISIG_MODE = "multisig_mode";
     private TxEntity txEntity;
+    private CasaSignature casaSignature;
     private boolean isMultisig;
     private boolean signed;
+    private MultiSigMode multiSigMode;
 
     @Override
     protected int setView() {
@@ -60,44 +65,72 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
 
     @Override
     protected void init(View view) {
-        Bundle data = Objects.requireNonNull(getArguments());
+        Bundle data = requireArguments();
         CoinListViewModel viewModel = ViewModelProviders.of(mActivity).get(CoinListViewModel.class);
-        viewModel.loadTx(data.getString(KEY_TXID)).observe(this, txEntity -> {
-            this.txEntity = txEntity;
-            isMultisig = txEntity.getSignId().equals(PSBT_MULTISIG_SIGN_ID);
-            mBinding.setCoinCode(txEntity.getCoinCode());
-            WatchWallet wallet = getWatchWallet(mActivity);
-            if (isMultisig) {
-                byte[] psbtBytes = Base64.decode(txEntity.getSignedHex());
-                mBinding.qrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
+        String mode = data.getString(KEY_MULTISIG_MODE);
+        boolean isCasaMultisig = false;
+        boolean isLegacyMultisig = false;
+        if (mode != null) {
+            isMultisig = true;
+            multiSigMode = MultiSigMode.valueOf(mode);
+            if (multiSigMode.equals(MultiSigMode.LEGACY)) {
+                isLegacyMultisig = true;
             } else {
-                switch (wallet) {
-                    case GENERIC:
-                    case SPARROW:
-                    case BTCPAY:
-                    case BLUE: {
-                        byte[] psbtBytes = Base64.decode(txEntity.getSignedHex());
-                        mBinding.qrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
-                        break;
-                    }
-                    default:
-                        mBinding.qrcodeLayout.qrcode.setData(Hex.toHexString(Base64.decode(txEntity.getSignedHex())));
-                }
+                isCasaMultisig = true;
             }
-            updateUI();
-        });
+        }
+
+        if (!isMultisig || isLegacyMultisig) {
+            viewModel.loadTx(data.getString(KEY_TXID)).observe(this, txEntity -> {
+                this.txEntity = txEntity;
+                mBinding.setCoinCode(txEntity.getCoinCode());
+                WatchWallet wallet = getWatchWallet(mActivity);
+                if (isMultisig) {
+                    byte[] psbtBytes = Base64.decode(txEntity.getSignedHex());
+                    mBinding.qrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
+                } else {
+                    switch (wallet) {
+                        case GENERIC:
+                        case SPARROW:
+                        case BTCPAY:
+                        case BLUE: {
+                            byte[] psbtBytes = Base64.decode(txEntity.getSignedHex());
+                            mBinding.qrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
+                            break;
+                        }
+                        default:
+                            mBinding.qrcodeLayout.qrcode.setData(Hex.toHexString(Base64.decode(txEntity.getSignedHex())));
+                    }
+                }
+                updateUI();
+            });
+        } else if (isCasaMultisig) {
+            viewModel.loadCasaSignature(data.getString(KEY_TXID)).observe(this, casaSignature -> {
+                this.casaSignature = casaSignature;
+                mBinding.setCoinCode("BTC");
+                byte[] psbtBytes = Base64.decode(casaSignature.getSignedHex());
+                mBinding.qrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
+                updateUI();
+            });
+        }
+
     }
 
     private void updateUI() {
         View.OnClickListener goHome;
         if (isMultisig) {
-            goHome = v -> popBackStack(R.id.multisigFragment, false);
+            if (multiSigMode.equals(MultiSigMode.LEGACY)) {
+                goHome = v -> popBackStack(R.id.legacyMultisigFragment, false);
+                mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
+            } else {
+                goHome = v -> popBackStack(R.id.casaMultisigFragment, false);
+                mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(casaSignature));
+            }
             mBinding.toolbarTitle.setText(getString(R.string.export_tx));
             mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
             mBinding.exportToSdcard.setVisibility(View.VISIBLE);
             mBinding.exportToSdcard.setOnClickListener(v ->
                     showExportPsbtDialog(mActivity, txEntity, null));
-            mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
             if (signed) {
                 mBinding.scanHint.setText(R.string.broadcast_multisig_tx_hint);
             } else {
@@ -148,6 +181,26 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
     }
 
     private String getSignStatus(TxEntity txEntity) {
+        String signStatus = txEntity.getSignStatus();
+
+        String[] splits = signStatus.split("-");
+        int sigNumber = Integer.parseInt(splits[0]);
+        int reqSigNumber = Integer.parseInt(splits[1]);
+
+        String text;
+        if (sigNumber == 0) {
+            text = getString(R.string.unsigned);
+        } else if (sigNumber < reqSigNumber) {
+            text = getString(R.string.partial_signed);
+        } else {
+            text = getString(R.string.signed);
+            signed = true;
+        }
+
+        return text;
+    }
+
+    private String getSignStatus(CasaSignature txEntity) {
         String signStatus = txEntity.getSignStatus();
 
         String[] splits = signStatus.split("-");
