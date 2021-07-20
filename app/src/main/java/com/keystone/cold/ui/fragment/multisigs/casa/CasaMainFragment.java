@@ -14,11 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
-import com.keystone.coinlib.Util;
-import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
-import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
-import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.databinding.CasaListItemBinding;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.db.entity.CasaSignature;

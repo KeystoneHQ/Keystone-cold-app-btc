@@ -47,7 +47,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         implements SurfaceHolder.Callback, Host {
     public static final String TAG = "ScannerFragment";
     private CameraManager mCameraManager;
-    private CaptureHandler mHandler;
+    private CaptureHandler captureHandler;
     private boolean hasSurface;
     private ZxingConfig mConfig;
     private SurfaceHolder mSurfaceHolder;
@@ -57,6 +57,8 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     private ScannerViewModel scannerViewModel;
     private ScannerState scannerState;
+
+    private final Handler handler = new Handler();
 
     @Override
     protected int setView() {
@@ -112,9 +114,9 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     @Override
     public void onPause() {
         super.onPause();
-        if (mHandler != null) {
-            mHandler.quitSynchronously();
-            mHandler = null;
+        if (captureHandler != null) {
+            captureHandler.quitSynchronously();
+            captureHandler = null;
         }
         mCameraManager.closeDriver();
 
@@ -153,8 +155,8 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         }
         try {
             mCameraManager.openDriver(surfaceHolder);
-            if (mHandler == null) {
-                mHandler = new CaptureHandler(this, mCameraManager);
+            if (captureHandler == null) {
+                captureHandler = new CaptureHandler(this, mCameraManager);
             }
         } catch (IOException ioe) {
             Log.w(TAG, ioe);
@@ -168,27 +170,23 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         return mConfig;
     }
 
-    private void runInMainThread(Runnable runnable) {
-        AppExecutors.getInstance().mainThread().execute(runnable);
-    }
-
     private void runInSubThread(Runnable runnable) {
         AppExecutors.getInstance().diskIO().execute(runnable);
     }
 
     @Override
     public void navigateUp() {
-        runInMainThread(super::navigateUp);
+        handler.post(super::navigateUp);
     }
 
     @Override
     public void navigate(int id) {
-        runInMainThread(() -> super.navigate(id));
+        handler.post(() -> super.navigate(id));
     }
 
     @Override
     public void navigate(int id, Bundle data) {
-        runInMainThread(() -> super.navigate(id, data));
+        handler.post(() -> super.navigate(id, data));
     }
 
     @Override
@@ -238,14 +236,14 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void alert(String title, String message, Runnable run) {
-        runInMainThread(() -> {
+        handler.post(() -> {
             super.alert(title, message, () -> {
                 if (run != null) {
                     run.run();
                 } else {
                     mBinding.scanProgress.setText("");
-                    if (mHandler != null) {
-                        mHandler.restartPreviewAndDecode();
+                    if (captureHandler != null) {
+                        captureHandler.restartPreviewAndDecode();
                     }
                 }
             });
@@ -265,7 +263,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public Handler getHandler() {
-        return mHandler;
+        return captureHandler;
     }
 
 }
