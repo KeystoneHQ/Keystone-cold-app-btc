@@ -867,7 +867,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
             }
         } else if (transaction.isMultisig() && mode.equals(MultiSigMode.CASA)) {
             for (int i = 0; i < distinctPaths.length; i++) {
-                int point = distinctPaths[i].lastIndexOf("'");
+                int point = Math.max(distinctPaths[i].lastIndexOf("'"), 0);
                 String XPubPath = distinctPaths[i].substring(0, point + 1);
                 String path = distinctPaths[i].replace(XPubPath + "/", "");
                 String[] index = path.split("/");
@@ -1238,8 +1238,8 @@ public class TxConfirmViewModel extends AndroidViewModel {
                 JSONObject psbtOutput = psbtOutputs.getJSONObject(i);
                 JSONObject out = new JSONObject();
                 String address = psbtOutput.getString("address");
-                if(mode.equals(MultiSigMode.CASA)){
-                    if(!isCasaMainnet) {
+                if (mode.equals(MultiSigMode.CASA)) {
+                    if (!isCasaMainnet) {
                         address = Util.convertAddressToTestnet(address);
                     }
                 }
