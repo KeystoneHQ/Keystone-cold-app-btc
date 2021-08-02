@@ -26,9 +26,6 @@
         android:label="ScannerFragment"
         tools:layout="@layout/qrcode_scan_fragment">
         <action
-            android:id="@+id/action_to_webAuthResultFragment"
-            app:destination="@id/webAuthResultFragment" />
-        <action
             android:id="@+id/action_scanner_to_casaSignMessageFragment"
             app:destination="@id/casaSignMessageFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -58,6 +55,16 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/import_multisig_wallet"
+            app:destination="@id/importWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_QRCodeScan_to_result"
+            app:destination="@id/webAuthResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/patternLockFragment"

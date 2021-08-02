@@ -2,6 +2,7 @@ package com.keystone.cold.ui.fragment.main.scan.scanner;
 
 
 import com.sparrowwallet.hummingbird.UR;
+import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
 import org.spongycastle.util.encoders.Hex;
@@ -16,7 +17,8 @@ import co.nstant.in.cbor.model.DataItem;
 public enum ScanResultTypes {
     PLAIN_TEXT,
     UR_BYTES,
-    UR_CRYPTO_PSBT;
+    UR_CRYPTO_PSBT,
+    CRYPTO_ACCOUNT;
 
 
     public boolean isType(String text) {
@@ -31,6 +33,8 @@ public enum ScanResultTypes {
                     return decodeResult instanceof CryptoPSBT;
                 case UR_BYTES:
                     return decodeResult instanceof byte[];
+                case CRYPTO_ACCOUNT:
+                    return decodeResult instanceof CryptoAccount;
                 default:
                     return false;
             }

@@ -35,6 +35,15 @@
             app:destination="@id/setPasswordFragment" />
     </fragment>
     <fragment
+        android:id="@id/ScannerFragment"
+        android:name="com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment"
+        android:label="ScannerFragment"
+        tools:layout="@layout/qrcode_scan_fragment">
+        <action
+            android:id="@+id/action_to_webAuthResultFragment"
+            app:destination="@id/webAuthResultFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/setupVaultFragment"
         android:name="com.keystone.cold.ui.fragment.setup.SetupVaultFragment"
         android:label="SetupVaultFragment"

@@ -39,6 +39,7 @@ import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.accounts.Account;
 import com.keystone.coinlib.accounts.ExtendedPublicKeyVersion;
 import com.keystone.coinlib.accounts.MultiSig;
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.CollectExpubBinding;
@@ -56,7 +57,6 @@ import com.keystone.cold.update.utils.FileUtils;
 import com.keystone.cold.viewmodel.CollectXpubViewModel;
 import com.keystone.cold.viewmodel.SharedDataViewModel;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
-import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoOutput;
@@ -64,11 +64,10 @@ import com.sparrowwallet.hummingbird.registry.CryptoOutput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -221,44 +220,36 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
             }
         });
         ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT,
-                        ScanResultTypes.UR_BYTES)) {
+                .setState(new ScannerState(Collections.singletonList(ScanResultTypes.CRYPTO_ACCOUNT)) {
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
-                        if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
-                            mFragment.navigateUp();
-                        } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
-                            byte[] bytes = (byte[]) result.resolve();
-                            String hex = Hex.toHexString(bytes);
-                            try {
-                                if (solveBytes(viewModel, hex)) {
-                                    mFragment.navigateUp();
-                                }
-                            } catch (CollectExPubException e) {
-                                e.printStackTrace();
-                                showCommonModal(mFragment.getHostActivity(),
+                        if (result.getType().equals(ScanResultTypes.CRYPTO_ACCOUNT)) {
+                            if (solveBytes(viewModel, result.getData())) {
+                                mFragment.navigateUp();
+                                return;
+                            }
+                        }
+                        AppExecutors.getInstance().mainThread().execute(() ->
+                                showCommonModal(mActivity,
                                         getString(R.string.invalid_xpub_file),
                                         getString(R.string.invalid_xpub_file_hint),
-                                        getString(R.string.know), null);
-                            }
-                        } else {
-                            throw new UnknowQrCodeException("not support bc32 qrcode in current wallet mode");
-                        }
+                                        getString(R.string.know), null));
+                        mFragment.navigateUp();
                     }
                 });
         navigate(R.id.action_to_scanner);
     }
 
-    private boolean solveBytes(SharedDataViewModel viewModel, String hex) throws CollectExPubException, JSONException {
-        CryptoAccount cryptoAccount = collectXpubViewModel.decodeCryptoAccount(hex);
+    private boolean solveBytes(SharedDataViewModel viewModel, String data) throws CollectExPubException, JSONException {
+        CryptoAccount cryptoAccount = collectXpubViewModel.decodeCryptoAccount(data);
         Account targetAccount = viewModel.getTargetMultiSigAccount();
-        CryptoOutput cryptoOutput = collectXpubViewModel.decodeCryptoOutput(hex);
+        CryptoOutput cryptoOutput = collectXpubViewModel.decodeCryptoOutput(data);
         if (cryptoAccount != null) {
             cryptoOutput = collectXpubViewModel.collectMultiSigCryptoOutputFromCryptoAccount(cryptoAccount, targetAccount);
         }
         if (cryptoOutput != null) {
             String jsonStr = collectXpubViewModel.handleCollectExPubWithCryptoOutput(cryptoOutput);
-            viewModel.updateScanResult(jsonStr);
+            AppExecutors.getInstance().mainThread().execute(() -> viewModel.updateScanResult(jsonStr));
             return true;
         } else {
             throw new CollectExPubException("Cannot find any xpub");

@@ -77,13 +77,16 @@ import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.EncoderException;
 import org.spongycastle.util.encoders.Hex;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
 import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_ID;
 import static com.keystone.cold.ui.fragment.main.TxConfirmFragment.KEY_TX_DATA;
+import static com.keystone.cold.ui.fragment.setup.WebAuthResultFragment.WEB_AUTH_DATA;
 import static com.keystone.cold.viewmodel.GlobalViewModel.getAddressType;
 import static com.keystone.cold.viewmodel.WatchWallet.getWatchWallet;
 
@@ -132,6 +135,7 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                                 mFragment.alert(getString(R.string.unsupported_qrcode));
                             }
                         } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
+                            if (checkAuth(result)) return;
                             byte[] bytes = (byte[]) result.resolve();
                             String hex = Hex.toHexString(bytes);
                             if (decodeAsProtobuf(hex) != null) {
@@ -159,6 +163,24 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         } else {
                             throw new UnknowQrCodeException("not support bc32 qrcode in current wallet mode");
                         }
+                    }
+
+                    private boolean checkAuth(ScanResult result) {
+                        try {
+                            JSONObject object = new JSONObject(new String((byte[]) result.resolve(), StandardCharsets.UTF_8));
+                            JSONObject webAuth = object.optJSONObject("data");
+                            if (webAuth != null && webAuth.optString("type").equals("webAuth")) {
+                                String data = webAuth.getString("data");
+                                Bundle bundle = new Bundle();
+                                bundle.putString(WEB_AUTH_DATA, data);
+                                bundle.putBoolean(IS_SETUP_VAULT, false);
+                                mFragment.navigate(R.id.action_QRCodeScan_to_result, bundle);
+                                return true;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return false;
                     }
                 });
     }
