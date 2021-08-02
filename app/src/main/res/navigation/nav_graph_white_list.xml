@@ -63,18 +63,13 @@
             app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@id/LegacyQRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
-        android:label="QRCodeScanFragment"
-        tools:layout="@layout/qrcode_scan_fragment" />
-    <fragment
         android:id="@+id/addWhiteListFragment"
         android:name="com.keystone.cold.ui.fragment.whitelist.AddWhiteListFragment"
         android:label="AddWhiteListFragment"
         tools:layout="@layout/add_white_list">
         <action
-            android:id="@+id/add_white_list_scan"
-            app:destination="@id/LegacyQRCodeScanFragment"
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
