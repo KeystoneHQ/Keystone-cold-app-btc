@@ -618,8 +618,8 @@
             app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
-            android:id="@+id/action_scan_multisig_wallet"
-            app:destination="@id/LegacyQRCodeScanFragment"
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
