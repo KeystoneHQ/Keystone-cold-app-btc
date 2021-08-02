@@ -430,32 +430,31 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
         String from;
         if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             from = txEntity.getFrom();
+            List<TransactionItem> items = new ArrayList<>();
+            try {
+                JSONArray inputs = new JSONArray(from);
+                for (int i = 0; i < inputs.length(); i++) {
+                    JSONObject out = inputs.getJSONObject(i);
+                    items.add(new TransactionItem(i,
+                            out.getLong("value"),
+                            out.getString("address"),
+                            txEntity.getCoinCode()));
+                }
+            } catch (JSONException e) {
+                return;
+            }
+            if (items.size() == 0) {
+                mBinding.txDetail.arrowDown.setVisibility(View.GONE);
+            }
+            TransactionItemAdapter adapter
+                    = new TransactionItemAdapter(mActivity,
+                    TransactionItem.ItemType.INPUT);
+            adapter.setItems(items);
+            mBinding.txDetail.fromList.setVisibility(View.VISIBLE);
+            mBinding.txDetail.fromList.setAdapter(adapter);
         } else {
             mBinding.txDetail.arrowDown.setVisibility(View.GONE);
-            return;
         }
-        List<TransactionItem> items = new ArrayList<>();
-        try {
-            JSONArray inputs = new JSONArray(from);
-            for (int i = 0; i < inputs.length(); i++) {
-                JSONObject out = inputs.getJSONObject(i);
-                items.add(new TransactionItem(i,
-                        out.getLong("value"),
-                        out.getString("address"),
-                        casaSignature.getCoinCode()));
-            }
-        } catch (JSONException e) {
-            return;
-        }
-        if (items.size() == 0) {
-            mBinding.txDetail.arrowDown.setVisibility(View.GONE);
-        }
-        TransactionItemAdapter adapter
-                = new TransactionItemAdapter(mActivity,
-                TransactionItem.ItemType.INPUT);
-        adapter.setItems(items);
-        mBinding.txDetail.fromList.setVisibility(View.VISIBLE);
-        mBinding.txDetail.fromList.setAdapter(adapter);
     }
 
     protected void subscribeSignState() {
