@@ -353,9 +353,9 @@ public class QrScanViewModel extends AndroidViewModel {
         bundle.putString(WEB_AUTH_DATA, data);
         bundle.putBoolean(IS_SETUP_VAULT, isSetupVault);
         if (isSetupVault) {
-            fragment.navigate(R.id.action_to_webAuthResultFragment, bundle);
+//            fragment.navigate(R.id.action_to_webAuthResultFragment, bundle);
         } else {
-            fragment.navigate(R.id.action_QRCodeScan_to_result, bundle);
+//            fragment.navigate(R.id.action_QRCodeScan_to_result, bundle);
         }
     }
 
