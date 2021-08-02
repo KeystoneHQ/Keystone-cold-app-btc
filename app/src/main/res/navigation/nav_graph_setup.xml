@@ -28,20 +28,11 @@
         android:label="WebAuthFragment"
         tools:layout="@layout/web_auth">
         <action
-            android:id="@+id/webAuth_to_QRCodeScan"
-            app:destination="@id/LegacyQRCodeScanFragment" />
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"/>
         <action
             android:id="@+id/action_webAuthFragment_to_setPasswordFragment"
             app:destination="@id/setPasswordFragment" />
-    </fragment>
-    <fragment
-        android:id="@id/LegacyQRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
-        android:label="QRCodeScanFragment"
-        tools:layout="@layout/qrcode_scan_fragment">
-        <action
-            android:id="@+id/action_to_webAuthResultFragment"
-            app:destination="@id/webAuthResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/setupVaultFragment"

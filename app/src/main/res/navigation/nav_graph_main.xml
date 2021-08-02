@@ -26,6 +26,9 @@
         android:label="ScannerFragment"
         tools:layout="@layout/qrcode_scan_fragment">
         <action
+            android:id="@+id/action_to_webAuthResultFragment"
+            app:destination="@id/webAuthResultFragment" />
+        <action
             android:id="@+id/action_scanner_to_casaSignMessageFragment"
             app:destination="@id/casaSignMessageFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -39,12 +42,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/LegacyQRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
-        android:label="QRCodeScanFragment"
-        tools:layout="@layout/qrcode_scan_fragment">
+        <action
+            android:id="@+id/action_to_psbtTxConfirmFragment"
+            app:destination="@id/psbtTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_txConfirmFragment"
             app:destination="@id/txConfirmFragment"
@@ -54,26 +58,6 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
-
-        <action
-            android:id="@id/action_to_psbtTxConfirmFragment"
-            app:destination="@id/psbtTxConfirmFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_QRCodeScan_to_result"
-            app:destination="@id/webAuthResultFragment" />
-
-        <action
-            android:id="@id/import_multisig_wallet"
-            app:destination="@id/importWalletFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/patternLockFragment"
