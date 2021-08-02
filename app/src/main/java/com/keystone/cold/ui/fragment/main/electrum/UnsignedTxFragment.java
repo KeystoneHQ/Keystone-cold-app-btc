@@ -221,7 +221,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void checkBtcFee() {
-        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+        if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             if (txEntity.getCoinCode().equals(Coins.BTC.coinCode())) {
                 float fee = Float.parseFloat(txEntity.getFee().split(" ")[0]);
                 if (fee > 0.01) {
@@ -239,7 +239,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void refreshSignStatus() {
-        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+        if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             if (!TextUtils.isEmpty(txEntity.getSignStatus())) {
                 mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
                 String signStatus = txEntity.getSignStatus();
@@ -353,7 +353,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void refreshAmount() {
-        if (viewModel.mode.equals(MultiSigMode.CASA)) {
+        if (viewModel.mode != null && viewModel.mode.equals(MultiSigMode.CASA)) {
             SpannableStringBuilder style = new SpannableStringBuilder(casaSignature.getAmount());
             style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
                     0, casaSignature.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -367,7 +367,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void refreshReceiveList() {
-        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+        if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             String to = txEntity.getTo();
             List<TransactionItem> items = new ArrayList<>();
             try {
@@ -428,7 +428,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
 
     private void refreshFromList() {
         String from;
-        if (viewModel.mode.equals(MultiSigMode.LEGACY)) {
+        if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             from = txEntity.getFrom();
         } else {
             mBinding.txDetail.arrowDown.setVisibility(View.GONE);
