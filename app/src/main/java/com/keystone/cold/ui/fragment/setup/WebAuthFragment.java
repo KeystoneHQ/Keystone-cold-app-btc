@@ -40,7 +40,7 @@ import com.yanzhenjie.permission.Permission;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
@@ -87,7 +87,8 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
 
     private void initScanResult() {
         ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                .setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
+                .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT, ScanResultTypes.UR_BYTES,
+                        ScanResultTypes.UR_CRYPTO_PSBT, ScanResultTypes.CRYPTO_ACCOUNT)) {
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
                         if (result.getType().equals(ScanResultTypes.UR_BYTES)) {

@@ -67,7 +67,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -220,7 +220,8 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
             }
         });
         ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                .setState(new ScannerState(Collections.singletonList(ScanResultTypes.CRYPTO_ACCOUNT)) {
+                .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT, ScanResultTypes.UR_BYTES,
+                        ScanResultTypes.UR_CRYPTO_PSBT, ScanResultTypes.CRYPTO_ACCOUNT)) {
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
                         if (result.getType().equals(ScanResultTypes.CRYPTO_ACCOUNT)) {
