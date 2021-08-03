@@ -24,11 +24,11 @@ import org.spongycastle.util.encoders.Hex;
 
 import static com.keystone.cold.ui.fragment.main.TxConfirmFragment.KEY_TX_DATA;
 
-public class DecodeTxViewModel extends AndroidViewModel {
+public class KeystoneTxViewModel extends AndroidViewModel {
 
     private Application application;
 
-    public DecodeTxViewModel(@NonNull Application application) {
+    public KeystoneTxViewModel(@NonNull Application application) {
         super(application);
         this.application = application;
     }

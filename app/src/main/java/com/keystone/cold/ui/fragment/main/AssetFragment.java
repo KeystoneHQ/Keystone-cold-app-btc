@@ -58,7 +58,7 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.viewmodel.AddAddressViewModel;
-import com.keystone.cold.viewmodel.DecodeTxViewModel;
+import com.keystone.cold.viewmodel.KeystoneTxViewModel;
 import com.keystone.cold.viewmodel.SetupVaultViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
@@ -120,41 +120,15 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
                         if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
-                            if (handleSignElectrumPSBT(result)) {
-                                String hex = result.getData();
-                                String psbtBase64 = Base64.toBase64String(Base43.decode(hex));
-                                Bundle bundle = new Bundle();
-                                bundle.putString("psbt_base64", psbtBase64);
-                                bundle.putBoolean("multisig", false);
-                                mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
-                            } else {
-                                throw new UnknowQrCodeException("not a electrum psbt transaction!");
-                            }
+                            if (handleSignElectrumPSBT(result)) return;
+                            throw new UnknowQrCodeException("not a electrum psbt transaction!");
                         } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                             if (handleWebAuth(result)) return;
-
-                            DecodeTxViewModel viewModel = ViewModelProviders.of(mActivity)
-                                    .get(DecodeTxViewModel.class);
-                            byte[] bytes = (byte[]) result.resolve();
-                            String hex = Hex.toHexString(bytes);
-                            JSONObject object = viewModel.decodeAsProtobuf(hex);
-                            if (object != null) {
-                                Log.i(TAG, "decodeAsProtobuf result: " + object);
-                                Bundle bundle = viewModel.decodeAsBundle(object);
-                                mFragment.navigate(R.id.action_to_txConfirmFragment, bundle);
-                            }
+                            if (handleKeystoneTx(result)) return;
+                            throw new UnknowQrCodeException("unknown qrcode");
                         } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
-                            WatchWallet watchWallet = WatchWallet.getWatchWallet(mActivity.getApplication());
-                            if (watchWallet.supportBc32QrCode() && watchWallet.supportPsbt()) {
-                                CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
-                                byte[] bytes = cryptoPSBT.getPsbt();
-                                String psbtB64 = Base64.toBase64String(bytes);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("psbt_base64", psbtB64);
-                                mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
-                            } else {
-                                throw new UnknowQrCodeException("not support bc32 or psbt");
-                            }
+                            if (handleSignCryptoPSBT(result)) return;
+                            throw new UnknowQrCodeException("current watch wallet not support bc32 or psbt");
                         }
                     }
 
@@ -165,13 +139,13 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                             mFragment.alert(getString(R.string.incorrect_tx_data));
                         } else if (e instanceof CoinNotFindException) {
                             mFragment.alert(null, getString(R.string.only_support_btc), null);
-                        }  else if (e instanceof JSONException) {
+                        } else if (e instanceof JSONException) {
                             mFragment.alert(getString(R.string.incorrect_qrcode));
-                        }  else if (e instanceof XfpNotMatchException) {
+                        } else if (e instanceof XfpNotMatchException) {
                             mFragment.alert(getString(R.string.uuid_not_match));
-                        }  else if (e instanceof UnknowQrCodeException) {
+                        } else if (e instanceof UnknowQrCodeException) {
                             mFragment.alert(getString(R.string.unsupported_qrcode));
-                        }  else if (e instanceof WatchWalletNotMatchException) {
+                        } else if (e instanceof WatchWalletNotMatchException) {
                             mFragment.alert(getString(R.string.identification_failed),
                                     getString(R.string.master_pubkey_not_match)
                                             + getString(R.string.watch_wallet_not_match,
@@ -197,17 +171,56 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         }
                         return false;
                     }
-                });
-    }
 
-    private boolean handleSignElectrumPSBT(ScanResult result) {
-        try {
-            byte[] data = Base43.decode(result.getData());
-            return new String(data).startsWith("psbt");
-        } catch (EncoderException | IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        return false;
+                    private boolean handleSignElectrumPSBT(ScanResult result) {
+                        try {
+                            byte[] data = Base43.decode(result.getData());
+                            if (new String(data).startsWith("psbt")) {
+                                String hex = result.getData();
+                                String psbtBase64 = Base64.toBase64String(Base43.decode(hex));
+                                Bundle bundle = new Bundle();
+                                bundle.putString("psbt_base64", psbtBase64);
+                                bundle.putBoolean("multisig", false);
+                                mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                                return true;
+                            }
+                            return false;
+                        } catch (EncoderException | IllegalArgumentException e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    }
+
+                    private boolean handleKeystoneTx(ScanResult result) throws InvalidTransactionException, XfpNotMatchException, JSONException, UnknowQrCodeException, CoinNotFindException, WatchWalletNotMatchException {
+                        KeystoneTxViewModel viewModel = ViewModelProviders.of(mActivity)
+                                .get(KeystoneTxViewModel.class);
+                        byte[] bytes = (byte[]) result.resolve();
+                        String hex = Hex.toHexString(bytes);
+                        JSONObject object = viewModel.decodeAsProtobuf(hex);
+                        if (object != null) {
+                            Log.i(TAG, "decodeAsProtobuf result: " + object);
+                            Bundle bundle = viewModel.decodeAsBundle(object);
+                            mFragment.navigate(R.id.action_to_txConfirmFragment, bundle);
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    private boolean handleSignCryptoPSBT(ScanResult result) {
+                        WatchWallet watchWallet = WatchWallet.getWatchWallet(mActivity);
+                        if (watchWallet.supportBc32QrCode() && watchWallet.supportPsbt()) {
+                            CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
+                            byte[] bytes = cryptoPSBT.getPsbt();
+                            String psbtB64 = Base64.toBase64String(bytes);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("psbt_base64", psbtB64);
+                            mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
     }
 
     private void addAddress() {
