@@ -35,6 +35,7 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.fragment.main.scan.scanner.exceptions.UnExpectedQRException;
+import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 
@@ -92,15 +93,8 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
                 .setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
-                        JSONObject object = new JSONObject(new String((byte[]) result.resolve(), StandardCharsets.UTF_8));
-                        JSONObject webAuth = object.optJSONObject("data");
-                        if (TextUtils.equals(Objects.requireNonNull(webAuth).optString("type"), "webAuth")) {
-                            String webAuthData = webAuth.getString("data");
-                            Bundle bundle = new Bundle();
-                            bundle.putString(WEB_AUTH_DATA, webAuthData);
-                            bundle.putBoolean(IS_SETUP_VAULT, true);
-                            mFragment.navigate(R.id.action_to_webAuthResultFragment, bundle);
-                        }
+                        if (handleWebAuth(result)) return;
+                        throw new UnknowQrCodeException("Unknow qrcode");
                     }
 
                     @Override
@@ -111,6 +105,20 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
                             return true;
                         }
                         return super.handleException(e);
+                    }
+
+                    private boolean handleWebAuth(ScanResult result) throws JSONException {
+                        JSONObject object = new JSONObject(new String((byte[]) result.resolve(), StandardCharsets.UTF_8));
+                        JSONObject webAuth = object.optJSONObject("data");
+                        if (TextUtils.equals(Objects.requireNonNull(webAuth).optString("type"), "webAuth")) {
+                            String webAuthData = webAuth.getString("data");
+                            Bundle bundle = new Bundle();
+                            bundle.putString(WEB_AUTH_DATA, webAuthData);
+                            bundle.putBoolean(IS_SETUP_VAULT, true);
+                            mFragment.navigate(R.id.action_to_webAuthResultFragment, bundle);
+                            return true;
+                        }
+                        return false;
                     }
                 });
     }

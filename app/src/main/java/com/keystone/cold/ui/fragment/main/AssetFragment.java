@@ -71,7 +71,6 @@ import com.yanzhenjie.permission.Permission;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.encoders.EncoderException;
 import org.spongycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -179,25 +178,22 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                     }
 
                     private boolean handleSignElectrumPSBT(ScanResult result) {
-                        try {
-                            byte[] data = Base43.decode(result.getData());
-                            if (new String(data).startsWith("psbt")) {
-                                String hex = result.getData();
-                                String psbtBase64 = Base64.toBase64String(Base43.decode(hex));
-                                Bundle bundle = new Bundle();
-                                bundle.putString("psbt_base64", psbtBase64);
-                                bundle.putBoolean("multisig", false);
-                                mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
-                                return true;
-                            }
-                            return false;
-                        } catch (EncoderException | IllegalArgumentException e) {
-                            e.printStackTrace();
+                        byte[] data = Base43.decode(result.getData());
+                        if (new String(data).startsWith("psbt")) {
+                            String hex = result.getData();
+                            String psbtBase64 = Base64.toBase64String(Base43.decode(hex));
+                            Bundle bundle = new Bundle();
+                            bundle.putString("psbt_base64", psbtBase64);
+                            bundle.putBoolean("multisig", false);
+                            mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                            return true;
                         }
                         return false;
                     }
 
-                    private boolean handleKeystoneTx(ScanResult result) throws InvalidTransactionException, XfpNotMatchException, JSONException, UnknowQrCodeException, CoinNotFindException, WatchWalletNotMatchException {
+                    private boolean handleKeystoneTx(ScanResult result) throws InvalidTransactionException,
+                            XfpNotMatchException, JSONException, UnknowQrCodeException, CoinNotFindException,
+                            WatchWalletNotMatchException {
                         KeystoneTxViewModel viewModel = ViewModelProviders.of(mActivity)
                                 .get(KeystoneTxViewModel.class);
                         byte[] bytes = (byte[]) result.resolve();
