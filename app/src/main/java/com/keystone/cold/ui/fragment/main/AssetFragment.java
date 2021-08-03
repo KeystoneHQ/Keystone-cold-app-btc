@@ -137,19 +137,25 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         e.printStackTrace();
                         if (e instanceof InvalidTransactionException) {
                             mFragment.alert(getString(R.string.incorrect_tx_data));
+                            return true;
                         } else if (e instanceof CoinNotFindException) {
                             mFragment.alert(null, getString(R.string.only_support_btc), null);
+                            return true;
                         } else if (e instanceof JSONException) {
                             mFragment.alert(getString(R.string.incorrect_qrcode));
+                            return true;
                         } else if (e instanceof XfpNotMatchException) {
                             mFragment.alert(getString(R.string.uuid_not_match));
+                            return true;
                         } else if (e instanceof UnknowQrCodeException) {
                             mFragment.alert(getString(R.string.unsupported_qrcode));
+                            return true;
                         } else if (e instanceof WatchWalletNotMatchException) {
                             mFragment.alert(getString(R.string.identification_failed),
                                     getString(R.string.master_pubkey_not_match)
                                             + getString(R.string.watch_wallet_not_match,
                                             WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
+                            return true;
                         }
                         return super.handleException(e);
                     }

@@ -31,7 +31,7 @@ import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.coinlib.utils.B58;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.update.utils.Storage;
-import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
+import com.keystone.cold.viewmodel.exceptions.CollectExPubWrongDataException;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoCoinInfo;
 import com.sparrowwallet.hummingbird.registry.CryptoHDKey;
@@ -164,22 +164,22 @@ public class CollectXpubViewModel extends AndroidViewModel {
         }
     }
 
-    public String handleCollectExPubWithCryptoOutput(CryptoOutput cryptoOutput) throws CollectExPubException, JSONException {
+    public String handleCollectExPubWithCryptoOutput(CryptoOutput cryptoOutput) throws CollectExPubWrongDataException, JSONException {
         try {
             CryptoHDKey cryptoHDKey = cryptoOutput.getHdKey();
             if (cryptoHDKey != null) {
                 JSONObject object = new JSONObject();
                 CryptoKeypath origin = cryptoHDKey.getOrigin();
                 if (origin == null) {
-                    throw new CollectExPubException("invalid CryptoHDKey: origin is null");
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: origin is null");
                 }
 
                 String path = "m/" + origin.getPath();
                 if (path == null) {
-                    throw new CollectExPubException("invalid CryptoHDKey: origin path is null");
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: origin path is null");
                 }
                 if (!MultiSig.isValidPath(path)) {
-                    throw new CollectExPubException("invalid CryptoHDKey: origin path is invalid: " + path);
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: origin path is invalid: " + path);
                 }
 
                 int depth;
@@ -200,23 +200,23 @@ public class CollectXpubViewModel extends AndroidViewModel {
                 Account account = MultiSig.ofPath(path, !isTestnet).get(0);
                 byte[] parentFingerprint = cryptoHDKey.getParentFingerprint();
                 if (parentFingerprint == null) {
-                    throw new CollectExPubException("invalid CryptoHDKey: parentFingerprint is null");
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: parentFingerprint is null");
                 }
 
                 byte[] sourceFingerprint;
                 if (origin.getSourceFingerprint() != null) {
                     sourceFingerprint = origin.getSourceFingerprint();
                 } else {
-                    throw new CollectExPubException("invalid CryptoHDKey: master fingerprint is null");
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: master fingerprint is null");
                 }
 
                 byte[] key = cryptoHDKey.getKey();
                 if (key == null) {
-                    throw new CollectExPubException("invalid CryptoHDKey: key is null");
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: key is null");
                 }
                 byte[] chainCode = cryptoHDKey.getChainCode();
                 if (chainCode == null) {
-                    throw new CollectExPubException("invalid CryptoHDKey: chainCode is null");
+                    throw new CollectExPubWrongDataException("invalid CryptoHDKey: chainCode is null");
                 }
 
                 byte[] xPubVersion = account.getXPubVersion().getVersionBytes();
@@ -236,10 +236,10 @@ public class CollectXpubViewModel extends AndroidViewModel {
                 object.put("path", path);
                 return object.toString();
             } else {
-                throw new CollectExPubException("invalid CryptoOutput: is not a CryptoHDKey");
+                throw new CollectExPubWrongDataException("invalid CryptoOutput: is not a CryptoHDKey");
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new CollectExPubException("invalid CryptoOutput");
+            throw new CollectExPubWrongDataException("invalid CryptoOutput");
         }
     }
 }

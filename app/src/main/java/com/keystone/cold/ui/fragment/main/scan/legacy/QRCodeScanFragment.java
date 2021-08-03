@@ -47,7 +47,7 @@ import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.main.QrScanPurpose;
 import com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
-import com.keystone.cold.viewmodel.exceptions.CollectExPubException;
+import com.keystone.cold.viewmodel.exceptions.CollectExPubWrongDataException;
 import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.QrScanViewModel;
@@ -241,7 +241,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
                             sharedDataViewModel.updateScanResult(jsonStr);
                             navigateUp();
                         } else {
-                            throw new CollectExPubException("Cannot find any xpub");
+                            throw new CollectExPubWrongDataException("Cannot find any xpub");
                         }
                     } else {
                         CryptoOutput cryptoOutput = viewModel.decodeCryptoOutput(res);
@@ -250,7 +250,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
                             sharedDataViewModel.updateScanResult(jsonStr);
                             navigateUp();
                         }
-                        throw new CollectExPubException("Cannot find any xpub");
+                        throw new CollectExPubWrongDataException("Cannot find any xpub");
                     }
                 } else if (qrScanPurpose != QrScanPurpose.UNDEFINE && !qrScanPurpose.isAnimateQr()) {
                     alert(getString(R.string.unsupported_qrcode));
@@ -281,7 +281,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
             } catch (InvalidMultisigWalletException e) {
                 e.printStackTrace();
                 alert(getString(R.string.invalid_multisig_wallet), getString(R.string.invalid_multisig_wallet_hint));
-            } catch (CollectExPubException e) {
+            } catch (CollectExPubWrongDataException e) {
                 e.printStackTrace();
                 CollectExpubFragment.showCommonModal(mActivity, getString(R.string.invalid_xpub_file),
                         getString(R.string.invalid_xpub_file_hint),
