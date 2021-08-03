@@ -43,7 +43,7 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.modal.ModalDialog;
-import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 
@@ -54,7 +54,7 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,10 +70,12 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
         implements Callback, Toolbar.OnMenuItemClickListener {
     private Adapter adapter;
     private AtomicBoolean showEmpty;
+
     @Override
     protected int setView() {
         return R.layout.file_list;
     }
+
     private Map<String, JSONObject> walletFiles = new HashMap<>();
 
     @Override
@@ -132,12 +134,12 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
             String walletFileNet = isWalletFileTest ? getString(R.string.testnet) : getString(R.string.mainnet);
             ModalDialog.showCommonModal(mActivity, getString(R.string.import_failed),
                     getString(R.string.import_failed_network_not_match, currentNet, walletFileNet, walletFileNet),
-                    getString(R.string.know),null);
+                    getString(R.string.know), null);
             return;
         }
 
         Bundle data = new Bundle();
-        data.putString("wallet_info",walletFile.toString());
+        data.putString("wallet_info", walletFile.toString());
         navigate(R.id.import_multisig_wallet, data);
     }
 
@@ -148,13 +150,10 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
             Bundle data = new Bundle();
             data.putString("purpose", "importMultiSigWallet");
             ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                    .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT,
-                            ScanResultTypes.UR_BYTES)) {
+                    .setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
                         @Override
                         public void handleScanResult(ScanResult result) throws Exception {
-                            if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
-                                mFragment.alert(getString(R.string.unsupported_qrcode));
-                            } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
+                            if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                                 byte[] bytes = (byte[]) result.resolve();
                                 String hex = Hex.toHexString(bytes);
                                 JSONObject object = LegacyMultiSigViewModel.decodeColdCardWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
@@ -164,11 +163,19 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
                                 if (object != null) {
                                     handleImportMultisigWallet(hex, mFragment);
                                 } else {
-                                    mFragment.alert(getString(R.string.invalid_multisig_wallet), getString(R.string.invalid_multisig_wallet_hint));
+                                    throw new InvalidMultisigWalletException("not multisig wallet");
                                 }
-                            } else {
-                                throw new UnknowQrCodeException("not support bc32 qrcode in current wallet mode");
                             }
+                        }
+
+                        @Override
+                        public boolean handleException(Exception e) {
+                            e.printStackTrace();
+                            if (e instanceof InvalidMultisigWalletException) {
+                                mFragment.alert(getString(R.string.invalid_multisig_wallet), getString(R.string.invalid_multisig_wallet_hint));
+                                return true;
+                            }
+                            return super.handleException(e);
                         }
                     });
             navigate(R.id.action_to_scanner);

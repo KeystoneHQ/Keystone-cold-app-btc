@@ -34,13 +34,15 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
+import com.keystone.cold.ui.fragment.main.scan.scanner.exceptions.UnExpectedQRException;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
@@ -87,23 +89,28 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
 
     private void initScanResult() {
         ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT, ScanResultTypes.UR_BYTES,
-                        ScanResultTypes.UR_CRYPTO_PSBT, ScanResultTypes.CRYPTO_ACCOUNT)) {
+                .setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
-                        if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
-                            JSONObject object = new JSONObject(new String((byte[]) result.resolve(), StandardCharsets.UTF_8));
-                            JSONObject webAuth = object.optJSONObject("data");
-                            if (TextUtils.equals(Objects.requireNonNull(webAuth).optString("type"), "webAuth")) {
-                                String webAuthData = webAuth.getString("data");
-                                Bundle bundle = new Bundle();
-                                bundle.putString(WEB_AUTH_DATA, webAuthData);
-                                bundle.putBoolean(IS_SETUP_VAULT, true);
-                                mFragment.navigate(R.id.action_to_webAuthResultFragment, bundle);
-                            }
-                        } else {
-                            alert(getString(R.string.invalid_webauth_qrcode_hint));
+                        JSONObject object = new JSONObject(new String((byte[]) result.resolve(), StandardCharsets.UTF_8));
+                        JSONObject webAuth = object.optJSONObject("data");
+                        if (TextUtils.equals(Objects.requireNonNull(webAuth).optString("type"), "webAuth")) {
+                            String webAuthData = webAuth.getString("data");
+                            Bundle bundle = new Bundle();
+                            bundle.putString(WEB_AUTH_DATA, webAuthData);
+                            bundle.putBoolean(IS_SETUP_VAULT, true);
+                            mFragment.navigate(R.id.action_to_webAuthResultFragment, bundle);
                         }
+                    }
+
+                    @Override
+                    public boolean handleException(Exception e) {
+                        e.printStackTrace();
+                        if (e instanceof UnExpectedQRException || e instanceof JSONException) {
+                            mFragment.alert(getString(R.string.invalid_webauth_qrcode_hint));
+                            return true;
+                        }
+                        return super.handleException(e);
                     }
                 });
     }

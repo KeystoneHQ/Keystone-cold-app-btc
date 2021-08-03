@@ -35,6 +35,8 @@ import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfig;
 import com.keystone.cold.ui.fragment.main.scan.scanner.bean.ZxingConfigBuilder;
 import com.keystone.cold.ui.fragment.main.scan.scanner.camera.CameraManager;
+import com.keystone.cold.ui.fragment.main.scan.scanner.exceptions.UnExpectedQRException;
+import com.keystone.cold.ui.modal.ModalDialog;
 import com.sparrowwallet.hummingbird.UR;
 
 import org.spongycastle.util.encoders.Hex;
@@ -196,7 +198,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 if (this.desiredTypes.stream().anyMatch(dt -> dt.isType(text))) {
                     scannerState.handleScanResult(new ScanResult(ScanResultTypes.PLAIN_TEXT, text));
                 } else {
-                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                    throw new UnExpectedQRException("un expected qrcode");
                 }
             } catch (Exception e) {
                 if (!scannerState.handleException(e)) {
@@ -214,7 +216,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 if (srt != null) {
                     scannerState.handleScanResult(new ScanResult(srt, Hex.toHexString(ur.getCborBytes())));
                 } else {
-                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                    throw new UnExpectedQRException("un expected qrcode");
                 }
             } catch (Exception e) {
                 if (!scannerState.handleException(e)) {
@@ -241,15 +243,24 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 if (run != null) {
                     run.run();
                 } else {
-                    mBinding.scanProgress.setText("");
-                    if (captureHandler != null) {
-                        captureHandler.restartPreviewAndDecode();
-                    }
+                    resetScan();
                 }
             });
         });
     }
 
+    public void alert(String title, String subTitle, String message, Runnable run) {
+        handler.post(() -> {
+            ModalDialog.showCommonModal(mActivity, title, subTitle, message, run);
+        });
+    }
+
+    public void resetScan() {
+        mBinding.scanProgress.setText("");
+        if (captureHandler != null) {
+            captureHandler.restartPreviewAndDecode();
+        }
+    }
 
     @Override
     public void handleProgressPercent(double percent) {
@@ -265,7 +276,6 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     public Handler getHandler() {
         return captureHandler;
     }
-
 }
 
 

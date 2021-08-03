@@ -44,10 +44,9 @@ import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.util.Keyboard;
 import com.keystone.cold.viewmodel.SharedDataViewModel;
 import com.keystone.cold.viewmodel.WhiteListModel;
-import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 
@@ -139,17 +138,10 @@ public class AddWhiteListFragment extends BaseFragment<AddWhiteListBinding>
             Keyboard.hide(mActivity, requireView());
 
             ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                    .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT,
-                            ScanResultTypes.UR_BYTES)) {
+                    .setState(new ScannerState(Collections.singletonList(ScanResultTypes.PLAIN_TEXT)) {
                         @Override
-                        public void handleScanResult(ScanResult result) throws Exception {
-                            if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
-                                mFragment.navigateUp();
-                            } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
-                                mFragment.alert(getString(R.string.unsupported_qrcode));
-                            } else {
-                                throw new UnknowQrCodeException("not support bc32 qrcode in current wallet mode");
-                            }
+                        public void handleScanResult(ScanResult result) {
+                            mFragment.navigateUp();
                         }
                     });
             navigate(R.id.action_to_scanner);

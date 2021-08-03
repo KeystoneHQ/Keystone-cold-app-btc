@@ -52,6 +52,7 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
+import com.keystone.cold.ui.fragment.main.scan.scanner.exceptions.UnExpectedQRException;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.FileUtils;
 import com.keystone.cold.viewmodel.CollectXpubViewModel;
@@ -68,6 +69,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -220,28 +222,35 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
             }
         });
         ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
-                .setState(new ScannerState(Arrays.asList(ScanResultTypes.PLAIN_TEXT, ScanResultTypes.UR_BYTES,
-                        ScanResultTypes.UR_CRYPTO_PSBT, ScanResultTypes.CRYPTO_ACCOUNT)) {
+                .setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_CRYPTO_ACCOUNT)) {
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
-                        if (result.getType().equals(ScanResultTypes.CRYPTO_ACCOUNT)) {
-                            if (solveBytes(viewModel, result.getData())) {
-                                mFragment.navigateUp();
-                                return;
-                            }
+                        if (handleXpubInfo(viewModel, result)) {
+                            mFragment.navigateUp();
+                        } else {
+                            throw new CollectExPubException("cannot find any xpub");
                         }
-                        AppExecutors.getInstance().mainThread().execute(() ->
-                                showCommonModal(mActivity,
-                                        getString(R.string.invalid_xpub_file),
-                                        getString(R.string.invalid_xpub_file_hint),
-                                        getString(R.string.know), null));
-                        mFragment.navigateUp();
+                    }
+
+                    @Override
+                    public boolean handleException(Exception e) {
+                        e.printStackTrace();
+                        if (e instanceof UnExpectedQRException
+                                || e instanceof CollectExPubException || e instanceof JSONException) {
+                            mFragment.alert(getString(R.string.invalid_xpub_file),
+                                    getString(R.string.invalid_xpub_file_hint),
+                                    getString(R.string.know),
+                                    () -> mFragment.resetScan());
+                            return true;
+                        }
+                        return super.handleException(e);
                     }
                 });
         navigate(R.id.action_to_scanner);
     }
 
-    private boolean solveBytes(SharedDataViewModel viewModel, String data) throws CollectExPubException, JSONException {
+    private boolean handleXpubInfo(SharedDataViewModel viewModel, ScanResult result) throws CollectExPubException, JSONException {
+        String data = result.getData();
         CryptoAccount cryptoAccount = collectXpubViewModel.decodeCryptoAccount(data);
         Account targetAccount = viewModel.getTargetMultiSigAccount();
         CryptoOutput cryptoOutput = collectXpubViewModel.decodeCryptoOutput(data);
@@ -252,9 +261,8 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
             String jsonStr = collectXpubViewModel.handleCollectExPubWithCryptoOutput(cryptoOutput);
             AppExecutors.getInstance().mainThread().execute(() -> viewModel.updateScanResult(jsonStr));
             return true;
-        } else {
-            throw new CollectExPubException("Cannot find any xpub");
         }
+        return false;
     }
 
     private void updateXpubInfo(CollectXpubViewModel.XpubInfo info, String xfp, String xpub) {

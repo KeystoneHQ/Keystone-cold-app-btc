@@ -18,7 +18,7 @@ public enum ScanResultTypes {
     PLAIN_TEXT,
     UR_BYTES,
     UR_CRYPTO_PSBT,
-    CRYPTO_ACCOUNT;
+    UR_CRYPTO_ACCOUNT;
 
 
     public boolean isType(String text) {
@@ -33,7 +33,7 @@ public enum ScanResultTypes {
                     return decodeResult instanceof CryptoPSBT;
                 case UR_BYTES:
                     return decodeResult instanceof byte[];
-                case CRYPTO_ACCOUNT:
+                case UR_CRYPTO_ACCOUNT:
                     return decodeResult instanceof CryptoAccount;
                 default:
                     return false;
