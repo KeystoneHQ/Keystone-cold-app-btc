@@ -190,7 +190,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         bundle.putString("psbt_base64", psbtB64);
                         bundle.putBoolean("multisig", true);
                         bundle.putString("multisig_mode", MultiSigMode.CASA.name());
-                        mFragment.navigate(R.id.action_scanner_to_psbtTxConfirmFragment, bundle);
+                        mFragment.navigate(R.id.action_to_psbtCasaTxConfirmFragment, bundle);
                     }
                 }
             });
