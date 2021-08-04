@@ -58,7 +58,7 @@ public class WebAuthResultFragment extends SetupVaultBaseFragment<WebAuthResultB
 	@Override
 	protected void init(View view) {
 		super.init(view);
-		Bundle bundle = Objects.requireNonNull(getArguments());
+		Bundle bundle = requireArguments();
 		isSetupVault = bundle.getBoolean(IS_SETUP_VAULT);
 		mBinding.setViewModel(viewModel);
 		viewModel.calcAuthCode(bundle.getString(WEB_AUTH_DATA));

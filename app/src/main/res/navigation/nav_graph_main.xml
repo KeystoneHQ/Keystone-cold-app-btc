@@ -39,12 +39,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/LegacyQRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
-        android:label="QRCodeScanFragment"
-        tools:layout="@layout/qrcode_scan_fragment">
+        <action
+            android:id="@+id/action_to_psbtTxConfirmFragment"
+            app:destination="@id/psbtTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_txConfirmFragment"
             app:destination="@id/txConfirmFragment"
@@ -54,26 +55,16 @@
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
-
         <action
-            android:id="@id/action_to_psbtTxConfirmFragment"
-            app:destination="@id/psbtTxConfirmFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_QRCodeScan_to_result"
-            app:destination="@id/webAuthResultFragment" />
-
-        <action
-            android:id="@id/import_multisig_wallet"
+            android:id="@+id/import_multisig_wallet"
             app:destination="@id/importWalletFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_QRCodeScan_to_result"
+            app:destination="@id/webAuthResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/patternLockFragment"
@@ -292,8 +283,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_to_scan"
-            app:destination="@id/LegacyQRCodeScanFragment"
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -501,13 +492,6 @@
             app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
-            android:id="@id/action_to_scan"
-            app:destination="@id/LegacyQRCodeScanFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
             android:id="@+id/action_to_scanner"
             app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -634,8 +618,8 @@
             app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
-            android:id="@+id/action_scan_multisig_wallet"
-            app:destination="@id/LegacyQRCodeScanFragment"
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -674,8 +658,8 @@
         android:name="com.keystone.cold.ui.fragment.multisigs.legacy.CollectExpubFragment"
         android:label="CollectExpubFragment">
         <action
-            android:id="@+id/scan_xpub_info"
-            app:destination="@id/LegacyQRCodeScanFragment"
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -843,7 +827,7 @@
         android:id="@+id/electrumExportFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
         android:label="ElectrumExportFragment"
-        tools:layout="@layout/electrum_export"></fragment>
+        tools:layout="@layout/electrum_export"/>
     <fragment
         android:id="@+id/txConfirmFragment"
         android:name="com.keystone.cold.ui.fragment.main.TxConfirmFragment"
@@ -931,7 +915,7 @@
         android:id="@+id/broadcastElectrumTxFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumBroadcastTxFragment"
         android:label="ElectrumBroadcastTxFragment"
-        tools:layout="@layout/broadcast_electrum_tx_fragment"></fragment>
+        tools:layout="@layout/broadcast_electrum_tx_fragment"/>
 
     <fragment
         android:id="@+id/receiveCoinFragment"

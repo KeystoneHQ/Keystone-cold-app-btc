@@ -26,35 +26,54 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.keystone.coinlib.accounts.Account;
+import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.FileListBinding;
 import com.keystone.cold.databinding.FileListItemBinding;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.electrum.Callback;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.modal.ModalDialog;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigWalletException;
+import com.keystone.cold.viewmodel.exceptions.MultisigWalletNetNotMatchException;
+import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
+import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.encoders.Hex;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.keystone.coinlib.Util.getExpubFingerprint;
 import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
-
 
 public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding>
         implements Callback, Toolbar.OnMenuItemClickListener {
     private Adapter adapter;
     private AtomicBoolean showEmpty;
+
     @Override
     protected int setView() {
         return R.layout.file_list;
     }
+
     private Map<String, JSONObject> walletFiles = new HashMap<>();
 
     @Override
@@ -113,12 +132,12 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
             String walletFileNet = isWalletFileTest ? getString(R.string.testnet) : getString(R.string.mainnet);
             ModalDialog.showCommonModal(mActivity, getString(R.string.import_failed),
                     getString(R.string.import_failed_network_not_match, currentNet, walletFileNet, walletFileNet),
-                    getString(R.string.know),null);
+                    getString(R.string.know), null);
             return;
         }
 
         Bundle data = new Bundle();
-        data.putString("wallet_info",walletFile.toString());
+        data.putString("wallet_info", walletFile.toString());
         navigate(R.id.import_multisig_wallet, data);
     }
 
@@ -128,10 +147,87 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
         if (id == R.id.action_scan) {
             Bundle data = new Bundle();
             data.putString("purpose", "importMultiSigWallet");
-            navigate(R.id.action_scan_multisig_wallet, data);
+            ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
+                    .setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
+                        String currentNet;
+                        String walletFileNet;
+
+                        @Override
+                        public void handleScanResult(ScanResult result) throws Exception {
+                            if (handleMultisigWallet(result)) return;
+                            throw new UnknowQrCodeException("Unknown qrcode");
+                        }
+
+                        @Override
+                        public boolean handleException(Exception e) {
+                            e.printStackTrace();
+                            if (e instanceof InvalidMultisigWalletException) {
+                                mFragment.alert(getString(R.string.invalid_multisig_wallet), getString(R.string.invalid_multisig_wallet_hint));
+                                return true;
+                            } else if (e instanceof XfpNotMatchException) {
+                                mFragment.alert(getString(R.string.import_multisig_wallet_fail), getString(R.string.import_multisig_wallet_fail_hint));
+                                return true;
+                            } else if (e instanceof JSONException) {
+                                mFragment.alert(getString(R.string.incorrect_qrcode));
+                                return true;
+                            } else if (e instanceof MultisigWalletNetNotMatchException) {
+                                mFragment.alert(getString(R.string.import_failed),
+                                        getString(R.string.import_failed_network_not_match, currentNet, walletFileNet, walletFileNet));
+                            }
+                            return super.handleException(e);
+                        }
+
+                        private boolean handleMultisigWallet(ScanResult result) throws InvalidMultisigWalletException, XfpNotMatchException, JSONException, MultisigWalletNetNotMatchException {
+                            byte[] bytes = (byte[]) result.resolve();
+                            String hex = Hex.toHexString(bytes);
+                            JSONObject object = LegacyMultiSigViewModel.decodeColdCardWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
+                            if (object == null) {
+                                object = LegacyMultiSigViewModel.decodeCaravanWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
+                            }
+                            if (object != null) {
+                                return handleImportMultisigWallet(object);
+                            }
+                            throw new InvalidMultisigWalletException("not multisig wallet");
+                        }
+
+                        public boolean handleImportMultisigWallet(JSONObject obj) throws JSONException, XfpNotMatchException, MultisigWalletNetNotMatchException {
+                            LegacyMultiSigViewModel viewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+                            String xfp = viewModel.getXfp();
+                            boolean isWalletFileTest = obj.optBoolean("isTest", false);
+                            Account account = MultiSig.ofPath(obj.getString("Derivation"), !isWalletFileTest).get(0);
+                            boolean isTestnet = !Utilities.isMainNet(mActivity);
+                            if (isWalletFileTest != isTestnet) {
+                                currentNet = isTestnet ? getString(R.string.testnet) : getString(R.string.mainnet);
+                                walletFileNet = isWalletFileTest ? getString(R.string.testnet) : getString(R.string.mainnet);
+                                throw new MultisigWalletNetNotMatchException("network not match");
+                            }
+
+                            Bundle bundle = new Bundle();
+                            bundle.putString("wallet_info", obj.toString());
+                            JSONArray array = obj.getJSONArray("Xpubs");
+                            boolean matchXfp = false;
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject xpubInfo = array.getJSONObject(i);
+                                String thisXfp = xpubInfo.getString("xfp");
+                                if (thisXfp.equalsIgnoreCase(xfp)
+                                        || thisXfp.equalsIgnoreCase(getExpubFingerprint(viewModel.getXPub(account)))) {
+                                    matchXfp = true;
+                                    break;
+                                }
+                            }
+                            if (!matchXfp) {
+                                throw new XfpNotMatchException("xfp not match");
+                            } else {
+                                mFragment.navigate(R.id.import_multisig_wallet, bundle);
+                                return true;
+                            }
+                        }
+                    });
+            navigate(R.id.action_to_scanner);
         }
         return true;
     }
+
 
     static class Adapter extends BaseBindingAdapter<String, FileListItemBinding> {
         private final Callback callback;

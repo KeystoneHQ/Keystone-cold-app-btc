@@ -35,6 +35,10 @@ import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.WhiteListEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.util.Keyboard;
@@ -42,6 +46,7 @@ import com.keystone.cold.viewmodel.SharedDataViewModel;
 import com.keystone.cold.viewmodel.WhiteListModel;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Objects;
 
 
@@ -130,10 +135,16 @@ public class AddWhiteListFragment extends BaseFragment<AddWhiteListBinding>
             SharedDataViewModel viewModel =
                     ViewModelProviders.of(mActivity).get(SharedDataViewModel.class);
             viewModel.getScanResult().observe(this, addr::set);
-            Keyboard.hide(mActivity, Objects.requireNonNull(getView()));
-            Bundle data = new Bundle();
-            data.putString("purpose", "address");
-            navigate(R.id.add_white_list_scan, data);
+            Keyboard.hide(mActivity, requireView());
+
+            ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
+                    .setState(new ScannerState(Collections.singletonList(ScanResultTypes.PLAIN_TEXT)) {
+                        @Override
+                        public void handleScanResult(ScanResult result) {
+                            mFragment.navigateUp();
+                        }
+                    });
+            navigate(R.id.action_to_scanner);
         }
         return true;
     }

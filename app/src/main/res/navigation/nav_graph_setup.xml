@@ -28,16 +28,16 @@
         android:label="WebAuthFragment"
         tools:layout="@layout/web_auth">
         <action
-            android:id="@+id/webAuth_to_QRCodeScan"
-            app:destination="@id/LegacyQRCodeScanFragment" />
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"/>
         <action
             android:id="@+id/action_webAuthFragment_to_setPasswordFragment"
             app:destination="@id/setPasswordFragment" />
     </fragment>
     <fragment
-        android:id="@id/LegacyQRCodeScanFragment"
-        android:name="com.keystone.cold.ui.fragment.main.scan.legacy.QRCodeScanFragment"
-        android:label="QRCodeScanFragment"
+        android:id="@id/ScannerFragment"
+        android:name="com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment"
+        android:label="ScannerFragment"
         tools:layout="@layout/qrcode_scan_fragment">
         <action
             android:id="@+id/action_to_webAuthResultFragment"
@@ -308,8 +308,8 @@
         android:label="AddWhiteListFragment"
         tools:layout="@layout/add_white_list">
         <action
-            android:id="@id/add_white_list_scan"
-            app:destination="@id/LegacyQRCodeScanFragment"
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
