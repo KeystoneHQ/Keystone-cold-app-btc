@@ -54,6 +54,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import co.nstant.in.cbor.CborDecoder;
+import co.nstant.in.cbor.CborException;
 import co.nstant.in.cbor.model.DataItem;
 
 public class CollectXpubViewModel extends AndroidViewModel {
@@ -111,13 +112,12 @@ public class CollectXpubViewModel extends AndroidViewModel {
         return result;
     }
 
-    public CryptoAccount decodeCryptoAccount(String hex) {
+    public CryptoAccount decodeCryptoAccount(String hex) throws CollectExPubWrongDataException {
         try {
             List<DataItem> dataItems = CborDecoder.decode(Hex.decode(hex));
             return CryptoAccount.fromCbor(dataItems.get(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } catch (CborException e) {
+            throw new CollectExPubWrongDataException("invalid data");
         }
     }
 
@@ -131,10 +131,10 @@ public class CollectXpubViewModel extends AndroidViewModel {
         }
     }
 
-    public CryptoOutput collectMultiSigCryptoOutputFromCryptoAccount(CryptoAccount cryptoAccount, Account targetAccount) {
+    public CryptoOutput collectMultiSigCryptoOutputFromCryptoAccount(CryptoAccount cryptoAccount, Account targetAccount) throws CollectExPubWrongDataException {
         List<CryptoOutput> cryptoOutputs = cryptoAccount.getOutputDescriptors();
         if (cryptoOutputs.size() == 0) {
-            return null;
+            throw new CollectExPubWrongDataException("invalid cryptoAccount");
         }
         List<ScriptExpression> scriptExpressions = getScriptExpressionByAccount(targetAccount);
         AtomicReference<CryptoOutput> result = new AtomicReference<>();
