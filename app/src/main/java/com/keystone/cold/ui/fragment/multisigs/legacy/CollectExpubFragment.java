@@ -197,6 +197,9 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     updateXpubInfo(info, xfp.toUpperCase(), xpub);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    showCommonModal(mActivity, getString(R.string.invalid_xpub_file),
+                            getString(R.string.invalid_xpub_file_hint),
+                            getString(R.string.know), null);
                 } finally {
                     scanResult.setValue("");
                     scanResult.removeObservers(mActivity);
@@ -247,12 +250,10 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                         }
                         if (cryptoOutput != null) {
                             String jsonStr = collectXpubViewModel.handleCollectExPubWithCryptoOutput(cryptoOutput);
-                            AppExecutors.getInstance().mainThread().execute(() -> viewModel.updateScanResult(jsonStr));
-                            mFragment.navigateUp();
+                            handleImportXPubJson(new ScanResult(ScanResultTypes.PLAIN_TEXT, jsonStr));
                             return true;
-                        } else {
-                            throw new CollectExPubWrongTypeException("wrong xpub type");
                         }
+                        throw new CollectExPubWrongTypeException("wrong xpub type");
                     }
 
                     private boolean handleImportXPubJson(ScanResult result) throws JSONException, CollectExPubWrongTypeException {
