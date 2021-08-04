@@ -210,6 +210,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
             case R.id.action_sdcard:
                 Bundle data = new Bundle();
                 data.putBoolean("multisig", true);
+                data.putString("multisig_mode", MultiSigMode.LEGACY.name());
                 navigate(R.id.action_to_psbtListFragment, data);
                 break;
             case R.id.action_more:

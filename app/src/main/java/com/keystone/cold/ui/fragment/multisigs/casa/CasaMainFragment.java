@@ -197,7 +197,10 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             navigate(R.id.action_to_scanner, data);
             return true;
         } else if (id == R.id.action_sdcard) {
-            navigate(R.id.action_to_psbtListFragment);
+            Bundle data = new Bundle();
+            data.putBoolean("multisig", true);
+            data.putString("multisig_mode", MultiSigMode.CASA.name());
+            navigate(R.id.action_to_psbtListFragment, data);
             return true;
         }
         return false;

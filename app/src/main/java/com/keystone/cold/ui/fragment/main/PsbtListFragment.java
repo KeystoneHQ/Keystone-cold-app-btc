@@ -35,6 +35,7 @@ import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.FileUtils;
 import com.keystone.cold.update.utils.Storage;
 import com.keystone.cold.viewmodel.PsbtViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
@@ -55,6 +56,7 @@ public class PsbtListFragment extends BaseFragment<FileListBinding>
     private FileListAdapter adapter;
     private AtomicBoolean showEmpty;
     private boolean multisig;
+    private MultiSigMode mode;
 
     @Override
     protected int setView() {
@@ -66,6 +68,7 @@ public class PsbtListFragment extends BaseFragment<FileListBinding>
 
         if (getArguments() != null) {
             multisig = getArguments().getBoolean("multisig");
+            mode = MultiSigMode.valueOf(getArguments().getString("multisig_mode"));
         }
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         viewModel = ViewModelProviders.of(mActivity).get(PsbtViewModel.class);
@@ -130,7 +133,10 @@ public class PsbtListFragment extends BaseFragment<FileListBinding>
             if (psbtBase64 != null) {
                 Bundle bundle = new Bundle();
                 bundle.putString("psbt_base64", psbtBase64);
-                bundle.putBoolean("multisig",multisig);
+                bundle.putBoolean("multisig", multisig);
+                if (multisig) {
+                    bundle.putString("multisig_mode", mode.name());
+                }
                 navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
                 return;
             }
@@ -148,7 +154,7 @@ public class PsbtListFragment extends BaseFragment<FileListBinding>
         try {
             byte[] data = Base64.decode(new String(content));
             return Hex.toHexString(data).startsWith(PSBT_MAGIC_PREFIX);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
