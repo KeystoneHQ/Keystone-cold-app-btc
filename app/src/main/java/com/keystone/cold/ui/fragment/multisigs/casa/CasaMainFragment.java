@@ -166,7 +166,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.casa, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -195,6 +195,9 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                 }
             });
             navigate(R.id.action_to_scanner, data);
+            return true;
+        } else if (id == R.id.action_sdcard) {
+            navigate(R.id.action_to_psbtListFragment);
             return true;
         }
         return false;
