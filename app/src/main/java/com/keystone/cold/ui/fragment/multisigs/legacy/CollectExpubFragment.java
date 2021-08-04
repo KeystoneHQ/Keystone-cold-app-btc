@@ -197,6 +197,9 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     updateXpubInfo(info, xfp.toUpperCase(), xpub);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    showCommonModal(mActivity, getString(R.string.invalid_xpub_file),
+                            getString(R.string.invalid_xpub_file_hint),
+                            getString(R.string.know), null);
                 } finally {
                     scanResult.setValue("");
                     scanResult.removeObservers(mActivity);
@@ -210,7 +213,7 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
                         if (result.getType().equals(ScanResultTypes.UR_CRYPTO_ACCOUNT)) {
-                            if (handleImportCryptoAccount(viewModel, result)) return;
+                            if (handleImportCryptoAccount(result)) return;
                             throw new UnknowQrCodeException("unknown crypto account");
                         } else if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
                             if (handleImportXPubJson(result)) return;
@@ -238,34 +241,30 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                         return super.handleException(e);
                     }
 
-                    private boolean handleImportCryptoAccount(SharedDataViewModel viewModel, ScanResult result) throws CollectExPubWrongDataException, JSONException, CollectExPubWrongTypeException {
+                    private boolean handleImportCryptoAccount(ScanResult result) throws CollectExPubWrongDataException, JSONException, CollectExPubWrongTypeException {
                         String data = result.getData();
                         CryptoAccount cryptoAccount = collectXpubViewModel.decodeCryptoAccount(data);
-                        CryptoOutput cryptoOutput = null;
-                        if (cryptoAccount != null) {
-                            cryptoOutput = collectXpubViewModel.collectMultiSigCryptoOutputFromCryptoAccount(cryptoAccount, account);
-                        }
-                        if (cryptoOutput != null) {
-                            String jsonStr = collectXpubViewModel.handleCollectExPubWithCryptoOutput(cryptoOutput);
-                            AppExecutors.getInstance().mainThread().execute(() -> viewModel.updateScanResult(jsonStr));
-                            mFragment.navigateUp();
-                            return true;
-                        } else {
-                            throw new CollectExPubWrongTypeException("wrong xpub type");
-                        }
+                        CryptoOutput cryptoOutput = collectXpubViewModel.collectMultiSigCryptoOutputFromCryptoAccount(cryptoAccount, account);
+                        String jsonStr = collectXpubViewModel.handleCollectExPubWithCryptoOutput(cryptoOutput);
+                        return resolveXPubJson(jsonStr);
                     }
 
                     private boolean handleImportXPubJson(ScanResult result) throws JSONException, CollectExPubWrongTypeException {
-                        JSONObject object = new JSONObject(result.getData());
-                        xpub = object.getString("xpub");
-                        String path = object.getString("path");
+                        return resolveXPubJson(result.getData());
+                    }
+
+                    private boolean resolveXPubJson(String jsonStr) throws JSONException, CollectExPubWrongTypeException {
+                        JSONObject jsonObject = new JSONObject(jsonStr);
+                        xpub = jsonObject.getString("xpub");
+                        String path = jsonObject.getString("path");
                         if (path.equals(account.getPath())
                                 && xpub.startsWith(account.getXPubVersion().getName())) {
-                            AppExecutors.getInstance().mainThread().execute(() -> viewModel.updateScanResult(object.toString()));
+                            AppExecutors.getInstance().mainThread().execute(() -> viewModel.updateScanResult(jsonObject.toString()));
                             mFragment.navigateUp();
                             return true;
                         }
                         throw new CollectExPubWrongTypeException("wrong xpub type");
+
                     }
                 });
         navigate(R.id.action_to_scanner);
