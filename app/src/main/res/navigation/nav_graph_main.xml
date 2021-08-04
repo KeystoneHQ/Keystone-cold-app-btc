@@ -421,6 +421,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtListFragment"
+            app:destination="@id/psbtListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -827,7 +834,7 @@
         android:id="@+id/electrumExportFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
         android:label="ElectrumExportFragment"
-        tools:layout="@layout/electrum_export"/>
+        tools:layout="@layout/electrum_export" />
     <fragment
         android:id="@+id/txConfirmFragment"
         android:name="com.keystone.cold.ui.fragment.main.TxConfirmFragment"
@@ -915,7 +922,7 @@
         android:id="@+id/broadcastElectrumTxFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumBroadcastTxFragment"
         android:label="ElectrumBroadcastTxFragment"
-        tools:layout="@layout/broadcast_electrum_tx_fragment"/>
+        tools:layout="@layout/broadcast_electrum_tx_fragment" />
 
     <fragment
         android:id="@+id/receiveCoinFragment"
