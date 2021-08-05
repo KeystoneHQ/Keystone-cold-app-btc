@@ -30,16 +30,19 @@ public class PsbtMultiSigTxAdapter {
     private JSONObject object;
     private MultiSigWalletEntity wallet;
     public MultiSigMode mode;
-    private boolean isCasaMainnet;
+    private boolean isCasaMainnet = true;
     private final DataRepository mRepository;
     String mfp;
 
-    public PsbtMultiSigTxAdapter(MultiSigMode mode, MultiSigWalletEntity wallet, boolean isCasaMainnet) {
+    public PsbtMultiSigTxAdapter(MultiSigMode mode, MultiSigWalletEntity wallet) {
         mRepository = MainApplication.getApplication().getRepository();
         mfp = new GetMasterFingerprintCallable().call();
         this.wallet = wallet;
         this.mode = mode;
-        this.isCasaMainnet = isCasaMainnet;
+    }
+
+    public boolean isCasaMainnet() {
+        return isCasaMainnet;
     }
 
     public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWalletException, NotMyCasaKeyException {

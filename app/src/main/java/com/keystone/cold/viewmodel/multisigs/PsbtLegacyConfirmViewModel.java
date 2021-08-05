@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.Util;
@@ -42,14 +43,17 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
 
-public class PsbtLegacyPsbtConfirmViewModel extends ParsePsbtViewModel {
+public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "SigleTxConfirmViewModel";
+    protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
     private MultiSigWalletEntity wallet;
 
-    public PsbtLegacyPsbtConfirmViewModel(@NonNull Application application) {
+    public PsbtLegacyConfirmViewModel(@NonNull Application application) {
         super(application);
+        observableTx.setValue(null);
     }
 
+    @Override
     public void parseTxData(Bundle bundle) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
@@ -66,7 +70,7 @@ public class PsbtLegacyPsbtConfirmViewModel extends ParsePsbtViewModel {
                             new InvalidTransactionException("", InvalidTransactionException.IS_NOTMULTISIG_TX));
                     return;
                 }
-                JSONObject adaptTx = new PsbtMultiSigTxAdapter(MultiSigMode.CASA, wallet,false).adapt(psbtTx);
+                JSONObject adaptTx = new PsbtMultiSigTxAdapter(MultiSigMode.CASA, wallet).adapt(psbtTx);
                 JSONObject signTx = parsePsbtTx(adaptTx);
                 Log.i(TAG, "signTx = " + signTx.toString(4));
                 transaction = AbsTx.newInstance(signTx);
@@ -104,7 +108,82 @@ public class PsbtLegacyPsbtConfirmViewModel extends ParsePsbtViewModel {
         });
     }
 
-    private boolean checkMultisigChangeAddress(AbsTx utxoTx) {
+    @Override
+    public void handleSignPsbt(String psbt) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            SignPsbtCallback callback = new SignPsbtCallback() {
+                @Override
+                public void startSign() {
+                    signState.postValue(STATE_SIGNING);
+                }
+
+                @Override
+                public void onFail() {
+                    signState.postValue(STATE_SIGN_FAIL);
+                    new ClearTokenCallable().call();
+                }
+
+                @Override
+                public void onSuccess(String txId, String psbtB64) {
+                    TxEntity tx = observableTx.getValue();
+                    Objects.requireNonNull(tx);
+                    updateTxSignStatus(tx);
+                    if (TextUtils.isEmpty(txId)) {
+                        txId = "unknown_txid_" + Math.abs(tx.hashCode());
+                    }
+                    tx.setTxId(txId);
+                    tx.setSignedHex(psbtB64);
+                    mRepository.insertTx(tx);
+                    signState.postValue(STATE_SIGN_SUCCESS);
+                    new ClearTokenCallable().call();
+                }
+
+                @Override
+                public void postProgress(int progress) {
+
+                }
+
+                private void updateTxSignStatus(TxEntity tx) {
+                    String signStatus = tx.getSignStatus();
+                    String[] splits = signStatus.split("-");
+                    int sigNumber = Integer.parseInt(splits[0]);
+                    int reqSigNumber = Integer.parseInt(splits[1]);
+                    int keyNumber = Integer.parseInt(splits[2]);
+                    tx.setSignStatus((sigNumber + 1) + "-" + reqSigNumber + "-" + keyNumber);
+                }
+            };
+            callback.startSign();
+            Signer[] signer = initSigners();
+            Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+            btc.signPsbt(psbt, callback, false, signer);
+        });
+    }
+
+    @Override
+    public Signer[] initSigners() {
+        String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
+        String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
+        Signer[] signer = new Signer[distinctPaths.length];
+
+        String authToken = getAuthToken();
+        if (TextUtils.isEmpty(authToken)) {
+            Log.w(TAG, "authToken null");
+            return null;
+        }
+        for (int i = 0; i < distinctPaths.length; i++) {
+            String path = distinctPaths[i].replace(wallet.getExPubPath() + "/", "");
+            String[] index = path.split("/");
+            if (index.length != 2) return null;
+            String expub = new GetExtendedPublicKeyCallable(wallet.getExPubPath()).call();
+            String pubKey = Util.getPublicKeyHex(
+                    ExtendPubkeyFormat.convertExtendPubkey(expub, ExtendPubkeyFormat.xpub),
+                    Integer.parseInt(index[0]), Integer.parseInt(index[1]));
+            signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
+        }
+        return signer;
+    }
+
+    protected boolean checkMultisigChangeAddress(AbsTx utxoTx) {
         List<UtxoTx.ChangeAddressInfo> changeAddressInfo = ((UtxoTx) utxoTx).getChangeAddressInfo();
         if (changeAddressInfo == null || changeAddressInfo.isEmpty()) {
             return true;
@@ -239,78 +318,7 @@ public class PsbtLegacyPsbtConfirmViewModel extends ParsePsbtViewModel {
         }
     }
 
-    @Override
-    public void handleSignPsbt(String psbt) {
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            SignPsbtCallback callback = new SignPsbtCallback() {
-                @Override
-                public void startSign() {
-                    signState.postValue(STATE_SIGNING);
-                }
-
-                @Override
-                public void onFail() {
-                    signState.postValue(STATE_SIGN_FAIL);
-                    new ClearTokenCallable().call();
-                }
-
-                @Override
-                public void onSuccess(String txId, String psbtB64) {
-                    TxEntity tx = observableTx.getValue();
-                    Objects.requireNonNull(tx);
-                    updateTxSignStatus(tx);
-                    if (TextUtils.isEmpty(txId)) {
-                        txId = "unknown_txid_" + Math.abs(tx.hashCode());
-                    }
-                    tx.setTxId(txId);
-                    tx.setSignedHex(psbtB64);
-                    mRepository.insertTx(tx);
-                    signState.postValue(STATE_SIGN_SUCCESS);
-                    new ClearTokenCallable().call();
-                }
-
-                @Override
-                public void postProgress(int progress) {
-
-                }
-
-                private void updateTxSignStatus(TxEntity tx) {
-                    String signStatus = tx.getSignStatus();
-                    String[] splits = signStatus.split("-");
-                    int sigNumber = Integer.parseInt(splits[0]);
-                    int reqSigNumber = Integer.parseInt(splits[1]);
-                    int keyNumber = Integer.parseInt(splits[2]);
-                    tx.setSignStatus((sigNumber + 1) + "-" + reqSigNumber + "-" + keyNumber);
-                }
-            };
-            callback.startSign();
-            Signer[] signer = initSigners();
-            Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
-            btc.signPsbt(psbt, callback, false, signer);
-        });
-    }
-
-    @Override
-    protected Signer[] initSigners() {
-        String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
-        String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
-        Signer[] signer = new Signer[distinctPaths.length];
-
-        String authToken = getAuthToken();
-        if (TextUtils.isEmpty(authToken)) {
-            Log.w(TAG, "authToken null");
-            return null;
-        }
-        for (int i = 0; i < distinctPaths.length; i++) {
-            String path = distinctPaths[i].replace(wallet.getExPubPath() + "/", "");
-            String[] index = path.split("/");
-            if (index.length != 2) return null;
-            String expub = new GetExtendedPublicKeyCallable(wallet.getExPubPath()).call();
-            String pubKey = Util.getPublicKeyHex(
-                    ExtendPubkeyFormat.convertExtendPubkey(expub, ExtendPubkeyFormat.xpub),
-                    Integer.parseInt(index[0]), Integer.parseInt(index[1]));
-            signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
-        }
-        return signer;
+    public MutableLiveData<TxEntity> getObservableTx() {
+        return observableTx;
     }
 }

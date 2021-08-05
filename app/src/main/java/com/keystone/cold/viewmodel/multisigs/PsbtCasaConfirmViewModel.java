@@ -37,16 +37,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class PsbtCasaPsbtConfirmViewModel extends ParsePsbtViewModel {
+public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "SigleTxConfirmViewModel";
 
     private final MutableLiveData<CasaSignature> observableCasaSignature = new MutableLiveData<>();
-    private MultiSigWalletEntity wallet;
-    private boolean isCasaMainnet = true;
+    private boolean isCasaMainnet;
+    protected MultiSigWalletEntity wallet;
 
-    public PsbtCasaPsbtConfirmViewModel(@NonNull Application application) {
+    public PsbtCasaConfirmViewModel(@NonNull Application application) {
         super(application);
         observableCasaSignature.setValue(null);
+        isCasaMainnet = Utilities.isMainNet(getApplication());
     }
 
     public MutableLiveData<CasaSignature> getObservableCasaSignature() {
@@ -57,11 +58,12 @@ public class PsbtCasaPsbtConfirmViewModel extends ParsePsbtViewModel {
         return isCasaMainnet;
     }
 
+    @Override
     public void parseTxData(Bundle bundle) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
                 String psbtBase64 = bundle.getString("psbt_base64");
-                Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+                Btc btc = new Btc(new BtcImpl(isCasaMainnet));
                 JSONObject psbtTx = btc.parsePsbt(psbtBase64);
                 if (psbtTx == null) {
                     parseTxException.postValue(new InvalidTransactionException("parse failed,invalid psbt data"));
@@ -73,18 +75,20 @@ public class PsbtCasaPsbtConfirmViewModel extends ParsePsbtViewModel {
                             new InvalidTransactionException("", InvalidTransactionException.IS_NOTMULTISIG_TX));
                     return;
                 }
-                JSONObject adaptTx = new PsbtMultiSigTxAdapter(MultiSigMode.CASA, wallet, isCasaMainnet).adapt(psbtTx);
+                PsbtMultiSigTxAdapter psbtMultiSigTxAdapter = new PsbtMultiSigTxAdapter(MultiSigMode.CASA, wallet);
+                JSONObject adaptTx = psbtMultiSigTxAdapter.adapt(psbtTx);
+                isCasaMainnet = psbtMultiSigTxAdapter.isCasaMainnet();
                 JSONObject signTx = parsePsbtTx(adaptTx);
                 Log.i(TAG, "signTx = " + signTx.toString(4));
                 transaction = AbsTx.newInstance(signTx);
                 if (transaction == null) {
-                    observableTx.postValue(null);
+                    observableCasaSignature.postValue(null);
                     parseTxException.postValue(new InvalidTransactionException("invalid transaction"));
                     return;
                 }
                 if (transaction instanceof UtxoTx) {
                     if (!checkMultisigChangeAddress(transaction)) {
-                        observableTx.postValue(null);
+                        observableCasaSignature.postValue(null);
                         parseTxException.postValue(new InvalidTransactionException("invalid change address"));
                         return;
                     }
@@ -99,56 +103,6 @@ public class PsbtCasaPsbtConfirmViewModel extends ParsePsbtViewModel {
                 parseTxException.postValue(e);
             }
         });
-    }
-
-    private boolean checkMultisigChangeAddress(AbsTx utxoTx) {
-        List<UtxoTx.ChangeAddressInfo> changeAddressInfo = ((UtxoTx) utxoTx).getChangeAddressInfo();
-        if (changeAddressInfo == null || changeAddressInfo.isEmpty()) {
-            return true;
-        }
-
-        try {
-            String exPubPath = wallet.getExPubPath();
-            for (UtxoTx.ChangeAddressInfo info : changeAddressInfo) {
-                String path = info.hdPath;
-                String address = info.address;
-                if (!path.startsWith(exPubPath)) return false;
-                path = path.replace(exPubPath + "/", "");
-
-                String[] index = path.split("/");
-
-                if (index.length != 2) return false;
-                String expectedAddress = wallet.deriveAddress(
-                        new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])},
-                        Utilities.isMainNet(getApplication()));
-
-                if (!expectedAddress.equals(address)) {
-                    return false;
-                }
-            }
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private CasaSignature generateCasaSignature(JSONObject object) throws JSONException {
-        CasaSignature sig = new CasaSignature();
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(20);
-        sig.setFrom("");
-        sig.setTo(getToAddress());
-        sig.setAmount(nf.format(transaction.getAmount()) + " " + transaction.getUnit());
-        sig.setFee(nf.format(transaction.getFee()) + " BTC");
-        sig.setMemo(transaction.getMemo());
-        String signStatus = null;
-        if (object.has("btcTx")) {
-            signStatus = object.getJSONObject("btcTx").getString("signStatus");
-        } else if (object.has("xtnTx")) {
-            signStatus = object.getJSONObject("xtnTx").getString("signStatus");
-        }
-        sig.setSignStatus(signStatus);
-        return sig;
     }
 
     @Override
@@ -204,7 +158,7 @@ public class PsbtCasaPsbtConfirmViewModel extends ParsePsbtViewModel {
     }
 
     @Override
-    protected Signer[] initSigners() {
+    public Signer[] initSigners() {
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
         Signer[] signer = new Signer[distinctPaths.length];
@@ -225,5 +179,55 @@ public class PsbtCasaPsbtConfirmViewModel extends ParsePsbtViewModel {
             signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
         }
         return signer;
+    }
+
+    protected boolean checkMultisigChangeAddress(AbsTx utxoTx) {
+        List<UtxoTx.ChangeAddressInfo> changeAddressInfo = ((UtxoTx) utxoTx).getChangeAddressInfo();
+        if (changeAddressInfo == null || changeAddressInfo.isEmpty()) {
+            return true;
+        }
+
+        try {
+            String exPubPath = wallet.getExPubPath();
+            for (UtxoTx.ChangeAddressInfo info : changeAddressInfo) {
+                String path = info.hdPath;
+                String address = info.address;
+                if (!path.startsWith(exPubPath)) return false;
+                path = path.replace(exPubPath + "/", "");
+
+                String[] index = path.split("/");
+
+                if (index.length != 2) return false;
+                String expectedAddress = wallet.deriveAddress(
+                        new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])},
+                        Utilities.isMainNet(getApplication()));
+
+                if (!expectedAddress.equals(address)) {
+                    return false;
+                }
+            }
+        } catch (NumberFormatException | NullPointerException e) {
+            return false;
+        }
+        return true;
+    }
+
+    protected CasaSignature generateCasaSignature(JSONObject object) throws JSONException {
+        CasaSignature sig = new CasaSignature();
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(20);
+        sig.setFrom("");
+        sig.setTo(getToAddress());
+        sig.setAmount(nf.format(transaction.getAmount()) + " " + transaction.getUnit());
+        sig.setFee(nf.format(transaction.getFee()) + " BTC");
+        sig.setMemo(transaction.getMemo());
+        String signStatus = null;
+        if (object.has("btcTx")) {
+            signStatus = object.getJSONObject("btcTx").getString("signStatus");
+        } else if (object.has("xtnTx")) {
+            signStatus = object.getJSONObject("xtnTx").getString("signStatus");
+        }
+        sig.setSignStatus(signStatus);
+        return sig;
     }
 }

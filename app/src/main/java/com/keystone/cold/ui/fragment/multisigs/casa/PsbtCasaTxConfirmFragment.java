@@ -21,9 +21,7 @@ import com.keystone.cold.databinding.ElectrumTxConfirmFragmentBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
-import com.keystone.cold.ui.fragment.main.BroadcastTxFragment;
 import com.keystone.cold.ui.fragment.main.FeeAttackChecking;
-import com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment;
 import com.keystone.cold.ui.fragment.main.TransactionItem;
 import com.keystone.cold.ui.fragment.main.TransactionItemAdapter;
 import com.keystone.cold.ui.fragment.setup.PreImportFragment;
@@ -39,7 +37,8 @@ import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.exceptions.XpubNotMatchException;
-import com.keystone.cold.viewmodel.multisigs.PsbtCasaPsbtConfirmViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
+import com.keystone.cold.viewmodel.multisigs.PsbtCasaConfirmViewModel;
 import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
@@ -54,13 +53,14 @@ import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
 import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
 public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
 
-    private PsbtCasaPsbtConfirmViewModel psbtCasaTxConfirmViewModel;
+    private PsbtCasaConfirmViewModel psbtCasaTxConfirmViewModel;
     private SigningDialog signingDialog;
     private List<String> changeAddress = new ArrayList<>();
     private int feeAttackCheckingState;
@@ -101,7 +101,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        psbtCasaTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtCasaPsbtConfirmViewModel.class);
+        psbtCasaTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtCasaConfirmViewModel.class);
         ViewModelProviders.of(mActivity)
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
@@ -359,25 +359,10 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
     }
 
     protected void onSignSuccess() {
-        WatchWallet wallet = WatchWallet.getWatchWallet(mActivity);
-        if (wallet == WatchWallet.BTCPAY || wallet == WatchWallet.BLUE || wallet == WatchWallet.GENERIC || wallet == WatchWallet.SPARROW) {
-            Bundle data = new Bundle();
-            data.putString(PsbtBroadcastTxFragment.KEY_TXID, casaSignature.getTxId());
-            navigate(R.id.action_to_psbt_broadcast, data);
-        } else if (wallet == WatchWallet.ELECTRUM) {
-            if (casaSignature.getSignedHex().length() <= 800) {
-                String txId = casaSignature.getTxId();
-                Bundle data = new Bundle();
-                data.putString(BroadcastTxFragment.KEY_TXID, txId);
-                navigate(R.id.action_to_broadcastElectrumTxFragment, data);
-            } else {
-                showExportPsbtDialog(mActivity, casaSignature,
-                        () -> popBackStack(R.id.assetFragment, false));
-            }
-        } else {
-            showExportPsbtDialog(mActivity, casaSignature,
-                    () -> popBackStack(R.id.assetFragment, false));
-        }
+        Bundle data = new Bundle();
+        data.putString(KEY_TXID, String.valueOf(casaSignature.getId()));
+        data.putString(KEY_MULTISIG_MODE, MultiSigMode.CASA.name());
+        navigate(R.id.action_to_psbt_broadcast, data);
         psbtCasaTxConfirmViewModel.getSignState().removeObservers(this);
     }
 }
