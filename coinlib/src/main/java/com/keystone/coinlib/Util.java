@@ -26,6 +26,7 @@ import com.keystone.coinlib.path.Change;
 import com.keystone.coinlib.path.CoinPath;
 
 import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.Bech32;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.SignatureDecodeException;
@@ -41,6 +42,7 @@ import org.bouncycastle.util.Properties;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.ECPoint;
 import java.util.Arrays;
@@ -89,6 +91,12 @@ public class Util {
     }
 
     public static String convertAddressToTestnet(String address) {
+        if (address.toLowerCase().startsWith("bc")) {
+            Bech32.Bech32Data decode = Bech32.decode(address);
+            return Bech32.encode("tb", decode.data);
+        } else if (address.toLowerCase().startsWith("tb")){
+            return address;
+        }
         byte[] versionAndDataBytes = Base58.decodeChecked(address);
         byte[] data = new byte[20];
         System.arraycopy(versionAndDataBytes, 1, data, 0, 20);
