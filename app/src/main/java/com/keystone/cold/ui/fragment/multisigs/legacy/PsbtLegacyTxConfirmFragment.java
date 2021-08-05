@@ -32,13 +32,13 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.viewmodel.GlobalViewModel;
-import com.keystone.cold.viewmodel.PsbtSiglePsbtConfirmViewModel;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.exceptions.XpubNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
+import com.keystone.cold.viewmodel.multisigs.PsbtLegacyConfirmViewModel;
 import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
@@ -55,13 +55,12 @@ import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackChec
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
 public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
 
-    private PsbtSiglePsbtConfirmViewModel psbtSigleTxConfirmViewModel;
+    private PsbtLegacyConfirmViewModel psbtLegacyConfirmViewModel;
     private SigningDialog signingDialog;
     private TxEntity txEntity;
     private List<String> changeAddress = new ArrayList<>();
@@ -102,12 +101,12 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        psbtSigleTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtSiglePsbtConfirmViewModel.class);
+        psbtLegacyConfirmViewModel = ViewModelProviders.of(this).get(PsbtLegacyConfirmViewModel.class);
         ViewModelProviders.of(mActivity)
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
                 .observe(this, address -> this.changeAddress = address);
-        psbtSigleTxConfirmViewModel.parseTxData(requireArguments());
+        psbtLegacyConfirmViewModel.parseTxData(requireArguments());
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
@@ -120,7 +119,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
     }
 
     private void observeEntity() {
-        psbtSigleTxConfirmViewModel.getObservableTx().observe(this, txEntity -> {
+        psbtLegacyConfirmViewModel.getObservableTx().observe(this, txEntity -> {
             if (txEntity != null) {
                 progressModalDialog.dismiss();
                 this.txEntity = txEntity;
@@ -131,7 +130,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
     }
 
     private void observeException() {
-        psbtSigleTxConfirmViewModel.getParseTxException().observe(this, ex -> {
+        psbtLegacyConfirmViewModel.getParseTxException().observe(this, ex -> {
             if (ex != null) {
                 ex.printStackTrace();
                 progressModalDialog.dismiss();
@@ -170,7 +169,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
     }
 
     private void observeFeeAttack() {
-        psbtSigleTxConfirmViewModel.getFeeAttachCheckingResult().observe(this, state -> {
+        psbtLegacyConfirmViewModel.getFeeAttachCheckingResult().observe(this, state -> {
             feeAttackCheckingState = state;
             if (state != NORMAL) {
                 feeAttackChecking = new FeeAttackChecking(this);
@@ -330,19 +329,19 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
         String to = txEntity.getTo();
         String encryptedAddress = ByteFormatter.bytes2hex(
                 new KeyStoreUtil().encrypt(to.getBytes(StandardCharsets.UTF_8)));
-        return psbtSigleTxConfirmViewModel.isAddressInWhiteList(encryptedAddress);
+        return psbtLegacyConfirmViewModel.isAddressInWhiteList(encryptedAddress);
     }
 
     protected AuthenticateModal.OnVerify signWithVerifyInfo() {
         return token -> {
-            psbtSigleTxConfirmViewModel.setToken(token);
-            psbtSigleTxConfirmViewModel.handleSignPsbt(requireArguments().getString("psbt_base64"));
+            psbtLegacyConfirmViewModel.setToken(token);
+            psbtLegacyConfirmViewModel.handleSignPsbt(requireArguments().getString("psbt_base64"));
             subscribeSignState();
         };
     }
 
     protected void subscribeSignState() {
-        psbtSigleTxConfirmViewModel.getSignState().observe(this, s -> {
+        psbtLegacyConfirmViewModel.getSignState().observe(this, s -> {
             if (TxConfirmViewModel.STATE_SIGNING.equals(s)) {
                 signingDialog = SigningDialog.newInstance();
                 signingDialog.show(mActivity.getSupportFragmentManager(), "");
@@ -356,7 +355,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
                     }
                     signingDialog = null;
                     onSignSuccess();
-                    psbtSigleTxConfirmViewModel.getSignState().setValue(STATE_NONE);
+                    psbtLegacyConfirmViewModel.getSignState().setValue(STATE_NONE);
                 }, 500);
             } else if (TxConfirmViewModel.STATE_SIGN_FAIL.equals(s)) {
                 if (signingDialog == null) {
@@ -369,8 +368,8 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
                         signingDialog.dismiss();
                     }
                     signingDialog = null;
-                    psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
-                    psbtSigleTxConfirmViewModel.getSignState().setValue(STATE_NONE);
+                    psbtLegacyConfirmViewModel.getSignState().removeObservers(this);
+                    psbtLegacyConfirmViewModel.getSignState().setValue(STATE_NONE);
                 }, 2000);
             }
         });
@@ -381,6 +380,6 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
         data.putString(KEY_TXID, txEntity.getTxId());
         data.putString(KEY_MULTISIG_MODE, MultiSigMode.LEGACY.name());
         navigate(R.id.action_to_psbt_broadcast, data);
-        psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
+        psbtLegacyConfirmViewModel.getSignState().removeObservers(this);
     }
 }

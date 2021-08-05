@@ -22,6 +22,7 @@ import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.setup.PreImportFragment;
+import com.keystone.cold.ui.modal.ExportPsbtDialog;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.ui.modal.SigningDialog;
@@ -29,7 +30,7 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.viewmodel.GlobalViewModel;
-import com.keystone.cold.viewmodel.PsbtSiglePsbtConfirmViewModel;
+import com.keystone.cold.viewmodel.PsbtSigleConfirmViewModel;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
@@ -49,13 +50,12 @@ import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
 import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
 public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
 
-    private PsbtSiglePsbtConfirmViewModel psbtSigleTxConfirmViewModel;
+    private PsbtSigleConfirmViewModel psbtSigleTxConfirmViewModel;
     private SigningDialog signingDialog;
     private TxEntity txEntity;
     private List<String> changeAddress = new ArrayList<>();
@@ -96,7 +96,7 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        psbtSigleTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtSiglePsbtConfirmViewModel.class);
+        psbtSigleTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtSigleConfirmViewModel.class);
         ViewModelProviders.of(mActivity)
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
@@ -383,11 +383,11 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
                 data.putString(BroadcastTxFragment.KEY_TXID, txId);
                 navigate(R.id.action_to_broadcastElectrumTxFragment, data);
             } else {
-                showExportPsbtDialog(mActivity, txEntity,
+                ExportPsbtDialog.showExportPsbtDialog(mActivity, txEntity,
                         () -> popBackStack(R.id.assetFragment, false));
             }
         } else {
-            showExportPsbtDialog(mActivity, txEntity,
+            ExportPsbtDialog.showExportPsbtDialog(mActivity, txEntity,
                     () -> popBackStack(R.id.assetFragment, false));
         }
         psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
