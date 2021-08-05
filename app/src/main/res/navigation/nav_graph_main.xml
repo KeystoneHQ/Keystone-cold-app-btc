@@ -791,7 +791,7 @@
 
     <fragment
         android:id="@+id/psbtSignedCasaFragment"
-        android:name="com.keystone.cold.ui.fragment.multisigs.casa.PsbtSignedCasaFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaSignedPsbtFragment"
         android:label="PsbtSignedCasaFragment" />
 
     <fragment

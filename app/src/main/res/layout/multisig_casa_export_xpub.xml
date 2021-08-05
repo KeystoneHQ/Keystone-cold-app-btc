@@ -16,8 +16,7 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -68,12 +67,13 @@
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
                     android:gravity="center">
+
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:padding="5dp"
                         android:src="@drawable/info"
-                        android:visibility="invisible"/>
+                        android:visibility="invisible" />
 
                     <TextView
                         android:id="@+id/scan_hint"
@@ -86,17 +86,33 @@
                         android:textColor="@color/white"
                         android:textSize="15sp"
                         android:textStyle="bold" />
+
                     <ImageView
                         android:id="@+id/info"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:padding="5dp"
                         android:src="@drawable/info"
-                        android:visibility="visible"/>
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
-                <include android:id="@+id/qrcode_layout" layout="@layout/dynamic_qrcode"/>
+                <include
+                    android:id="@+id/qrcode_layout"
+                    layout="@layout/dynamic_qrcode" />
+
+                <com.keystone.cold.ui.views.SpanedTextView
+                    android:id="@+id/export_to_sdcard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="6dp"
+                    android:paddingVertical="10dp"
+                    android:gravity="center"
+                    android:text="@string/electrum_qrcode_hint"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
                 <TextView
                     android:id="@+id/xpub"
                     android:paddingHorizontal="16dp"
@@ -104,8 +120,8 @@
                     android:layout_height="wrap_content"
                     android:text="ypub6XsyMmCyC7o9aXNfXzxwFgz3XPub9HadNzaZraotUtYjRHkJR7YXvaPmdZvvxhrYh9ajWXBJaPNjPsEPo3M4uNG9LyrrPTaYuee44qgWJW3"
                     android:textColor="@color/white40"
-                    android:textAlignment="center"
-                    />
+                    android:textAlignment="center" />
+
                 <TextView
                     android:id="@+id/path"
                     android:layout_marginTop="12dp"
@@ -113,8 +129,7 @@
                     android:layout_height="wrap_content"
                     android:text="Path: m"
                     android:textColor="@color/white40"
-                    android:textSize="20sp"
-                    />
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/done"
@@ -122,7 +137,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
                     style="@style/AcceptButton"
-                    android:text="@string/complete"/>
+                    android:text="@string/complete" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

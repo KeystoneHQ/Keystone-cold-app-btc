@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.keystone.cold.ui.fragment.multisigs.casa.SignedCasaFragment.KEY_ID;
+import static com.keystone.cold.ui.fragment.multisigs.casa.CasaSignedPsbtFragment.KEY_ID;
 
 public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMainBinding> {
     public static final String TAG = "MultisigEntry";
