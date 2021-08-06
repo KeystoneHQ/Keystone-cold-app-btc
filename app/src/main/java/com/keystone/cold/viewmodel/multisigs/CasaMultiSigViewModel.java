@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 public class CasaMultiSigViewModel extends ViewModelBase {
     private final DataRepository repo;
-    private static final Pattern signedMessagePattern = Pattern.compile("^signed_[0-9a-fA-F]{8}.txt$");
+    private static final Pattern unsignedMessageFilePattern = Pattern.compile("^\\d{8}-hc-[0-9a-fA-F]{8}.txt$");
 
     public CasaMultiSigViewModel(@NonNull Application application) {
         super(application);
@@ -40,8 +40,8 @@ public class CasaMultiSigViewModel extends ViewModelBase {
         return URRegistryHelper.generateCryptoHDKey(MultiSig.CASA, Hex.decode(getXfp()), getXPub(MultiSig.CASA));
     }
 
-    private boolean isSignedMessage(String fileName) {
-        Matcher matcher = signedMessagePattern.matcher(fileName);
+    private boolean isUnsignedMessage(String fileName) {
+        Matcher matcher = unsignedMessageFilePattern.matcher(fileName);
         return matcher.matches();
     }
 
@@ -54,8 +54,7 @@ public class CasaMultiSigViewModel extends ViewModelBase {
                 File[] files = storage.getExternalDir().listFiles();
                 if (files != null) {
                     for (File f : files) {
-                        if (f.getName().endsWith(".txt")
-                                && !isSignedMessage(f.getName())) {
+                        if (isUnsignedMessage(f.getName())) {
                             fileList.add(f.getName());
                         }
                     }

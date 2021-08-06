@@ -16,8 +16,8 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.keystone.cold.R;
-import com.keystone.cold.databinding.CasaPerformHealthCheckBinding;
 import com.keystone.cold.databinding.FileListItemBinding;
+import com.keystone.cold.databinding.MultisigCasaPerformHealthCheckBinding;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.main.electrum.Callback;
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CasaPerformHealthCheckFragment extends BaseFragment<CasaPerformHealthCheckBinding> implements Callback {
+public class CasaPerformHealthCheckFragment extends BaseFragment<MultisigCasaPerformHealthCheckBinding> implements Callback {
     public static final String TAG = "CasaHealthCheckFragment";
     protected CasaMultiSigViewModel casaMultiSigViewModel;
     private FileListAdapter adapter;
@@ -53,7 +53,7 @@ public class CasaPerformHealthCheckFragment extends BaseFragment<CasaPerformHeal
 
     @Override
     protected int setView() {
-        return R.layout.casa_perform_health_check;
+        return R.layout.multisig_casa_perform_health_check;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class CasaPerformHealthCheckFragment extends BaseFragment<CasaPerformHeal
                     Bundle bundle = new Bundle();
                     bundle.putString("message", message);
                     bundle.putString("path", path);
-                    mFragment.navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
+                    mFragment.navigate(R.id.action_to_casaSignMessageFragment, bundle);
                     return true;
                 }
 
@@ -188,7 +188,8 @@ public class CasaPerformHealthCheckFragment extends BaseFragment<CasaPerformHeal
                 Bundle bundle = new Bundle();
                 bundle.putString("message", message);
                 bundle.putString("path", path);
-                navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
+                bundle.putString("file_name", file);
+                navigate(R.id.action_to_casaSignMessageFragment, bundle);
                 return;
             }
 

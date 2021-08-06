@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.keystone.cold.R;
-import com.keystone.cold.databinding.CasaListItemBinding;
+import com.keystone.cold.databinding.MultisigCasaListItemBinding;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.ui.MainActivity;
@@ -25,16 +25,11 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
-import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
 import org.spongycastle.util.encoders.Base64;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -128,34 +123,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
 
             }
         });
-        mBinding.healthCheck.setOnClickListener(v -> {
-            ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
-                @Override
-                public void handleScanResult(ScanResult result) throws IOException {
-                    if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
-                        byte[] bytes = (byte[]) result.resolve();
-                        String signData = new String(bytes, StandardCharsets.UTF_8);
-                        BufferedReader reader = new BufferedReader(new StringReader(signData));
-                        String message = reader.readLine();
-                        String path = reader.readLine();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("message", message);
-                        bundle.putString("path", path);
-                        mFragment.navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
-                    }
-                }
-
-                @Override
-                public boolean handleException(Exception e) {
-                    if (e instanceof XfpNotMatchException) {
-                        mFragment.alert("Master fingerprint not match");
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            navigate(R.id.action_to_scanner);
-        });
+        mBinding.healthCheck.setOnClickListener(v -> navigate(R.id.action_to_casaPerformHealthCheckFragment));
     }
 
     @Override
@@ -206,7 +174,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         return false;
     }
 
-    class SignatureAdapter extends FilterableBaseBindingAdapter<CasaSignature, CasaListItemBinding> {
+    class SignatureAdapter extends FilterableBaseBindingAdapter<CasaSignature, MultisigCasaListItemBinding> {
 
         SignatureAdapter(Context context) {
             super(context);
@@ -214,11 +182,11 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
 
         @Override
         protected int getLayoutResId(int viewType) {
-            return R.layout.casa_list_item;
+            return R.layout.multisig_casa_list_item;
         }
 
         @Override
-        protected void onBindItem(CasaListItemBinding binding, CasaSignature item) {
+        protected void onBindItem(MultisigCasaListItemBinding binding, CasaSignature item) {
             binding.setCs(item);
             binding.setCasaCallback(casaCallback);
         }

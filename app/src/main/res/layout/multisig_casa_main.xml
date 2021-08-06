@@ -161,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tab"
-            tools:listitem="@layout/casa_list_item"
+            tools:listitem="@layout/multisig_casa_list_item"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:visibility="gone" />
 
