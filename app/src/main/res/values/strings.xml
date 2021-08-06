@@ -131,13 +131,13 @@
 
     <string name="casa_sign_message">Sign Message</string>
     <string name="casa_sign_message_result">Export signature</string>
-    <string name="casa_sign_message_result_export">Using Casa scan the QR Code to get signature</string>
+    <string name="casa_sign_message_result_export">Scan QR Code with your Casa App</string>
     <string name="casa_sign_message_message">Message: </string>
     <string name="casa_sign_message_address">Associated Address: </string>
     <string name="casa_sign_message_path">Using the key associated with address: </string>
 
-    <string name="casa_operation">OPERATION</string>
-    <string name="casa_signatures">SIGNATURES</string>
+    <string name="casa_operation">OPTIONS</string>
+    <string name="casa_signatures">SIGNING HISTORY</string>
 
     <string name="scan_qrcode_with_casa">Scan the QR code using Casa</string>
     <string name="scan_qrcode_with_casa_hint_title">How to export XPub to Casa</string>
