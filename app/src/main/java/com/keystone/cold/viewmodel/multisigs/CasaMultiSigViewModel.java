@@ -58,9 +58,14 @@ public class CasaMultiSigViewModel extends ViewModelBase {
                             fileList.add(f.getName());
                         }
                     }
+                    for (File f : files) {
+                        if (f.getName().endsWith(".txt") && !isUnsignedMessage(f.getName()) && !f.getName().startsWith(".")) {
+                            fileList.add(f.getName());
+                        }
+                    }
                 }
             }
-            fileList.sort(String::compareTo);
+//            fileList.sort(String::compareTo);
             result.postValue(fileList);
         });
         return result;

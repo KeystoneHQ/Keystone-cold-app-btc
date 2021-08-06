@@ -41,10 +41,11 @@ public class CasaSignMessageResultFragment extends BaseFragment<MultisigCasaSign
         try {
             Bundle data = requireArguments();
             signResult = data.getString("sign_result");
-            fileName = data.getString("file_name");
+            fileName = data.getString("file_name").replace(".txt", "-signed.txt");
             byte[] bytes = signResult.getBytes(StandardCharsets.UTF_8);
             String ur = UR.fromBytes(bytes).toString();
             mBinding.qrcodeLayout.qrcode.setData(ur);
+            mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
             mBinding.exportToSdcard.setOnClickListener(v -> exportSignedMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,10 +64,9 @@ public class CasaSignMessageResultFragment extends BaseFragment<MultisigCasaSign
             binding.title.setText(R.string.export_xpub_text_file);
             binding.fileName.setText(fileName);
             binding.cancel.setOnClickListener(vv -> modalDialog.dismiss());
-            String signedFileName = fileName.replace(".txt", "-signed.txt");
             binding.confirm.setOnClickListener(vv -> {
                 modalDialog.dismiss();
-                boolean result = writeToSdcard(storage, signResult, signedFileName);
+                boolean result = writeToSdcard(storage, signResult, fileName);
                 showExportResult(mActivity, null, result);
             });
             modalDialog.setBinding(binding);

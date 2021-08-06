@@ -122,15 +122,17 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
             if (multiSigMode.equals(MultiSigMode.LEGACY)) {
                 goHome = v -> popBackStack(R.id.legacyMultisigFragment, false);
                 mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
+                mBinding.exportToSdcard.setOnClickListener(v ->
+                        showExportPsbtDialog(mActivity, txEntity, null));
             } else {
                 goHome = v -> popBackStack(R.id.casaMultisigFragment, false);
                 mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(casaSignature));
+                mBinding.exportToSdcard.setOnClickListener(v ->
+                        showExportPsbtDialog(mActivity, casaSignature, null));
             }
             mBinding.toolbarTitle.setText(getString(R.string.export_tx));
             mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
             mBinding.exportToSdcard.setVisibility(View.VISIBLE);
-            mBinding.exportToSdcard.setOnClickListener(v ->
-                    showExportPsbtDialog(mActivity, txEntity, null));
             if (signed) {
                 mBinding.scanHint.setText(R.string.broadcast_multisig_tx_hint);
             } else {
