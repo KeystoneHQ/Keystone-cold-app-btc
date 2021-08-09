@@ -244,7 +244,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
                 bundle.putString("psbt_base64", Base64.toBase64String(Hex.decode(psbt)));
                 bundle.putBoolean("multisig", true);
                 bundle.putString("multisig_mode", MultiSigMode.LEGACY.name());
-                mFragment.navigate(R.id.action_scanner_to_psbtTxConfirmFragment, bundle);
+                mFragment.navigate(R.id.action_to_psbtLegacyTxConfirmFragment, bundle);
             }
         });
         navigate(R.id.action_to_scanner);
