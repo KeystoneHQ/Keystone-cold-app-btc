@@ -1,7 +1,6 @@
 package com.keystone.cold.ui.fragment.main.adapter;
 
-import com.keystone.coinlib.Util;
-import com.keystone.coinlib.accounts.MultiSig;
+import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
@@ -9,8 +8,6 @@ import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
-import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
-import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,29 +20,26 @@ import java.util.stream.Collectors;
 
 import static com.keystone.coinlib.Util.getExpubFingerprint;
 
-public class PsbtMultiSigTxAdapter {
+public class PsbtLegacyTxAdapter {
     private int total;
     private int threshold;
     private String fingerprintsHash;
     private JSONObject object;
     private MultiSigWalletEntity wallet;
-    public MultiSigMode mode;
-    private boolean isCasaMainnet = true;
     private final DataRepository mRepository;
-    String mfp;
 
-    public PsbtMultiSigTxAdapter(MultiSigMode mode, MultiSigWalletEntity wallet) {
+    public PsbtLegacyTxAdapter() {
         mRepository = MainApplication.getApplication().getRepository();
-        mfp = new GetMasterFingerprintCallable().call();
-        this.wallet = wallet;
-        this.mode = mode;
     }
 
-    public boolean isCasaMainnet() {
-        return isCasaMainnet;
+    public MultiSigWalletEntity getWallet() {
+        return wallet;
     }
 
-    public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWalletException, NotMyCasaKeyException {
+    public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NoMatchedMultisigWalletException, InvalidTransactionException {
+        if (psbt == null) {
+            throw new InvalidTransactionException("parse failed,invalid psbt data");
+        }
         object = new JSONObject();
         JSONArray inputs = new JSONArray();
         JSONArray outputs = new JSONArray();
@@ -57,13 +51,11 @@ public class PsbtMultiSigTxAdapter {
         object.put("inputs", inputs);
         object.put("outputs", outputs);
         object.put("multisig", true);
-        if (mode.equals(MultiSigMode.LEGACY)) {
-            object.put("wallet_fingerprint", wallet != null ? wallet.getWalletFingerPrint() : null);
-        }
+        object.put("wallet_fingerprint", wallet != null ? wallet.getWalletFingerPrint() : null);
         return object;
     }
 
-    private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException, NoMatchedMultisigWalletException, NotMyCasaKeyException {
+    private void adaptInputs(JSONArray psbtInputs, JSONArray inputs) throws JSONException, NoMatchedMultisigWalletException {
         for (int i = 0; i < psbtInputs.length(); i++) {
             JSONObject psbtInput = psbtInputs.getJSONObject(i);
             JSONObject in = new JSONObject();
@@ -100,74 +92,45 @@ public class PsbtMultiSigTxAdapter {
             //all input should have the same xpub info
             if (!fingerprintsHash(fps).equals(fingerprintsHash)) break;
 
-            if (mode.equals(MultiSigMode.LEGACY)) {
-                //find the exists multisig wallet match the xpub info
-                if (wallet == null) {
-                    List<MultiSigWalletEntity> wallets = mRepository.loadAllMultiSigWalletSync()
-                            .stream()
-                            .filter(w -> w.getTotal() == total && w.getThreshold() == threshold)
-                            .collect(Collectors.toList());
-                    for (MultiSigWalletEntity w : wallets) {
-                        if (w.getTotal() != total || w.getThreshold() != threshold) continue;
-                        JSONArray array = new JSONArray(w.getExPubs());
-                        List<String> walletFps = new ArrayList<>();
-                        List<String> walletRootXfps = new ArrayList<>();
-                        for (int k = 0; k < array.length(); k++) {
-                            JSONObject xpub = array.getJSONObject(k);
-                            walletFps.add(getExpubFingerprint(xpub.getString("xpub")));
-                            walletRootXfps.add(xpub.getString("xfp"));
-                        }
-                        if (fingerprintsHash(walletFps).equalsIgnoreCase(fingerprintsHash)
-                                || (fingerprintsHash(walletRootXfps).equalsIgnoreCase(fingerprintsHash)
-                                && hdPath.startsWith(w.getExPubPath()))) {
-                            wallet = w;
-                            break;
-                        }
+            //find the exists multisig wallet match the xpub info
+            if (wallet == null) {
+                List<MultiSigWalletEntity> wallets = mRepository.loadAllMultiSigWalletSync()
+                        .stream()
+                        .filter(w -> w.getTotal() == total && w.getThreshold() == threshold)
+                        .collect(Collectors.toList());
+                for (MultiSigWalletEntity w : wallets) {
+                    if (w.getTotal() != total || w.getThreshold() != threshold) continue;
+                    JSONArray array = new JSONArray(w.getExPubs());
+                    List<String> walletFps = new ArrayList<>();
+                    List<String> walletRootXfps = new ArrayList<>();
+                    for (int k = 0; k < array.length(); k++) {
+                        JSONObject xpub = array.getJSONObject(k);
+                        walletFps.add(getExpubFingerprint(xpub.getString("xpub")));
+                        walletRootXfps.add(xpub.getString("xfp"));
+                    }
+                    if (fingerprintsHash(walletFps).equalsIgnoreCase(fingerprintsHash)
+                            || (fingerprintsHash(walletRootXfps).equalsIgnoreCase(fingerprintsHash)
+                            && hdPath.startsWith(w.getExPubPath()))) {
+                        wallet = w;
+                        break;
                     }
                 }
+            }
 
-                if (wallet != null) {
-                    if (!hdPath.startsWith(wallet.getExPubPath())) {
-                        hdPath = wallet.getExPubPath() + hdPath.substring(1);
-                    }
-                    utxo.put("publicKey", findMyPubKey(bip32Derivation));
-                    utxo.put("value", psbtInput.optInt("value"));
-                    in.put("utxo", utxo);
-                    in.put("ownerKeyPath", hdPath);
-                    in.put("masterFingerprint", wallet.getBelongTo());
-                    inputs.put(in);
-                } else {
-                    throw new NoMatchedMultisigWalletException("no matched multisig wallet");
+            if (wallet != null) {
+                if (!hdPath.startsWith(wallet.getExPubPath())) {
+                    hdPath = wallet.getExPubPath() + hdPath.substring(1);
                 }
+                utxo.put("publicKey", findMyPubKey(bip32Derivation));
+                utxo.put("value", psbtInput.optInt("value"));
+                in.put("utxo", utxo);
+                in.put("ownerKeyPath", hdPath);
+                in.put("masterFingerprint", wallet.getBelongTo());
+                inputs.put(in);
             } else {
-                String myCasaKey = findMyCasaKey(bip32Derivation);
-                if (myCasaKey != null) {
-                    if (!hdPath.startsWith(MultiSig.CASA.getPath())) {
-                        hdPath = MultiSig.CASA.getPath() + hdPath.substring(1);
-                    }
-                    String path = hdPath.replace("m/", "");
-                    String[] index = path.split("/");
-                    isCasaMainnet = !index[1].equals("1'");
-                    utxo.put("publicKey", myCasaKey);
-                    utxo.put("value", psbtInput.optInt("value"));
-                    in.put("utxo", utxo);
-                    in.put("ownerKeyPath", hdPath);
-                    in.put("masterFingerprint", mfp);
-                    inputs.put(in);
-                } else {
-                    throw new NotMyCasaKeyException("no matched casa key found");
-                }
+                throw new NoMatchedMultisigWalletException("no matched multisig wallet");
             }
         }
-    }
-
-    private String findMyCasaKey(JSONArray bip32Derivation) throws JSONException {
-        for (int i = 0; i < bip32Derivation.length(); i++) {
-            if (mfp.equalsIgnoreCase(bip32Derivation.getJSONObject(i).getString("masterFingerprint"))) {
-                return bip32Derivation.getJSONObject(i).getString("pubkey");
-            }
-        }
-        return null;
     }
 
     private String findMyPubKey(JSONArray bip32Derivation)
@@ -208,15 +171,10 @@ public class PsbtMultiSigTxAdapter {
             JSONObject psbtOutput = psbtOutputs.getJSONObject(i);
             JSONObject out = new JSONObject();
             String address = psbtOutput.getString("address");
-            if (mode.equals(MultiSigMode.CASA)) {
-                if (!isCasaMainnet) {
-                    address = Util.convertAddressToTestnet(address);
-                }
-            }
             out.put("address", address);
             out.put("value", psbtOutput.getInt("value"));
             JSONArray bip32Derivation = psbtOutput.optJSONArray("hdPath");
-            if (bip32Derivation != null && mode.equals(MultiSigMode.LEGACY)) {
+            if (bip32Derivation != null) {
                 for (int j = 0; j < bip32Derivation.length(); j++) {
                     JSONObject item = bip32Derivation.getJSONObject(j);
                     String hdPath = item.getString("path");

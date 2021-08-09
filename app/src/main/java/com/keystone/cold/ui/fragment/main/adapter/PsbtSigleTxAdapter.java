@@ -1,6 +1,7 @@
 package com.keystone.cold.ui.fragment.main.adapter;
 
 import com.keystone.coinlib.Util;
+import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
@@ -12,8 +13,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PsbtTxAdapter {
-    public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException {
+public class PsbtSigleTxAdapter {
+    public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, InvalidTransactionException {
+        if (psbt == null) {
+            throw new InvalidTransactionException("parse failed,invalid psbt data");
+        }
         JSONObject object = new JSONObject();
         JSONArray inputs = new JSONArray();
         JSONArray outputs = new JSONArray();
@@ -21,7 +25,6 @@ public class PsbtTxAdapter {
         if (inputs.length() < 1) {
             throw new WatchWalletNotMatchException("no input match masterFingerprint");
         }
-
         adaptOutputs(psbt.getJSONArray("outputs"), outputs);
         object.put("inputs", inputs);
         object.put("outputs", outputs);

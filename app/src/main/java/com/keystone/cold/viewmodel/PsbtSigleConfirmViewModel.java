@@ -29,7 +29,7 @@ import com.keystone.cold.db.entity.AddressEntity;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryption.ChipSigner;
-import com.keystone.cold.ui.fragment.main.adapter.PsbtTxAdapter;
+import com.keystone.cold.ui.fragment.main.adapter.PsbtSigleTxAdapter;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 
 import org.json.JSONArray;
@@ -43,12 +43,15 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
 
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
 import static com.keystone.cold.viewmodel.AddAddressViewModel.AddAddressTask.getAddressType;
 import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
 import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
 
 public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
-    private static final String TAG = "SigleTxConfirmViewModel";
+    private static final String TAG = "PsbtSigleConfirmViewModel";
     protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
 
     public PsbtSigleConfirmViewModel(@NonNull Application application) {
@@ -67,47 +70,39 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
                     parseTxException.postValue(new InvalidTransactionException("parse failed,invalid psbt data"));
                     return;
                 }
-                boolean isMultigisTx = psbtTx.getJSONArray("inputs").getJSONObject(0).getBoolean("isMultiSign");
-                if (isMultigisTx) {
-                    parseTxException.postValue(
-                            new InvalidTransactionException("", InvalidTransactionException.IS_MULTISIG_TX));
-                    return;
+                boolean isMultisigTx = psbtTx.getJSONArray("inputs").getJSONObject(0).getBoolean("isMultiSign");
+                if (isMultisigTx) {
+                    throw new InvalidTransactionException("", InvalidTransactionException.IS_MULTISIG_TX);
                 }
-                JSONObject adaptTx = new PsbtTxAdapter().adapt(psbtTx);
-                if (adaptTx.getJSONArray("inputs").length() == 0) {
-                    parseTxException.postValue(
-                            new InvalidTransactionException("master xfp not match, or nothing can be sign"));
-                    return;
-                }
+                JSONObject adaptTx = new PsbtSigleTxAdapter().adapt(psbtTx);
                 JSONObject signTx = parsePsbtTx(adaptTx);
                 Log.i(TAG, "signTx = " + signTx.toString(4));
                 transaction = AbsTx.newInstance(signTx);
-                if (transaction == null) {
-                    observableTx.postValue(null);
-                    parseTxException.postValue(new InvalidTransactionException("invalid transaction"));
-                    return;
-                }
-                if (transaction instanceof UtxoTx) {
-                    if (!checkChangeAddress(transaction)) {
-                        observableTx.postValue(null);
-                        parseTxException.postValue(new InvalidTransactionException("invalid change address"));
-                        return;
-                    }
-                }
+                checkTransaction();
                 TxEntity tx = generateTxEntity(signTx);
                 observableTx.postValue(tx);
-                if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
-                        || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
-                    feeAttackChecking(tx);
-                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 parseTxException.postValue(new InvalidTransactionException("adapt failed,invalid psbt data"));
-            } catch (WatchWalletNotMatchException e) {
+            } catch (WatchWalletNotMatchException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             }
         });
+    }
+
+    @Override
+    public void checkTransaction() throws InvalidTransactionException {
+        if (transaction == null) {
+            throw new InvalidTransactionException("invalid transaction");
+        }
+        if (transaction instanceof UtxoTx) {
+            checkChangeAddress(transaction);
+        }
+        if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
+                || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
+            feeAttackChecking();
+        }
     }
 
     @Override
@@ -183,11 +178,29 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
         return signer;
     }
 
-    private boolean checkChangeAddress(AbsTx utxoTx) {
-        List<UtxoTx.ChangeAddressInfo> changeAddressInfoList = ((UtxoTx) utxoTx).getChangeAddressInfo();
+    protected void feeAttackChecking() {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            String inputs = getFromAddress();
+            String outputs = getToAddress();
+            List<TxEntity> txs = mRepository.loadAllTxSync(Utilities.currentCoin(getApplication()).coinId());
+            for (TxEntity tx : txs) {
+                if (inputs.equals(tx.getFrom()) && outputs.equals(tx.getTo())) {
+                    feeAttachCheckingResult.postValue(DUPLICATE_TX);
+                    break;
+                } else if (outputs.equals(tx.getTo())) {
+                    feeAttachCheckingResult.postValue(SAME_OUTPUTS);
+                    break;
+                } else {
+                    feeAttachCheckingResult.postValue(NORMAL);
+                }
+            }
+        });
+    }
 
+    private void checkChangeAddress(AbsTx utxoTx) throws InvalidTransactionException {
+        List<UtxoTx.ChangeAddressInfo> changeAddressInfoList = ((UtxoTx) utxoTx).getChangeAddressInfo();
         if (changeAddressInfoList == null || changeAddressInfoList.isEmpty()) {
-            return true;
+            return;
         }
         Deriver deriver = new Deriver(Utilities.isMainNet(getApplication()));
         for (UtxoTx.ChangeAddressInfo changeAddressInfo : changeAddressInfoList) {
@@ -197,7 +210,7 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
             AccountEntity accountEntity = getAccountEntityByPath(accountHdPath,
                     mRepository.loadCoinEntityByCoinCode(utxoTx.getCoinCode()));
             if (accountEntity == null) {
-                return false;
+                throw new InvalidTransactionException("invalid accountEntity");
             }
             String exPub = accountEntity.getExPub();
             try {
@@ -207,15 +220,13 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
                 String expectAddress = Objects.requireNonNull(deriver).derive(exPub, change,
                         index, getAddressType(accountEntity));
                 if (!address.equals(expectAddress)) {
-                    return false;
+                    throw new InvalidTransactionException("change address is not equal");
                 }
             } catch (InvalidPathException e) {
                 e.printStackTrace();
-                return false;
+                throw new InvalidTransactionException("InvalidPathException");
             }
         }
-
-        return true;
     }
 
     private String getAccountHdPath(String addressPath) {

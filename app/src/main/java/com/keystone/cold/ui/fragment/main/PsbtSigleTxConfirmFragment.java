@@ -33,10 +33,7 @@ import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.viewmodel.PsbtSigleConfirmViewModel;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
-import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
-import com.keystone.cold.viewmodel.exceptions.XpubNotMatchException;
-import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -132,27 +129,17 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
                 String title = getString(R.string.electrum_decode_txn_fail);
                 String errorMessage = getString(R.string.incorrect_tx_data);
                 String buttonText = getString(R.string.confirm);
-                if (ex instanceof XpubNotMatchException || ex instanceof WatchWalletNotMatchException || ex instanceof NotMyCasaKeyException) {
+                if (ex instanceof WatchWalletNotMatchException) {
                     errorMessage = getString(R.string.master_pubkey_not_match);
                 }
 
                 if (ex instanceof InvalidTransactionException) {
                     InvalidTransactionException e = (InvalidTransactionException) ex;
-                    if (e.getErrorCode() == InvalidTransactionException.IS_NOTMULTISIG_TX) {
-                        title = getString(R.string.open_int_siglesig_wallet);
-                        errorMessage = getString(R.string.open_int_siglesig_wallet_hint);
-                    } else if (e.getErrorCode() == InvalidTransactionException.IS_MULTISIG_TX) {
+                    if (e.getErrorCode() == InvalidTransactionException.IS_MULTISIG_TX) {
                         title = getString(R.string.open_int_multisig_wallet);
                         errorMessage = getString(R.string.open_int_multisig_wallet_hint);
                     }
                     buttonText = getString(R.string.know);
-                }
-
-                if (ex instanceof NoMatchedMultisigWalletException) {
-                    title = getString(R.string.no_matched_wallet);
-                    errorMessage = getString(R.string.no_matched_wallet_hint);
-                    buttonText = getString(R.string.know);
-
                 }
                 ModalDialog.showCommonModal(mActivity,
                         title,

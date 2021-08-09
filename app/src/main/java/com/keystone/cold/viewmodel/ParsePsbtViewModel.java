@@ -12,9 +12,9 @@ import com.googlecode.protobuf.format.JsonFormat;
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
+import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.interfaces.Signer;
 import com.keystone.coinlib.utils.Account;
-import com.keystone.cold.AppExecutors;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.Utilities;
@@ -40,14 +40,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
 import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
 import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
 
 public abstract class ParsePsbtViewModel extends AndroidViewModel {
-    protected static final String TAG = "ParseTxViewModel";
     public static final String STATE_NONE = "";
     public static final String STATE_SIGNING = "signing";
     public static final String STATE_SIGN_FAIL = "signing_fail";
@@ -77,25 +73,6 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
 
     public MutableLiveData<Exception> getParseTxException() {
         return parseTxException;
-    }
-
-    protected void feeAttackChecking(TxEntity txEntity) {
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            String inputs = txEntity.getFrom();
-            String outputs = txEntity.getTo();
-            List<TxEntity> txs = mRepository.loadAllTxSync(Utilities.currentCoin(getApplication()).coinId());
-            for (TxEntity tx : txs) {
-                if (inputs.equals(tx.getFrom()) && outputs.equals(tx.getTo())) {
-                    feeAttachCheckingResult.postValue(DUPLICATE_TX);
-                    break;
-                } else if (outputs.equals(tx.getTo())) {
-                    feeAttachCheckingResult.postValue(SAME_OUTPUTS);
-                    break;
-                } else {
-                    feeAttachCheckingResult.postValue(NORMAL);
-                }
-            }
-        });
     }
 
     protected int getAddressIndex(String hdPath) {
@@ -204,6 +181,8 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
     }
 
     public abstract void parseTxData(Bundle bundle);
+
+    public abstract void checkTransaction() throws InvalidTransactionException;
 
     public abstract void handleSignPsbt(String psbt);
 

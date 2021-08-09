@@ -26,11 +26,10 @@ import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryption.ChipSigner;
-import com.keystone.cold.ui.fragment.main.adapter.PsbtMultiSigTxAdapter;
+import com.keystone.cold.ui.fragment.main.adapter.PsbtLegacyTxAdapter;
 import com.keystone.cold.viewmodel.ParsePsbtViewModel;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
-import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +42,12 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
 
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
+
 public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
-    private static final String TAG = "SigleTxConfirmViewModel";
+    private static final String TAG = "PsbtLegacyConfirmViewModel";
     protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
     private MultiSigWalletEntity wallet;
 
@@ -64,48 +67,41 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     parseTxException.postValue(new InvalidTransactionException("parse failed,invalid psbt data"));
                     return;
                 }
-                boolean isMultigisTx = psbtTx.getJSONArray("inputs").getJSONObject(0).getBoolean("isMultiSign");
-                if (!isMultigisTx) {
-                    parseTxException.postValue(
-                            new InvalidTransactionException("", InvalidTransactionException.IS_NOTMULTISIG_TX));
-                    return;
+                boolean isMultisigTx = psbtTx.getJSONArray("inputs").getJSONObject(0).getBoolean("isMultiSign");
+                if (!isMultisigTx) {
+                    throw new InvalidTransactionException("", InvalidTransactionException.IS_NOTMULTISIG_TX);
                 }
-                JSONObject adaptTx = new PsbtMultiSigTxAdapter(MultiSigMode.CASA, wallet).adapt(psbtTx);
+                PsbtLegacyTxAdapter psbtLegacyTxAdapter = new PsbtLegacyTxAdapter();
+                JSONObject adaptTx = psbtLegacyTxAdapter.adapt(psbtTx);
+                wallet = psbtLegacyTxAdapter.getWallet();
                 JSONObject signTx = parsePsbtTx(adaptTx);
                 Log.i(TAG, "signTx = " + signTx.toString(4));
                 transaction = AbsTx.newInstance(signTx);
-                if (transaction == null) {
-                    observableTx.postValue(null);
-                    parseTxException.postValue(new InvalidTransactionException("invalid transaction"));
-                    return;
-                }
-                String walletFingerprint = null;
-                if (signTx.has("btcTx")) {
-                    walletFingerprint = signTx.getJSONObject("btcTx").getString("wallet_fingerprint");
-                } else if (signTx.has("xtnTx")) {
-                    walletFingerprint = signTx.getJSONObject("xtnTx").getString("wallet_fingerprint");
-                }
-                if (transaction instanceof UtxoTx) {
-                    if (!checkMultisigChangeAddress(transaction)) {
-                        observableTx.postValue(null);
-                        parseTxException.postValue(new InvalidTransactionException("invalid change address"));
-                        return;
-                    }
-                }
-                TxEntity tx = generateMultisigTxEntity(signTx, walletFingerprint);
+                checkTransaction();
+                TxEntity tx = generateLegacyTxEntity(signTx);
                 observableTx.postValue(tx);
-                if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
-                        || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
-                    feeAttackChecking(tx);
-                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 parseTxException.postValue(new InvalidTransactionException("adapt failed,invalid psbt data"));
-            } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException | NotMyCasaKeyException e) {
+            } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             }
         });
+    }
+
+    @Override
+    public void checkTransaction() throws InvalidTransactionException {
+        if (transaction == null) {
+            throw new InvalidTransactionException("invalid transaction");
+        }
+        if (transaction instanceof UtxoTx) {
+            checkMultisigChangeAddress(transaction);
+        }
+        if (Coins.BTC.coinCode().equals(transaction.getCoinCode())
+                || Coins.XTN.coinCode().equals(transaction.getCoinCode())) {
+            feeAttackChecking();
+        }
     }
 
     @Override
@@ -183,38 +179,66 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         return signer;
     }
 
-    protected boolean checkMultisigChangeAddress(AbsTx utxoTx) {
+    protected void feeAttackChecking() {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            String inputs = getMultiSigFromAddress();
+            String outputs = getToAddress();
+            List<TxEntity> txs = mRepository.loadAllTxSync(Utilities.currentCoin(getApplication()).coinId());
+            for (TxEntity tx : txs) {
+                if (inputs.equals(tx.getFrom()) && outputs.equals(tx.getTo())) {
+                    feeAttachCheckingResult.postValue(DUPLICATE_TX);
+                    break;
+                } else if (outputs.equals(tx.getTo())) {
+                    feeAttachCheckingResult.postValue(SAME_OUTPUTS);
+                    break;
+                } else {
+                    feeAttachCheckingResult.postValue(NORMAL);
+                }
+            }
+        });
+    }
+
+    private void checkMultisigChangeAddress(AbsTx utxoTx) throws InvalidTransactionException {
         List<UtxoTx.ChangeAddressInfo> changeAddressInfo = ((UtxoTx) utxoTx).getChangeAddressInfo();
         if (changeAddressInfo == null || changeAddressInfo.isEmpty()) {
-            return true;
+            return;
         }
-
         try {
             String exPubPath = wallet.getExPubPath();
             for (UtxoTx.ChangeAddressInfo info : changeAddressInfo) {
                 String path = info.hdPath;
                 String address = info.address;
-                if (!path.startsWith(exPubPath)) return false;
+                if (!path.startsWith(exPubPath)) {
+                    throw new InvalidTransactionException("invalid path");
+                }
                 path = path.replace(exPubPath + "/", "");
 
                 String[] index = path.split("/");
 
-                if (index.length != 2) return false;
+                if (index.length != 2) {
+                    throw new InvalidTransactionException("invalid path length");
+                }
                 String expectedAddress = wallet.deriveAddress(
                         new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])},
                         Utilities.isMainNet(getApplication()));
 
                 if (!expectedAddress.equals(address)) {
-                    return false;
+                    throw new InvalidTransactionException("invalid expectedAddress");
                 }
             }
         } catch (NumberFormatException e) {
-            return false;
+            e.printStackTrace();
+            throw new InvalidTransactionException("NumberFormatException");
         }
-        return true;
     }
 
-    private TxEntity generateMultisigTxEntity(JSONObject object, String walletFingerprint) throws JSONException {
+    private TxEntity generateLegacyTxEntity(JSONObject object) throws JSONException {
+        String walletFingerprint = null;
+        if (object.has("btcTx")) {
+            walletFingerprint = object.getJSONObject("btcTx").getString("wallet_fingerprint");
+        } else if (object.has("xtnTx")) {
+            walletFingerprint = object.getJSONObject("xtnTx").getString("wallet_fingerprint");
+        }
         wallet = mRepository.loadMultisigWallet(walletFingerprint);
         TxEntity tx = new TxEntity();
         NumberFormat nf = NumberFormat.getInstance();
