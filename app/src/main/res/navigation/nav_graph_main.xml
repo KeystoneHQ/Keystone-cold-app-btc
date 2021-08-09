@@ -380,6 +380,19 @@
     </fragment>
 
     <fragment
+        android:id="@+id/casaPerformHealthCheckFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaPerformHealthCheckFragment"
+        android:label="casaPerformHealthCheckFragment">
+        <action
+            android:id="@+id/action_to_casaSignMessageFragment"
+            app:destination="@id/casaSignMessageFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
         android:id="@+id/casaMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaMainFragment"
         android:label="MultisigEntry">
@@ -408,8 +421,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_to_casaSignMessageFragment"
-            app:destination="@id/casaSignMessageFragment"
+            android:id="@+id/action_to_casaPerformHealthCheckFragment"
+            app:destination="@id/casaPerformHealthCheckFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -791,7 +804,7 @@
 
     <fragment
         android:id="@+id/psbtSignedCasaFragment"
-        android:name="com.keystone.cold.ui.fragment.multisigs.casa.PsbtSignedCasaFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaSignedPsbtFragment"
         android:label="PsbtSignedCasaFragment" />
 
     <fragment

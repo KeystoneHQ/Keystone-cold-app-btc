@@ -18,7 +18,6 @@
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -28,7 +27,6 @@ import android.view.View;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.keystone.coinlib.utils.Base43;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.SignedTxBinding;
 import com.keystone.cold.db.entity.CasaSignature;
@@ -38,6 +36,7 @@ import com.keystone.cold.ui.fragment.main.TransactionItemAdapter;
 import com.keystone.cold.viewmodel.CoinListViewModel;
 import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
+import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,10 +48,8 @@ import java.util.List;
 
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
 import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
-import static com.keystone.cold.ui.fragment.main.electrum.ElectrumBroadcastTxFragment.showElectrumInfo;
 
-
-public class SignedCasaFragment extends BaseFragment<SignedTxBinding> {
+public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
 
     public static final String KEY_ID = "id";
     protected CasaSignature casaSignature;
@@ -188,16 +185,20 @@ public class SignedCasaFragment extends BaseFragment<SignedTxBinding> {
     }
 
     protected void displaySignResult(CasaSignature casaSignature) {
-        if (casaSignature.getSignedHex().length() <= 800) {
-            byte[] data = Base64.decode(casaSignature.getSignedHex());
-            String base43 = Base43.encode(data);
-            new Handler().postDelayed(() -> mBinding.txDetail.qrcodeLayout.qrcode.setData(base43), 500);
-            mBinding.txDetail.export.setVisibility(View.GONE);
-            mBinding.txDetail.exportToSdcardHint.setOnClickListener(v -> showExportDialog());
-            mBinding.txDetail.info.setOnClickListener(v -> showElectrumInfo(mActivity));
-        } else {
-            mBinding.txDetail.qr.setVisibility(View.GONE);
-        }
+        mBinding.txDetail.txIdInfo.setVisibility(View.GONE);
+        mBinding.txDetail.arrowDown.setVisibility(View.GONE);
+        mBinding.txDetail.scanInfo.setVisibility(View.GONE);
+        mBinding.txDetail.export.setVisibility(View.GONE);
+
+        mBinding.txDetail.dynamicQrcodeLayout.qrcode.setVisibility(View.VISIBLE);
+        mBinding.txDetail.exportToSdcardHint.setVisibility(View.VISIBLE);
+        byte[] psbtBytes = Base64.decode(casaSignature.getSignedHex());
+        mBinding.txDetail.dynamicQrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
+        mBinding.txDetail.dynamicQrcodeLayout.hint.setVisibility(View.GONE);
+        mBinding.txDetail.qrcodeLayout.qrcode.setVisibility(View.GONE);
+        mBinding.txDetail.broadcastGuide.setVisibility(View.GONE);
+        mBinding.txDetail.export.setVisibility(View.GONE);
+        mBinding.txDetail.exportToSdcardHint.setVisibility(View.INVISIBLE);
     }
 
 }

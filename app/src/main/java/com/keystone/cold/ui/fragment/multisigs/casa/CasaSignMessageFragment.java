@@ -39,6 +39,7 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
     private String message;
     private String path;
     private String address;
+    private String fileName = null;
 
     @Override
     protected int setView() {
@@ -50,7 +51,10 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
         signViewModel = ViewModelProviders.of(mActivity).get(SignViewModel.class);
         Bundle data = requireArguments();
         message = data.getString("message");
+        String messageId = message.substring(0, 8);
         path = data.getString("path");
+        String defaultFileName = "19700101" + "-" + "hc" + messageId + ".txt";
+        fileName = data.getString("file_name", defaultFileName);
         int point = Math.max(path.lastIndexOf("'"), 0);
         String hardenedPath = path.substring(0, point + 1);
         String nonHardenedPath = path.substring(point + 2);
@@ -121,6 +125,7 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
         String signature = signViewModel.getSignMessageSignature().getValue();
         String signResult = constructResult(signature);
         Bundle data = new Bundle();
+        data.putString("file_name", fileName);
         data.putString("sign_result", signResult);
         navigate(R.id.action_to_casaSignMessageResultFragment, data);
     }
