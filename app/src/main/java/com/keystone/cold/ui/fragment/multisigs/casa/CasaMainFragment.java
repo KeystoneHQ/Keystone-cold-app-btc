@@ -143,10 +143,6 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
         if (id == R.id.action_scan) {
-            Bundle data = new Bundle();
-            ArrayList<String> desiredResults = new ArrayList<>();
-            desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
-            data.putStringArrayList("desired_results", desiredResults);
             ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_CRYPTO_PSBT)) {
                 @Override
                 public void handleScanResult(ScanResult result) {
@@ -158,10 +154,14 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         bundle.putString("psbt_base64", psbtB64);
                         bundle.putBoolean("multisig", true);
                         bundle.putString("multisig_mode", MultiSigMode.CASA.name());
-                        mFragment.navigate(R.id.action_scanner_to_psbtTxConfirmFragment, bundle);
+                        mFragment.navigate(R.id.action_to_psbtCasaTxConfirmFragment, bundle);
                     }
                 }
             });
+            Bundle data = new Bundle();
+            ArrayList<String> desiredResults = new ArrayList<>();
+            desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
+            data.putStringArrayList("desired_results", desiredResults);
             navigate(R.id.action_to_scanner, data);
             return true;
         } else if (id == R.id.action_sdcard) {
