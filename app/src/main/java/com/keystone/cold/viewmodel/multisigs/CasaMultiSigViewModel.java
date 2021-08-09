@@ -65,7 +65,6 @@ public class CasaMultiSigViewModel extends ViewModelBase {
                     }
                 }
             }
-//            fileList.sort(String::compareTo);
             result.postValue(fileList);
         });
         return result;

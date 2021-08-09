@@ -71,12 +71,14 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
     }
 
     private String getKeystoneXPubFileContent(String xpub, String mfp) {
-        return "# Keystone Extended Public Key File\n" +
-                "## For wallet with master key fingerprint: " + mfp + "\n" +
-                "## ## IMPORTANT WARNING\n\n" +
-                "Do **not** deposit to any address in this file unless you have a working\n" +
-                "wallet system that is ready to handle the funds at that address!" +
-                "## Top-level, 'master' extended public key ('m/'):\n" + xpub;
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("# Keystone Extended Public Key File\n");
+        stringBuffer.append("## For wallet with master key fingerprint: ").append(mfp).append("\n");
+        stringBuffer.append("## ## IMPORTANT WARNING\n\n");
+        stringBuffer.append("Do **not** deposit to any address in this file unless you have a working\n");
+        stringBuffer.append("wallet system that is ready to handle the funds at that address!\n");
+        stringBuffer.append("## Top-level, 'master' extended public key ('m/'):\n").append(xpub);
+        return stringBuffer.toString();
     }
 
     @Override
