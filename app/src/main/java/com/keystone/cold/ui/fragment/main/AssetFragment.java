@@ -216,7 +216,7 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                             String psbtB64 = Base64.toBase64String(bytes);
                             Bundle bundle = new Bundle();
                             bundle.putString("psbt_base64", psbtB64);
-                            mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                            mFragment.navigate(R.id.action_to_psbtSigleTxConfirmFragment, bundle);
                             return true;
                         } else {
                             return false;
