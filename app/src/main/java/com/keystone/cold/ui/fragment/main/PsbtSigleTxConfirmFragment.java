@@ -22,7 +22,6 @@ import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.setup.PreImportFragment;
-import com.keystone.cold.ui.modal.ExportPsbtDialog;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.ui.modal.SigningDialog;
@@ -336,6 +335,7 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
                     }
                     signingDialog = null;
                     onSignSuccess();
+                    psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
                     psbtSigleTxConfirmViewModel.getSignState().setValue(STATE_NONE);
                 }, 500);
             } else if (TxConfirmViewModel.STATE_SIGN_FAIL.equals(s)) {
@@ -357,25 +357,8 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
     }
 
     protected void onSignSuccess() {
-        WatchWallet wallet = WatchWallet.getWatchWallet(mActivity);
-        if (wallet == WatchWallet.BTCPAY || wallet == WatchWallet.BLUE || wallet == WatchWallet.GENERIC || wallet == WatchWallet.SPARROW) {
-            Bundle data = new Bundle();
-            data.putString(PsbtBroadcastTxFragment.KEY_TXID, txEntity.getTxId());
-            navigate(R.id.action_to_psbt_broadcast, data);
-        } else if (wallet == WatchWallet.ELECTRUM) {
-            if (txEntity.getSignedHex().length() <= 800) {
-                String txId = txEntity.getTxId();
-                Bundle data = new Bundle();
-                data.putString(BroadcastTxFragment.KEY_TXID, txId);
-                navigate(R.id.action_to_broadcastElectrumTxFragment, data);
-            } else {
-                ExportPsbtDialog.showExportPsbtDialog(mActivity, txEntity,
-                        () -> popBackStack(R.id.assetFragment, false));
-            }
-        } else {
-            ExportPsbtDialog.showExportPsbtDialog(mActivity, txEntity,
-                    () -> popBackStack(R.id.assetFragment, false));
-        }
-        psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
+        Bundle data = new Bundle();
+        data.putString(PsbtBroadcastTxFragment.KEY_TXID, txEntity.getTxId());
+        navigate(R.id.action_to_psbt_broadcast, data);
     }
 }

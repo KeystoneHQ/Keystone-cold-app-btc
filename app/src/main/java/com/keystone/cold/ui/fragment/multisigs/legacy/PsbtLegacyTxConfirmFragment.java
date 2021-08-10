@@ -348,6 +348,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
                     }
                     signingDialog = null;
                     onSignSuccess();
+                    psbtLegacyConfirmViewModel.getSignState().removeObservers(this);
                     psbtLegacyConfirmViewModel.getSignState().setValue(STATE_NONE);
                 }, 500);
             } else if (TxConfirmViewModel.STATE_SIGN_FAIL.equals(s)) {
@@ -373,6 +374,5 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
         data.putString(KEY_TXID, txEntity.getTxId());
         data.putString(KEY_MULTISIG_MODE, MultiSigMode.LEGACY.name());
         navigate(R.id.action_to_psbt_broadcast, data);
-        psbtLegacyConfirmViewModel.getSignState().removeObservers(this);
     }
 }

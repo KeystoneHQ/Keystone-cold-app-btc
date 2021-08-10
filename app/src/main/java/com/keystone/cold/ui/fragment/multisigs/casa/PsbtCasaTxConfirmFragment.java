@@ -313,6 +313,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
                     }
                     signingDialog = null;
                     onSignSuccess();
+                    psbtCasaTxConfirmViewModel.getSignState().removeObservers(this);
                     psbtCasaTxConfirmViewModel.getSignState().setValue(STATE_NONE);
                 }, 500);
             } else if (TxConfirmViewModel.STATE_SIGN_FAIL.equals(s)) {
@@ -338,6 +339,5 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
         data.putString(KEY_TXID, String.valueOf(casaSignature.getId()));
         data.putString(KEY_MULTISIG_MODE, MultiSigMode.CASA.name());
         navigate(R.id.action_to_psbt_broadcast, data);
-        psbtCasaTxConfirmViewModel.getSignState().removeObservers(this);
     }
 }
