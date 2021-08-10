@@ -46,7 +46,7 @@ public class KeystoneTxViewModel extends AndroidViewModel {
             UnknowQrCodeException, WatchWalletNotMatchException {
         WatchWallet wallet = WatchWallet.getWatchWallet(MainApplication.getApplication());
         if (wallet != WatchWallet.KEYSTONE) {
-            throw new UnknowQrCodeException("not support bc32 qrcode in current wallet mode");
+            throw new WatchWalletNotMatchException("not support bc32 qrcode in current wallet mode");
         }
         String type = object.getString("type");
         switch (type) {
@@ -58,15 +58,7 @@ public class KeystoneTxViewModel extends AndroidViewModel {
     }
 
     private Bundle handleSignKeyStoneTx(JSONObject object)
-            throws InvalidTransactionException,
-            CoinNotFindException,
-            XfpNotMatchException, WatchWalletNotMatchException {
-
-        if (WatchWallet.getWatchWallet(application)
-                != WatchWallet.KEYSTONE) {
-            throw new WatchWalletNotMatchException("");
-        }
-
+            throws InvalidTransactionException, CoinNotFindException, XfpNotMatchException {
         checkXfp(object);
         try {
             String coinCode = object.getJSONObject("signTx")

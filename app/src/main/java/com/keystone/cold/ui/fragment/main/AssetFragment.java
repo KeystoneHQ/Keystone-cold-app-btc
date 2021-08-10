@@ -147,13 +147,13 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                             mFragment.alert(getString(R.string.uuid_not_match));
                             return true;
                         } else if (e instanceof UnknowQrCodeException) {
-                            mFragment.alert(getString(R.string.unsupported_qrcode));
+                            mFragment.alert(getString(R.string.error_hint),
+                                    getString(R.string.unknown_qrcode,
+                                            WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
                             return true;
                         } else if (e instanceof WatchWalletNotMatchException) {
-                            mFragment.alert(getString(R.string.identification_failed),
-                                    getString(R.string.master_pubkey_not_match)
-                                            + getString(R.string.watch_wallet_not_match,
-                                            WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
+                            mFragment.alert(getString(R.string.wallet_not_match_tips),
+                                    getString(R.string.wallet_not_match));
                             return true;
                         }
                         return super.handleException(e);
@@ -208,7 +208,7 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         return false;
                     }
 
-                    private boolean handleSignCryptoPSBT(ScanResult result) {
+                    private boolean handleSignCryptoPSBT(ScanResult result) throws WatchWalletNotMatchException {
                         WatchWallet watchWallet = WatchWallet.getWatchWallet(mActivity);
                         if (watchWallet.supportBc32QrCode() && watchWallet.supportPsbt()) {
                             CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
@@ -219,7 +219,7 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                             mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
                             return true;
                         } else {
-                            return false;
+                            throw new WatchWalletNotMatchException("not support bc32 or psbt qrcode in current wallet mode");
                         }
                     }
                 });
