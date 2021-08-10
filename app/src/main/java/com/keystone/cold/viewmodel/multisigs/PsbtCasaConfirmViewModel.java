@@ -41,21 +41,15 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "PsbtCasaConfirmViewModel";
 
     private final MutableLiveData<CasaSignature> observableCasaSignature = new MutableLiveData<>();
-    private boolean isCasaMainnet;
     protected MultiSigWalletEntity wallet;
 
     public PsbtCasaConfirmViewModel(@NonNull Application application) {
         super(application);
         observableCasaSignature.setValue(null);
-        isCasaMainnet = Utilities.isMainNet(getApplication());
     }
 
     public MutableLiveData<CasaSignature> getObservableCasaSignature() {
         return observableCasaSignature;
-    }
-
-    public boolean isCasaMainnet() {
-        return isCasaMainnet;
     }
 
     public void handleTx(Bundle bundle) {
@@ -82,7 +76,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
     @Override
     protected JSONObject parseTxData(Bundle bundle) throws Exception {
         String psbtBase64 = bundle.getString("psbt_base64");
-        Btc btc = new Btc(new BtcImpl(isCasaMainnet));
+        Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
             throw new InvalidTransactionException("parse failed,invalid psbt data");
@@ -93,7 +87,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
         }
         PsbtCasaTxAdapter psbtCasaTxAdapter = new PsbtCasaTxAdapter();
         JSONObject adaptTx = psbtCasaTxAdapter.adapt(psbtTx);
-        isCasaMainnet = psbtCasaTxAdapter.isCasaMainnet();
+        isMainNet = psbtCasaTxAdapter.isCasaMainnet();
         return parsePsbtTx(adaptTx);
     }
 
@@ -154,7 +148,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
             };
             callback.startSign();
             Signer[] signer = initSigners();
-            Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+            Btc btc = new Btc(new BtcImpl(isMainNet));
             btc.signPsbt(psbt, callback, false, signer);
         });
     }
@@ -203,8 +197,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
                     throw new InvalidTransactionException("invalid path length");
                 }
                 String expectedAddress = wallet.deriveAddress(
-                        new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])},
-                        Utilities.isMainNet(getApplication()));
+                        new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])}, isMainNet);
 
                 if (!expectedAddress.equals(address)) {
                     throw new InvalidTransactionException("invalid expectedAddress");

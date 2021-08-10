@@ -56,10 +56,12 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
     protected AbsTx transaction;
     protected String coinCode;
     protected AuthenticateModal.OnVerify.VerifyToken token;
+    protected boolean isMainNet;
 
     public ParsePsbtViewModel(@NonNull Application application) {
         super(application);
         mRepository = MainApplication.getApplication().getRepository();
+        isMainNet = Utilities.isMainNet(getApplication());
     }
 
     public MutableLiveData<Integer> getFeeAttachCheckingResult() {
@@ -72,6 +74,10 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
 
     public MutableLiveData<Exception> getParseTxException() {
         return parseTxException;
+    }
+
+    public boolean isMainNet() {
+        return isMainNet;
     }
 
     protected int getAddressIndex(String hdPath) {
@@ -105,7 +111,6 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
         }
         boolean isMultisig = adaptTx.optBoolean("multisig");
         TransactionProtoc.SignTransaction.Builder builder = TransactionProtoc.SignTransaction.newBuilder();
-        boolean isMainNet = Utilities.isMainNet(getApplication());
         builder.setCoinCode(Utilities.currentCoin(getApplication()).coinCode())
                 .setSignId(isMultisig ? "PSBT_MULTISIG" : signId)
                 .setTimestamp(generateAutoIncreaseId())

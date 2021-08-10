@@ -84,7 +84,7 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
     @Override
     protected JSONObject parseTxData(Bundle bundle) throws Exception {
         String psbtBase64 = bundle.getString("psbt_base64");
-        Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+        Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
             throw new InvalidTransactionException("parse failed,invalid psbt data");
@@ -147,7 +147,7 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
             };
             callback.startSign();
             Signer[] signer = initSigners();
-            Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+            Btc btc = new Btc(new BtcImpl(isMainNet));
             if (WatchWallet.getWatchWallet(getApplication()) == ELECTRUM) {
                 btc.signPsbt(psbt, callback, false, signer);
             } else {
@@ -207,7 +207,7 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
         if (changeAddressInfoList == null || changeAddressInfoList.isEmpty()) {
             return;
         }
-        Deriver deriver = new Deriver(Utilities.isMainNet(getApplication()));
+        Deriver deriver = new Deriver(isMainNet);
         for (UtxoTx.ChangeAddressInfo changeAddressInfo : changeAddressInfoList) {
             String hdPath = changeAddressInfo.hdPath;
             String address = changeAddressInfo.address;
@@ -299,7 +299,7 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
                     int index = addressIndex.getValue();
                     int change = addressIndex.getParent().getValue();
 
-                    String from = new Deriver(Utilities.isMainNet(getApplication())).derive(accountEntity.getExPub()
+                    String from = new Deriver(isMainNet).derive(accountEntity.getExPub()
                             , change, index, getAddressType(accountEntity));
                     inputsClone.put(new JSONObject().put("value", value)
                             .put("address", from));

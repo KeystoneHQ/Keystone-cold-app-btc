@@ -81,7 +81,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     @Override
     protected JSONObject parseTxData(Bundle bundle) throws Exception {
         String psbtBase64 = bundle.getString("psbt_base64");
-        Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+        Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
             throw new InvalidTransactionException("parse failed,invalid psbt data");
@@ -156,7 +156,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
             };
             callback.startSign();
             Signer[] signer = initSigners();
-            Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+            Btc btc = new Btc(new BtcImpl(isMainNet));
             btc.signPsbt(psbt, callback, false, signer);
         });
     }
@@ -224,8 +224,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     throw new InvalidTransactionException("invalid path length");
                 }
                 String expectedAddress = wallet.deriveAddress(
-                        new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])},
-                        Utilities.isMainNet(getApplication()));
+                        new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])}, isMainNet);
 
                 if (!expectedAddress.equals(address)) {
                     throw new InvalidTransactionException("invalid expectedAddress");
@@ -288,8 +287,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     hdpath = hdpath.replace(wallet.getExPubPath() + "/", "");
                     String[] index = hdpath.split("/");
                     String from = wallet.deriveAddress(
-                            new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])},
-                            Utilities.isMainNet(getApplication()));
+                            new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])}, isMainNet);
                     inputsClone.put(new JSONObject().put("value", value)
                             .put("address", from));
                 }

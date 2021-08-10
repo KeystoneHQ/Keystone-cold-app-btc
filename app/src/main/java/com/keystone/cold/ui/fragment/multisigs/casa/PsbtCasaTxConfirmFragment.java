@@ -118,7 +118,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
         psbtCasaTxConfirmViewModel.getObservableCasaSignature().observe(this, casaSignature -> {
             if (casaSignature != null) {
                 mBinding.txDetail.network.setVisibility(View.VISIBLE);
-                if (psbtCasaTxConfirmViewModel.isCasaMainnet()) {
+                if (psbtCasaTxConfirmViewModel.isMainNet()) {
                     mBinding.txDetail.networkText.setText("Mainnet");
                 } else {
                     mBinding.txDetail.networkText.setText("Testnet");
