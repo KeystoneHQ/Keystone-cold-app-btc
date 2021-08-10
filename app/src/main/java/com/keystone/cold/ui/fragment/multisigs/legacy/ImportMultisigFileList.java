@@ -173,6 +173,7 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
                             } else if (e instanceof MultisigWalletNetNotMatchException) {
                                 mFragment.alert(getString(R.string.import_failed),
                                         getString(R.string.import_failed_network_not_match, currentNet, walletFileNet, walletFileNet));
+                                return true;
                             }
                             return super.handleException(e);
                         }
