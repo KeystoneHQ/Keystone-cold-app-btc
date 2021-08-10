@@ -24,7 +24,7 @@
         android:id="@+id/ScannerFragment"
         android:name="com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment"
         android:label="ScannerFragment"
-        tools:layout="@layout/qrcode_scan_fragment">
+        tools:layout="@layout/scanner_fragment">
         <action
             android:id="@+id/action_scanner_to_casaSignMessageFragment"
             app:destination="@id/casaSignMessageFragment"
@@ -42,6 +42,27 @@
         <action
             android:id="@+id/action_to_psbtTxConfirmFragment"
             app:destination="@id/psbtTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtSigleTxConfirmFragment"
+            app:destination="@id/psbtSigleTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtLegacyTxConfirmFragment"
+            app:destination="@id/psbtLegacyTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtCasaTxConfirmFragment"
+            app:destination="@id/psbtCasaTxConfirmFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -65,6 +86,63 @@
         <action
             android:id="@+id/action_QRCodeScan_to_result"
             app:destination="@id/webAuthResultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/psbtLegacyTxConfirmFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.legacy.PsbtLegacyTxConfirmFragment"
+        android:label="PsbtLegacyTxConfirmFragment">
+        <action
+            android:id="@+id/action_to_psbt_broadcast"
+            app:destination="@id/psbtBroadcastTxFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@id/action_to_preImportFragment"
+            app:destination="@id/preImportFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/psbtCasaTxConfirmFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.PsbtCasaTxConfirmFragment"
+        android:label="PsbtCasaTxConfirmFragment">
+        <action
+            android:id="@+id/action_to_psbt_broadcast"
+            app:destination="@id/psbtBroadcastTxFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@id/action_to_preImportFragment"
+            app:destination="@id/preImportFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/psbtSigleTxConfirmFragment"
+        android:name="com.keystone.cold.ui.fragment.main.PsbtSigleTxConfirmFragment"
+        android:label="PsbtSigleTxConfirmFragment">
+        <action
+            android:id="@+id/action_to_psbt_broadcast"
+            app:destination="@id/psbtBroadcastTxFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@id/action_to_preImportFragment"
+            app:destination="@id/preImportFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/patternLockFragment"
