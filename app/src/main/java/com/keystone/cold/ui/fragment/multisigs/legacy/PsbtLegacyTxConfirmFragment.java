@@ -104,7 +104,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
                 .observe(this, address -> this.changeAddress = address);
-        psbtLegacyConfirmViewModel.parseTxData(requireArguments());
+        psbtLegacyConfirmViewModel.handleTx(requireArguments());
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
@@ -138,7 +138,6 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
                 if (ex instanceof WatchWalletNotMatchException) {
                     errorMessage = getString(R.string.master_pubkey_not_match);
                 }
-
                 if (ex instanceof InvalidTransactionException) {
                     InvalidTransactionException e = (InvalidTransactionException) ex;
                     if (e.getErrorCode() == InvalidTransactionException.IS_NOTMULTISIG_TX) {
@@ -147,7 +146,6 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
                     }
                     buttonText = getString(R.string.know);
                 }
-
                 if (ex instanceof NoMatchedMultisigWalletException) {
                     title = getString(R.string.no_matched_wallet);
                     errorMessage = getString(R.string.no_matched_wallet_hint);

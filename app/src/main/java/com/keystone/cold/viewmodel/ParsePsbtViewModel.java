@@ -13,7 +13,6 @@ import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
 import com.keystone.coinlib.exception.InvalidTransactionException;
-import com.keystone.coinlib.interfaces.Signer;
 import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
@@ -180,11 +179,9 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
         return accountEntity;
     }
 
-    public abstract void parseTxData(Bundle bundle);
+    protected abstract JSONObject parseTxData(Bundle bundle) throws Exception;
 
-    public abstract void checkTransaction() throws InvalidTransactionException;
+    protected abstract void checkTransaction() throws InvalidTransactionException;
 
     public abstract void handleSignPsbt(String psbt);
-
-    public abstract Signer[] initSigners();
 }

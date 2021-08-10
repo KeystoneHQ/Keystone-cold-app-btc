@@ -15,6 +15,7 @@ import com.keystone.coinlib.coins.BTC.Btc;
 import com.keystone.coinlib.coins.BTC.BtcImpl;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
 import com.keystone.coinlib.exception.InvalidTransactionException;
+import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.coinlib.interfaces.SignPsbtCallback;
 import com.keystone.coinlib.interfaces.Signer;
 import com.keystone.coinlib.utils.Coins;
@@ -56,42 +57,47 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         observableTx.setValue(null);
     }
 
-    @Override
-    public void parseTxData(Bundle bundle) {
+    public void handleTx(Bundle bundle) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
-                String psbtBase64 = bundle.getString("psbt_base64");
-                Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
-                JSONObject psbtTx = btc.parsePsbt(psbtBase64);
-                if (psbtTx == null) {
-                    parseTxException.postValue(new InvalidTransactionException("parse failed,invalid psbt data"));
-                    return;
-                }
-                boolean isMultisigTx = psbtTx.getJSONArray("inputs").getJSONObject(0).getBoolean("isMultiSign");
-                if (!isMultisigTx) {
-                    throw new InvalidTransactionException("", InvalidTransactionException.IS_NOTMULTISIG_TX);
-                }
-                PsbtLegacyTxAdapter psbtLegacyTxAdapter = new PsbtLegacyTxAdapter();
-                JSONObject adaptTx = psbtLegacyTxAdapter.adapt(psbtTx);
-                wallet = psbtLegacyTxAdapter.getWallet();
-                JSONObject signTx = parsePsbtTx(adaptTx);
-                Log.i(TAG, "signTx = " + signTx.toString(4));
+                JSONObject signTx = parseTxData(bundle);
                 transaction = AbsTx.newInstance(signTx);
                 checkTransaction();
                 TxEntity tx = generateLegacyTxEntity(signTx);
                 observableTx.postValue(tx);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                parseTxException.postValue(new InvalidTransactionException("adapt failed,invalid psbt data"));
             } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                parseTxException.postValue(new InvalidTransactionException("invalid data"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                parseTxException.postValue(new UnknownTransactionException("unKnown transaction"));
             }
         });
     }
 
     @Override
-    public void checkTransaction() throws InvalidTransactionException {
+    protected JSONObject parseTxData(Bundle bundle) throws Exception {
+        String psbtBase64 = bundle.getString("psbt_base64");
+        Btc btc = new Btc(new BtcImpl(Utilities.isMainNet(getApplication())));
+        JSONObject psbtTx = btc.parsePsbt(psbtBase64);
+        if (psbtTx == null) {
+            throw new InvalidTransactionException("parse failed,invalid psbt data");
+        }
+        boolean isMultisigTx = psbtTx.getJSONArray("inputs").getJSONObject(0).getBoolean("isMultiSign");
+        if (!isMultisigTx) {
+            throw new InvalidTransactionException("", InvalidTransactionException.IS_NOTMULTISIG_TX);
+        }
+        PsbtLegacyTxAdapter psbtLegacyTxAdapter = new PsbtLegacyTxAdapter();
+        JSONObject adaptTx = psbtLegacyTxAdapter.adapt(psbtTx);
+        wallet = psbtLegacyTxAdapter.getWallet();
+        return parsePsbtTx(adaptTx);
+    }
+
+    @Override
+    protected void checkTransaction() throws InvalidTransactionException {
         if (transaction == null) {
             throw new InvalidTransactionException("invalid transaction");
         }
@@ -155,8 +161,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         });
     }
 
-    @Override
-    public Signer[] initSigners() {
+    private Signer[] initSigners() {
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
         Signer[] signer = new Signer[distinctPaths.length];

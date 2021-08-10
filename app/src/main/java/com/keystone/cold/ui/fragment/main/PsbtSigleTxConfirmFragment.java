@@ -98,7 +98,7 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
                 .observe(this, address -> this.changeAddress = address);
-        psbtSigleTxConfirmViewModel.parseTxData(requireArguments());
+        psbtSigleTxConfirmViewModel.handleTx(requireArguments());
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
@@ -132,7 +132,6 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
                 if (ex instanceof WatchWalletNotMatchException) {
                     errorMessage = getString(R.string.master_pubkey_not_match);
                 }
-
                 if (ex instanceof InvalidTransactionException) {
                     InvalidTransactionException e = (InvalidTransactionException) ex;
                     if (e.getErrorCode() == InvalidTransactionException.IS_MULTISIG_TX) {

@@ -103,7 +103,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
                 .observe(this, address -> this.changeAddress = address);
-        psbtCasaTxConfirmViewModel.parseTxData(requireArguments());
+        psbtCasaTxConfirmViewModel.handleTx(requireArguments());
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
