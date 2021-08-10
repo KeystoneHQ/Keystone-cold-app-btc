@@ -18,7 +18,6 @@ import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.coinlib.interfaces.SignPsbtCallback;
 import com.keystone.coinlib.interfaces.Signer;
 import com.keystone.cold.AppExecutors;
-import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.ClearTokenCallable;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.db.entity.CasaSignature;
@@ -55,6 +54,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
     public void handleTx(Bundle bundle) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
+                initIsMainNet(bundle);
                 JSONObject signTx = parseTxData(bundle);
                 transaction = AbsTx.newInstance(signTx);
                 checkTransaction();
@@ -74,6 +74,17 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
     }
 
     @Override
+    protected void initIsMainNet(Bundle bundle) throws Exception {
+        String psbtBase64 = bundle.getString("psbt_base64");
+        Btc btc = new Btc(new BtcImpl(true));
+        JSONObject psbtTx = btc.parsePsbt(psbtBase64);
+        if (psbtTx == null) {
+            throw new InvalidTransactionException("parse failed,invalid psbt data");
+        }
+        isMainNet = new PsbtCasaTxAdapter().isCasaMainnet(psbtTx);
+    }
+
+    @Override
     protected JSONObject parseTxData(Bundle bundle) throws Exception {
         String psbtBase64 = bundle.getString("psbt_base64");
         Btc btc = new Btc(new BtcImpl(isMainNet));
@@ -87,7 +98,6 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
         }
         PsbtCasaTxAdapter psbtCasaTxAdapter = new PsbtCasaTxAdapter();
         JSONObject adaptTx = psbtCasaTxAdapter.adapt(psbtTx);
-        isMainNet = psbtCasaTxAdapter.isCasaMainnet();
         return parsePsbtTx(adaptTx);
     }
 

@@ -27,7 +27,29 @@ public class PsbtCasaTxAdapter {
         mfp = new GetMasterFingerprintCallable().call();
     }
 
-    public boolean isCasaMainnet() {
+    public boolean isCasaMainnet(JSONObject psbt) throws JSONException {
+        JSONArray psbtInputs = psbt.getJSONArray("inputs");
+        for (int i = 0; i < psbtInputs.length(); i++) {
+            JSONObject psbtInput = psbtInputs.getJSONObject(i);
+            JSONArray bip32Derivation = psbtInput.getJSONArray("hdPath");
+            String hdPath = "";
+            for (int j = 0; j < bip32Derivation.length(); j++) {
+                JSONObject item = bip32Derivation.getJSONObject(j);
+                String fingerprint = item.getString("masterFingerprint");
+                if (fingerprint.equalsIgnoreCase(new GetMasterFingerprintCallable().call())) {
+                    hdPath = item.getString("path");
+                }
+            }
+            String myCasaKey = findMyCasaKey(bip32Derivation);
+            if (myCasaKey != null) {
+                if (!hdPath.startsWith(MultiSig.CASA.getPath())) {
+                    hdPath = MultiSig.CASA.getPath() + hdPath.substring(1);
+                }
+                String path = hdPath.replace("m/", "");
+                String[] index = path.split("/");
+                isCasaMainnet = !index[1].equals("1'");
+            }
+        }
         return isCasaMainnet;
     }
 

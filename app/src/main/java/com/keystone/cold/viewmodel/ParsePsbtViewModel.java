@@ -61,7 +61,6 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
     public ParsePsbtViewModel(@NonNull Application application) {
         super(application);
         mRepository = MainApplication.getApplication().getRepository();
-        isMainNet = Utilities.isMainNet(getApplication());
     }
 
     public MutableLiveData<Integer> getFeeAttachCheckingResult() {
@@ -183,6 +182,8 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
         }
         return accountEntity;
     }
+
+    protected abstract void initIsMainNet(Bundle bundle) throws Exception;
 
     protected abstract JSONObject parseTxData(Bundle bundle) throws Exception;
 

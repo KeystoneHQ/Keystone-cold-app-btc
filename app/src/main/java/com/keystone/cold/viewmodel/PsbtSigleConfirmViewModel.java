@@ -63,6 +63,7 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
     public void handleTx(Bundle bundle) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
+                initIsMainNet(null);
                 JSONObject signTx = parseTxData(bundle);
                 transaction = AbsTx.newInstance(signTx);
                 checkTransaction();
@@ -79,6 +80,11 @@ public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
                 parseTxException.postValue(new UnknownTransactionException("unKnown transaction"));
             }
         });
+    }
+
+    @Override
+    protected void initIsMainNet(Bundle bundle) {
+        isMainNet = Utilities.isMainNet(getApplication());
     }
 
     @Override
