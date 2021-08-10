@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
 
-                        android:text="@string/scan_qrcode_with_generic_wallet"
+                        android:text="@string/scan_qrcode_with_casa"
                         android:textColor="@color/white"
                         android:textSize="15sp"
                         android:textStyle="bold" />
