@@ -34,7 +34,6 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
-import com.keystone.cold.ui.fragment.main.scan.scanner.exceptions.UnExpectedQRException;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -100,7 +99,7 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
                     @Override
                     public boolean handleException(Exception e) {
                         e.printStackTrace();
-                        if (e instanceof UnExpectedQRException || e instanceof JSONException) {
+                        if (e instanceof UnknowQrCodeException || e instanceof JSONException) {
                             mFragment.alert(getString(R.string.invalid_webauth_qrcode_hint));
                             return true;
                         }

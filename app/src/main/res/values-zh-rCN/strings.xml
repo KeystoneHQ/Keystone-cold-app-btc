@@ -226,6 +226,8 @@
     <string name="fingerprint_rename_subtitle">自定义指纹名称</string>
     <string name="enroll_complete_hint">恭喜！%s 成功录入</string>
     <string name="unsupported_qrcode">二维码非法，请检查您扫描的二维码</string>
+    <string name="error_hint">非法数据</string>
+    <string name="unknown_qrcode">当前模式下，仅支持扫描 %s 构造的二维码</string>
     <string name="unsupported_coin">不支持此币种</string>
     <string name="uuid_not_match">冷热端钱包不一致，请检查你扫描的二维码</string>
     <string name="incorrect_qrcode">二维码数据错误</string>
@@ -464,6 +466,8 @@
     <string name="wallet_info_hint">*请不要随意泄露该信息（可通过扩展公钥获取钱包地址及知道地址上存有的资产）</string>
     <string name="confirm_add_address">确认创建</string>
     <string name="watch_wallet_not_match">请使用%s生成待签交易</string>
+    <string name="wallet_not_match_tips">非当前钱包交易</string>
+    <string name="wallet_not_match">该交易不属于当前钱包，请检查交易信息。</string>
     <string name="scan_qrcode_with_generic_wallet">请用已适配铠石钱包的钱包扫描二维码</string>
     <string name="confirm_toggle">确认是否切换？</string>
     <string name="toggle_address_hint">切换地址格式后，您的收款地址、导出钱包、钱包信息都将切换，您需导出该地址格式的观察钱包</string>

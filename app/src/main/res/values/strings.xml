@@ -334,6 +334,8 @@
     <string name="fingerprint_rename_subtitle">Change Fingerprint Name</string>
     <string name="enroll_complete_hint">%s Fingerprint registered.</string>
     <string name="unsupported_qrcode">Invalid QR Code! Please check and retry.</string>
+    <string name="error_hint">Error</string>
+    <string name="unknown_qrcode">In current mode, only scan QR code built by %s is supported.</string>
     <string name="unsupported_coin">Unsupported Cryptocurrency</string>
     <string name="uuid_not_match">Hot end and cold end do not match. Please check that they been correctly bound.</string>
     <string name="incorrect_qrcode">Invalid QR Code</string>
@@ -573,6 +575,8 @@
     <string name="wallet_info_hint">* Do not share this public key with anyone. Account extended public keys can be used to identify your addresses and cryptocurrency amounts.</string>
     <string name="confirm_add_address">Confirm</string>
     <string name="watch_wallet_not_match">Please use %s generate unsigned transaction</string>
+    <string name="wallet_not_match_tips">Incongruent Transaction</string>
+    <string name="wallet_not_match">The transaction does not belong to the current wallet. Please check the transaction information.</string>
     <string name="scan_qrcode_with_generic_wallet">Please scan the QR code with the wallet you wish to use as a watch-only wallet.</string>
     <string name="confirm_toggle">Confirm Toggle?</string>
     <string name="toggle_address_hint">Once you toggle the address format, your receiving addresses, exported wallet, and wallet info will all be changed to this format. You will need to export your wallet information again using the new address format if you have not already. Do you still want to change the format?</string>
