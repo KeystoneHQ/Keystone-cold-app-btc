@@ -24,7 +24,7 @@
         android:id="@+id/ScannerFragment"
         android:name="com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment"
         android:label="ScannerFragment"
-        tools:layout="@layout/qrcode_scan_fragment">
+        tools:layout="@layout/scanner_fragment">
         <action
             android:id="@+id/action_scanner_to_casaSignMessageFragment"
             app:destination="@id/casaSignMessageFragment"

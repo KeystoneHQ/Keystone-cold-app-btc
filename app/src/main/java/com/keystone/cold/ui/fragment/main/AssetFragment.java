@@ -119,11 +119,12 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                     @Override
                     public void handleScanResult(ScanResult result) throws Exception {
                         if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
-                            if (handleSignElectrumPSBT(result)) return;
+                            if (handleSignPlainTextPSBT(result)) return;
                             throw new UnknowQrCodeException("not a electrum psbt transaction!");
                         } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                             if (handleWebAuth(result)) return;
                             if (handleKeystoneTx(result)) return;
+                            if (handleSignUrBytesPSBT(result)) return;
                             throw new UnknowQrCodeException("unknown qrcode");
                         } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
                             if (handleSignCryptoPSBT(result)) return;
@@ -177,15 +178,27 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         return false;
                     }
 
-                    private boolean handleSignElectrumPSBT(ScanResult result) {
+                    private boolean handleSignPlainTextPSBT(ScanResult result) {
                         byte[] data = Base43.decode(result.getData());
                         if (new String(data).startsWith("psbt")) {
                             String hex = result.getData();
                             String psbtBase64 = Base64.toBase64String(Base43.decode(hex));
                             Bundle bundle = new Bundle();
                             bundle.putString("psbt_base64", psbtBase64);
-                            bundle.putBoolean("multisig", false);
-                            mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                            mFragment.navigate(R.id.action_to_psbtSigleTxConfirmFragment, bundle);
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    private boolean handleSignUrBytesPSBT(ScanResult result) {
+                        byte[] bytes = (byte[]) result.resolve();
+                        String hex = Hex.toHexString(bytes);
+                        if (hex.startsWith(Hex.toHexString("psbt".getBytes()))) {
+                            String base64 = Base64.toBase64String(Hex.decode(hex));
+                            Bundle bundle = new Bundle();
+                            bundle.putString("psbt_base64", base64);
+                            mFragment.navigate(R.id.action_to_psbtSigleTxConfirmFragment, bundle);
                             return true;
                         }
                         return false;
