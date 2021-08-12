@@ -51,11 +51,11 @@ import static com.keystone.cold.viewmodel.AddAddressViewModel.AddAddressTask.get
 import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
 import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
 
-public class PsbtSigleConfirmViewModel extends ParsePsbtViewModel {
+public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "PsbtSigleConfirmViewModel";
     protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
 
-    public PsbtSigleConfirmViewModel(@NonNull Application application) {
+    public PsbtSingleConfirmViewModel(@NonNull Application application) {
         super(application);
         observableTx.setValue(null);
     }

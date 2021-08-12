@@ -3,10 +3,7 @@ package com.keystone.cold.ui.fragment.multisigs.legacy;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -17,7 +14,7 @@ import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.config.FeatureFlags;
-import com.keystone.cold.databinding.ElectrumTxConfirmFragmentBinding;
+import com.keystone.cold.databinding.PsbtTxConfirmFragmentBinding;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -56,7 +53,7 @@ import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXI
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
-public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
+public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
 
     private PsbtLegacyConfirmViewModel psbtLegacyConfirmViewModel;
     private SigningDialog signingDialog;
@@ -74,7 +71,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
 
     @Override
     protected int setView() {
-        return R.layout.electrum_tx_confirm_fragment;
+        return R.layout.psbt_tx_confirm_fragment;
     }
 
     @Override
@@ -172,18 +169,10 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<ElectrumTxConfirmF
 
 
     private void refreshUI() {
-        refreshAmount();
         refreshFromList();
         refreshReceiveList();
         refreshSignStatus();
         checkBtcFee();
-    }
-
-    private void refreshAmount() {
-        SpannableStringBuilder style = new SpannableStringBuilder(txEntity.getAmount());
-        style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                0, txEntity.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mBinding.txDetail.amount.setText(style);
     }
 
     private void refreshFromList() {

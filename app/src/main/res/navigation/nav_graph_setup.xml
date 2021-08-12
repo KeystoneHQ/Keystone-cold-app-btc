@@ -420,7 +420,7 @@
     <fragment
         android:id="@id/electrumExportFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
-        tools:layout="@layout/electrum_export"
+        tools:layout="@layout/psbt_export"
         android:label="ElectrumExportFragment">
         <action android:id="@+id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"

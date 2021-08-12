@@ -70,7 +70,7 @@
 
             <include
                 android:id="@+id/tx_detail"
-                layout="@layout/electrum_tx_detail"
+                layout="@layout/psbt_tx_detail"
                 bind:tx="@{tx}" />
         </LinearLayout>
 

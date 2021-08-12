@@ -127,7 +127,7 @@
     </fragment>
     <fragment
         android:id="@+id/psbtSigleTxConfirmFragment"
-        android:name="com.keystone.cold.ui.fragment.main.PsbtSigleTxConfirmFragment"
+        android:name="com.keystone.cold.ui.fragment.main.PsbtSingleTxConfirmFragment"
         android:label="PsbtSigleTxConfirmFragment">
         <action
             android:id="@+id/action_to_psbt_broadcast"
@@ -932,7 +932,7 @@
         android:id="@+id/electrumExportFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
         android:label="ElectrumExportFragment"
-        tools:layout="@layout/electrum_export" />
+        tools:layout="@layout/psbt_export" />
     <fragment
         android:id="@+id/txConfirmFragment"
         android:name="com.keystone.cold.ui.fragment.main.TxConfirmFragment"

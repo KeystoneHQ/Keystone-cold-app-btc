@@ -152,17 +152,11 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         String psbtB64 = Base64.toBase64String(bytes);
                         Bundle bundle = new Bundle();
                         bundle.putString("psbt_base64", psbtB64);
-                        bundle.putBoolean("multisig", true);
-                        bundle.putString("multisig_mode", MultiSigMode.CASA.name());
                         mFragment.navigate(R.id.action_to_psbtCasaTxConfirmFragment, bundle);
                     }
                 }
             });
-            Bundle data = new Bundle();
-            ArrayList<String> desiredResults = new ArrayList<>();
-            desiredResults.add(ScanResultTypes.UR_CRYPTO_PSBT.name());
-            data.putStringArrayList("desired_results", desiredResults);
-            navigate(R.id.action_to_scanner, data);
+            navigate(R.id.action_to_scanner);
             return true;
         } else if (id == R.id.action_sdcard) {
             Bundle data = new Bundle();

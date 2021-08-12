@@ -59,52 +59,6 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/unit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="16dp"
-                android:text="@{tx.coinCode}"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:text="BTC" />
-
-            <TextView
-                android:id="@+id/amount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="16dp"
-                android:layout_toStartOf="@id/unit"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:text="2.62407806" />
-
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/amount"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="16dp"
-                android:textColor="@color/white40"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:time="@{tx.timeStamp}"
-                tools:text="2018/06/01 15:40" />
-
             <include
                 layout="@layout/divider"
                 android:layout_width="match_parent"

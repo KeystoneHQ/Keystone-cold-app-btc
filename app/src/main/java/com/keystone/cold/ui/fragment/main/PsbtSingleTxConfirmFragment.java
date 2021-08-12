@@ -3,10 +3,6 @@ package com.keystone.cold.ui.fragment.main;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -17,7 +13,7 @@ import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.config.FeatureFlags;
-import com.keystone.cold.databinding.ElectrumTxConfirmFragmentBinding;
+import com.keystone.cold.databinding.PsbtTxConfirmFragmentBinding;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -30,7 +26,7 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.viewmodel.GlobalViewModel;
-import com.keystone.cold.viewmodel.PsbtSigleConfirmViewModel;
+import com.keystone.cold.viewmodel.PsbtSingleConfirmViewModel;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
@@ -50,9 +46,9 @@ import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackChec
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
-public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
+public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
 
-    private PsbtSigleConfirmViewModel psbtSigleTxConfirmViewModel;
+    private PsbtSingleConfirmViewModel psbtSigleTxConfirmViewModel;
     private SigningDialog signingDialog;
     private TxEntity txEntity;
     private List<String> changeAddress = new ArrayList<>();
@@ -68,7 +64,7 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
 
     @Override
     protected int setView() {
-        return R.layout.electrum_tx_confirm_fragment;
+        return R.layout.psbt_tx_confirm_fragment;
     }
 
     @Override
@@ -93,7 +89,7 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        psbtSigleTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtSigleConfirmViewModel.class);
+        psbtSigleTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtSingleConfirmViewModel.class);
         ViewModelProviders.of(mActivity)
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
@@ -158,20 +154,10 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
         });
     }
 
-
     private void refreshUI() {
-        refreshAmount();
         refreshFromList();
         refreshReceiveList();
-        refreshSignStatus();
         checkBtcFee();
-    }
-
-    private void refreshAmount() {
-        SpannableStringBuilder style = new SpannableStringBuilder(txEntity.getAmount());
-        style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                0, txEntity.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mBinding.txDetail.amount.setText(style);
     }
 
     private void refreshFromList() {
@@ -228,32 +214,6 @@ public class PsbtSigleTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFr
         adapter.setItems(items);
         mBinding.txDetail.toList.setVisibility(View.VISIBLE);
         mBinding.txDetail.toList.setAdapter(adapter);
-
-    }
-
-    private void refreshSignStatus() {
-        if (!TextUtils.isEmpty(txEntity.getSignStatus())) {
-            mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
-            String signStatus = txEntity.getSignStatus();
-
-            String[] splits = signStatus.split("-");
-            int sigNumber = Integer.parseInt(splits[0]);
-            int reqSigNumber = Integer.parseInt(splits[1]);
-
-            String text;
-            if (sigNumber == 0) {
-                text = getString(R.string.unsigned);
-            } else if (sigNumber < reqSigNumber) {
-                text = getString(R.string.partial_signed);
-            } else {
-                text = getString(R.string.signed);
-                signed = true;
-            }
-
-            mBinding.txDetail.signStatus.setText(text);
-        } else {
-            mBinding.txDetail.txSource.setVisibility(View.VISIBLE);
-        }
 
     }
 

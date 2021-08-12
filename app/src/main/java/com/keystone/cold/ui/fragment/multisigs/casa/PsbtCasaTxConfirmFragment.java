@@ -3,10 +3,7 @@ package com.keystone.cold.ui.fragment.multisigs.casa;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -17,11 +14,10 @@ import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.config.FeatureFlags;
-import com.keystone.cold.databinding.ElectrumTxConfirmFragmentBinding;
+import com.keystone.cold.databinding.PsbtTxConfirmFragmentBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
 import com.keystone.cold.ui.fragment.BaseFragment;
-import com.keystone.cold.ui.fragment.main.FeeAttackChecking;
 import com.keystone.cold.ui.fragment.main.TransactionItem;
 import com.keystone.cold.ui.fragment.main.TransactionItemAdapter;
 import com.keystone.cold.ui.fragment.setup.PreImportFragment;
@@ -49,19 +45,15 @@ import java.util.List;
 
 import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
 import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
-public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
-
+public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
     private PsbtCasaConfirmViewModel psbtCasaTxConfirmViewModel;
     private SigningDialog signingDialog;
     private List<String> changeAddress = new ArrayList<>();
-    private int feeAttackCheckingState;
-    private FeeAttackChecking feeAttackChecking;
     private boolean signed;
     private CasaSignature casaSignature;
     private ProgressModalDialog progressModalDialog;
@@ -73,7 +65,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
 
     @Override
     protected int setView() {
-        return R.layout.electrum_tx_confirm_fragment;
+        return R.layout.psbt_tx_confirm_fragment;
     }
 
     @Override
@@ -160,18 +152,10 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
     }
 
     private void refreshUI() {
-        refreshAmount();
         refreshFromList();
         refreshReceiveList();
         refreshSignStatus();
         checkBtcFee();
-    }
-
-    private void refreshAmount() {
-        SpannableStringBuilder style = new SpannableStringBuilder(casaSignature.getAmount());
-        style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                0, casaSignature.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mBinding.txDetail.amount.setText(style);
     }
 
     private void refreshFromList() {
@@ -243,10 +227,6 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<ElectrumTxConfirmFra
     }
 
     private void handleSign() {
-        if (feeAttackCheckingState == SAME_OUTPUTS) {
-            feeAttackChecking.showFeeAttackWarning();
-            return;
-        }
         if (signed) {
             ModalDialog.showCommonModal(mActivity, getString(R.string.broadcast_tx),
                     getString(R.string.multisig_already_signed), getString(R.string.know),
