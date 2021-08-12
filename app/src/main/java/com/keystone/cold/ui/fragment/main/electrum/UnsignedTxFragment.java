@@ -24,7 +24,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -38,7 +37,7 @@ import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.config.FeatureFlags;
-import com.keystone.cold.databinding.ElectrumTxConfirmFragmentBinding;
+import com.keystone.cold.databinding.PsbtTxConfirmFragmentBinding;
 import com.keystone.cold.databinding.ProgressModalBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.TxEntity;
@@ -77,11 +76,11 @@ import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX
 import static com.keystone.cold.ui.fragment.main.BroadcastTxFragment.KEY_TXID;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
 import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
-public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBinding> {
+public class UnsignedTxFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
 
     private final Runnable forgetPassword = () -> {
         Bundle bundle = new Bundle();
@@ -100,7 +99,7 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
 
     @Override
     protected int setView() {
-        return R.layout.electrum_tx_confirm_fragment;
+        return R.layout.psbt_tx_confirm_fragment;
     }
 
     @Override
@@ -213,7 +212,6 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
     }
 
     private void refreshUI() {
-        refreshAmount();
         refreshFromList();
         refreshReceiveList();
         refreshSignStatus();
@@ -350,20 +348,6 @@ public class UnsignedTxFragment extends BaseFragment<ElectrumTxConfirmFragmentBi
                 }
             }
         });
-    }
-
-    private void refreshAmount() {
-        if (viewModel.mode != null && viewModel.mode.equals(MultiSigMode.CASA)) {
-            SpannableStringBuilder style = new SpannableStringBuilder(casaSignature.getAmount());
-            style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                    0, casaSignature.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mBinding.txDetail.amount.setText(style);
-        } else {
-            SpannableStringBuilder style = new SpannableStringBuilder(txEntity.getAmount());
-            style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                    0, txEntity.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mBinding.txDetail.amount.setText(style);
-        }
     }
 
     private void refreshReceiveList() {

@@ -39,7 +39,7 @@ import org.spongycastle.util.encoders.Base64;
 
 import java.util.Objects;
 
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
 import static com.keystone.cold.viewmodel.WatchWallet.PSBT_MULTISIG_SIGN_ID;
 
 public class ElectrumBroadcastTxFragment extends BaseFragment<BroadcastElectrumTxFragmentBinding> {

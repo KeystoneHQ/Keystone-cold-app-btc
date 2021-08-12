@@ -29,7 +29,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
-import com.keystone.cold.databinding.ElectrumExportBinding;
+import com.keystone.cold.databinding.PsbtExportBinding;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.SetupVaultActivity;
@@ -43,13 +43,13 @@ import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
 import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
 
 
-public class ElectrumExportFragment extends BaseFragment<ElectrumExportBinding> {
+public class ElectrumExportFragment extends BaseFragment<PsbtExportBinding> {
 
     private String exPub;
 
     @Override
     protected int setView() {
-        return R.layout.electrum_export;
+        return R.layout.psbt_export;
     }
 
     @Override

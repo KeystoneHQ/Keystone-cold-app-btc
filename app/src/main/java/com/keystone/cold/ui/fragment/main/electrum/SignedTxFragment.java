@@ -19,10 +19,7 @@ package com.keystone.cold.ui.fragment.main.electrum;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -49,8 +46,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
 import static com.keystone.cold.ui.fragment.main.electrum.ElectrumBroadcastTxFragment.showElectrumInfo;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
 import static com.keystone.cold.viewmodel.WatchWallet.PSBT_MULTISIG_SIGN_ID;
 
 
@@ -92,7 +89,6 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
             this.txEntity = txEntity;
             isMultiSig = txEntity.getSignId().equals(PSBT_MULTISIG_SIGN_ID);
             displaySignResult(txEntity);
-            refreshAmount();
             refreshFromList();
             refreshReceiveList();
             refreshSignStatus();
@@ -148,13 +144,6 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
                 TransactionItem.ItemType.INPUT, changeAddress);
         adapter.setItems(items);
         mBinding.txDetail.fromList.setAdapter(adapter);
-    }
-
-    private void refreshAmount() {
-        SpannableStringBuilder style = new SpannableStringBuilder(txEntity.getAmount());
-        style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                0, txEntity.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mBinding.txDetail.amount.setText(style);
     }
 
     private void refreshReceiveList() {

@@ -38,7 +38,7 @@
         android:id="@id/ScannerFragment"
         android:name="com.keystone.cold.ui.fragment.main.scan.scanner.ScannerFragment"
         android:label="ScannerFragment"
-        tools:layout="@layout/qrcode_scan_fragment">
+        tools:layout="@layout/scanner_fragment">
         <action
             android:id="@+id/action_to_webAuthResultFragment"
             app:destination="@id/webAuthResultFragment" />
@@ -420,7 +420,7 @@
     <fragment
         android:id="@id/electrumExportFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
-        tools:layout="@layout/electrum_export"
+        tools:layout="@layout/psbt_export"
         android:label="ElectrumExportFragment">
         <action android:id="@+id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"

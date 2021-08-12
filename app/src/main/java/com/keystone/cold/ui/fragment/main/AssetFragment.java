@@ -124,6 +124,7 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
                             if (handleWebAuth(result)) return;
                             if (handleKeystoneTx(result)) return;
+                            if (handleSignUrBytesPSBT(result)) return;
                             throw new UnknowQrCodeException("unknown qrcode");
                         } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
                             if (handleSignCryptoPSBT(result)) return;
@@ -181,11 +182,17 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         byte[] data = Base43.decode(result.getData());
                         if (new String(data).startsWith("psbt")) {
                             String hex = result.getData();
-                            String psbtBase64 = Base64.toBase64String(Base43.decode(hex));
-                            Bundle bundle = new Bundle();
-                            bundle.putString("psbt_base64", psbtBase64);
-                            bundle.putBoolean("multisig", false);
-                            mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                            navigatePsbt(Base43.decode(hex));
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    private boolean handleSignUrBytesPSBT(ScanResult result) {
+                        byte[] bytes = (byte[]) result.resolve();
+                        String hex = Hex.toHexString(bytes);
+                        if (hex.startsWith(Hex.toHexString("psbt".getBytes()))) {
+                            navigatePsbt(Hex.decode(hex));
                             return true;
                         }
                         return false;
@@ -213,14 +220,18 @@ public class AssetFragment extends BaseFragment<AssetFragmentBinding>
                         if (watchWallet.supportBc32QrCode() && watchWallet.supportPsbt()) {
                             CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
                             byte[] bytes = cryptoPSBT.getPsbt();
-                            String psbtB64 = Base64.toBase64String(bytes);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("psbt_base64", psbtB64);
-                            mFragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+                            navigatePsbt(bytes);
                             return true;
                         } else {
                             throw new WatchWalletNotMatchException("not support bc32 or psbt qrcode in current wallet mode");
                         }
+                    }
+
+                    private void navigatePsbt(byte[] decode) {
+                        String base64 = Base64.toBase64String(decode);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("psbt_base64", base64);
+                        mFragment.navigate(R.id.action_to_psbtSigleTxConfirmFragment, bundle);
                     }
                 });
     }

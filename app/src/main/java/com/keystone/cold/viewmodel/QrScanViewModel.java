@@ -309,7 +309,7 @@ public class QrScanViewModel extends AndroidViewModel {
         if(isMultisig){
             bundle.putString("multisig_mode", MultiSigMode.LEGACY.name());
         }
-        fragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+//        fragment.navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
     }
 
     private void decodeAndProcess(JSONObject object)

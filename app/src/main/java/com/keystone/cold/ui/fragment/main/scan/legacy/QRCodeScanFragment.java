@@ -225,7 +225,7 @@ public class QRCodeScanFragment extends BaseFragment<QrcodeScanFragmentBinding>
                 Bundle bundle = new Bundle();
                 bundle.putString("psbt_base64", psbtBase64);
                 bundle.putBoolean("multisig", qrScanPurpose == QrScanPurpose.MULTISIG_TX);
-                navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
+//                navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
             } else {
                 alert(getString(R.string.unsupported_qrcode));
             }
