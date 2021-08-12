@@ -34,7 +34,7 @@ import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
 
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
 import static com.keystone.cold.viewmodel.WatchWallet.PSBT_MULTISIG_SIGN_ID;
 
 public class PsbtSignedTxFragment extends SignedTxFragment {

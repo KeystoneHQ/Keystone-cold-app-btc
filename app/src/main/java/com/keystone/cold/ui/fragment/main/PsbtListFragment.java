@@ -133,11 +133,15 @@ public class PsbtListFragment extends BaseFragment<FileListBinding>
             if (psbtBase64 != null) {
                 Bundle bundle = new Bundle();
                 bundle.putString("psbt_base64", psbtBase64);
-                bundle.putBoolean("multisig", multisig);
                 if (multisig) {
-                    bundle.putString("multisig_mode", mode.name());
+                    if (MultiSigMode.LEGACY == mode) {
+                        navigate(R.id.action_to_psbtLegacyTxConfirmFragment, bundle);
+                    } else if (MultiSigMode.CASA == mode) {
+                        navigate(R.id.action_to_psbtCasaTxConfirmFragment, bundle);
+                    }
+                } else {
+                    navigate(R.id.action_to_psbtSigleTxConfirmFragment, bundle);
                 }
-                navigate(R.id.action_to_psbtTxConfirmFragment, bundle);
                 return;
             }
         }

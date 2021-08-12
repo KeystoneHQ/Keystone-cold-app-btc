@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
-import static com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment.showExportPsbtDialog;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
 
 public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
 
@@ -84,7 +84,6 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
             mBinding.setTx(casaSignature);
             this.casaSignature = casaSignature;
             displaySignResult(casaSignature);
-            refreshAmount();
             refreshFromList();
             refreshReceiveList();
             refreshSignStatus();
@@ -141,13 +140,6 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
                 TransactionItem.ItemType.INPUT, changeAddress);
         adapter.setItems(items);
         mBinding.txDetail.fromList.setAdapter(adapter);
-    }
-
-    private void refreshAmount() {
-        SpannableStringBuilder style = new SpannableStringBuilder(casaSignature.getAmount());
-        style.setSpan(new ForegroundColorSpan(mActivity.getColor(R.color.colorAccent)),
-                0, casaSignature.getAmount().indexOf(" "), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mBinding.txDetail.amount.setText(style);
     }
 
     private void refreshReceiveList() {

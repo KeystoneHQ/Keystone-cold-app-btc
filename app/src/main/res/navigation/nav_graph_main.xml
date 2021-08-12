@@ -33,20 +33,6 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_scanner_to_psbtTxConfirmFragment"
-            app:destination="@id/psbtTxConfirmFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@+id/action_to_psbtTxConfirmFragment"
-            app:destination="@id/psbtTxConfirmFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
             android:id="@+id/action_to_psbtSigleTxConfirmFragment"
             app:destination="@id/psbtSigleTxConfirmFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -499,13 +485,6 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_to_psbtTxConfirmFragment"
-            app:destination="@id/psbtTxConfirmFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
             android:id="@+id/action_to_casaPerformHealthCheckFragment"
             app:destination="@id/casaPerformHealthCheckFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -783,8 +762,22 @@
         android:name="com.keystone.cold.ui.fragment.main.PsbtListFragment"
         android:label="PsbtListFragment">
         <action
-            android:id="@+id/action_to_psbtTxConfirmFragment"
-            app:destination="@id/psbtTxConfirmFragment"
+            android:id="@+id/action_to_psbtSigleTxConfirmFragment"
+            app:destination="@id/psbtSigleTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtLegacyTxConfirmFragment"
+            app:destination="@id/psbtLegacyTxConfirmFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtCasaTxConfirmFragment"
+            app:destination="@id/psbtCasaTxConfirmFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
