@@ -30,7 +30,7 @@ import com.keystone.cold.db.entity.AddressEntity;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryption.ChipSigner;
-import com.keystone.cold.ui.fragment.main.adapter.PsbtSigleTxAdapter;
+import com.keystone.cold.ui.fragment.main.adapter.PsbtSingleTxAdapter;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 
 import org.json.JSONArray;
@@ -60,15 +60,15 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
         observableTx.setValue(null);
     }
 
-    public void handleTx(Bundle bundle) {
+    public void handleTx(String psbtBase64) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
-                initIsMainNet(null);
-                JSONObject signTx = parseTxData(bundle);
+                initIsMainNet(psbtBase64);
+                JSONObject signTx = parseTxData(psbtBase64);
                 transaction = AbsTx.newInstance(signTx);
                 checkTransaction();
-                TxEntity tx = generateTxEntity(signTx);
-                observableTx.postValue(tx);
+                observableTx.postValue(generateTxEntity(signTx));
+                observableSignTx.postValue(signTx);
             } catch (WatchWalletNotMatchException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
@@ -82,14 +82,26 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
         });
     }
 
+    public void generateTx(String signTx) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                JSONObject jsonObject = new JSONObject(signTx);
+                transaction = AbsTx.newInstance(jsonObject);
+                observableTx.postValue(generateTxEntity(jsonObject));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                parseTxException.postValue(new InvalidTransactionException("invalid data"));
+            }
+        });
+    }
+
     @Override
-    protected void initIsMainNet(Bundle bundle) {
+    protected void initIsMainNet(String psbtBase64) {
         isMainNet = Utilities.isMainNet(getApplication());
     }
 
     @Override
-    protected JSONObject parseTxData(Bundle bundle) throws Exception {
-        String psbtBase64 = bundle.getString("psbt_base64");
+    protected JSONObject parseTxData(String psbtBase64) throws Exception {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
@@ -99,7 +111,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
         if (isMultisigTx) {
             throw new InvalidTransactionException("", InvalidTransactionException.IS_MULTISIG_TX);
         }
-        JSONObject adaptTx = new PsbtSigleTxAdapter().adapt(psbtTx);
+        JSONObject adaptTx = new PsbtSingleTxAdapter().adapt(psbtTx);
         return parsePsbtTx(adaptTx);
     }
 

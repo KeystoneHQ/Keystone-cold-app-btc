@@ -94,10 +94,22 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
                 .observe(this, address -> this.changeAddress = address);
-        psbtSigleTxConfirmViewModel.handleTx(requireArguments());
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
+        Bundle bundle = requireArguments();
+        String signTx = bundle.getString("signTx");
+        if (signTx != null) {
+            psbtSigleTxConfirmViewModel.generateTx(signTx);
+            feeAttackCheckingState = bundle.getInt("feeAttach");
+            if (feeAttackCheckingState != NORMAL) {
+                feeAttackChecking = new FeeAttackChecking(this);
+            }
+
+        } else {
+            String psbtBase64 = bundle.getString("psbt_base64");
+            psbtSigleTxConfirmViewModel.handleTx(psbtBase64);
+        }
     }
 
     private void subscribeTx() {

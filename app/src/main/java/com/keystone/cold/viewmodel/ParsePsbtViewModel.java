@@ -53,6 +53,7 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
     protected final MutableLiveData<String> signState = new MutableLiveData<>();
     protected final ExecutorService sExecutor = Executors.newSingleThreadExecutor();
     protected final MutableLiveData<Exception> parseTxException = new MutableLiveData<>();
+    protected final MutableLiveData<JSONObject> observableSignTx = new MutableLiveData<>();
     protected AbsTx transaction;
     protected String coinCode;
     protected AuthenticateModal.OnVerify.VerifyToken token;
@@ -73,6 +74,10 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
 
     public MutableLiveData<Exception> getParseTxException() {
         return parseTxException;
+    }
+
+    public MutableLiveData<JSONObject> getObservableSignTx() {
+        return observableSignTx;
     }
 
     public boolean isMainNet() {
@@ -183,9 +188,9 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
         return accountEntity;
     }
 
-    protected abstract void initIsMainNet(Bundle bundle) throws Exception;
+    protected abstract void initIsMainNet(String psbtBase64) throws Exception;
 
-    protected abstract JSONObject parseTxData(Bundle bundle) throws Exception;
+    protected abstract JSONObject parseTxData(String psbtBase64) throws Exception;
 
     protected abstract void checkTransaction() throws InvalidTransactionException;
 
