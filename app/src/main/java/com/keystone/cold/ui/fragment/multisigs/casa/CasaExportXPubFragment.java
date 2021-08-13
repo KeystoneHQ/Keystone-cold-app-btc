@@ -39,7 +39,7 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
         mBinding.qrcodeLayout.qrcode.setData(ur.toString());
         mBinding.qrcodeLayout.frame.setLayoutParams(new LinearLayout.LayoutParams(320, 320));
         mBinding.done.setOnClickListener(v -> navigateUp());
-        mBinding.scanHint.setOnClickListener(v -> showExportGuide());
+        mBinding.info.setOnClickListener(v -> showExportGuide());
         mBinding.path.setText("Path: " + MultiSig.CASA.getPath());
         mBinding.xpub.setText(casaMultiSigViewModel.getXPub(MultiSig.CASA));
         mBinding.exportToSdcard.setOnClickListener(v -> exportXpub());
