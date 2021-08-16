@@ -1,7 +1,6 @@
 package com.keystone.cold.viewmodel;
 
 import android.app.Application;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -101,7 +100,8 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
     }
 
     @Override
-    protected JSONObject parseTxData(String psbtBase64) throws Exception {
+    protected JSONObject parseTxData(String psbtBase64) throws InvalidTransactionException, JSONException,
+            WatchWalletNotMatchException {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {

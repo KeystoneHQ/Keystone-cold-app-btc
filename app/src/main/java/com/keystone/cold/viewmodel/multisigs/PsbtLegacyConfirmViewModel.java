@@ -97,7 +97,8 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     }
 
     @Override
-    protected JSONObject parseTxData(String psbtBase64) throws Exception {
+    protected JSONObject parseTxData(String psbtBase64) throws InvalidTransactionException, JSONException,
+            WatchWalletNotMatchException, NoMatchedMultisigWalletException {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
