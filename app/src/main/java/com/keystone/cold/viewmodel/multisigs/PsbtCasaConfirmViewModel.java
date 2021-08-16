@@ -51,15 +51,15 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
         return observableCasaSignature;
     }
 
-    public void handleTx(Bundle bundle) {
+    public void handleTx(String psbtBase64) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
-                initIsMainNet(bundle);
-                JSONObject signTx = parseTxData(bundle);
+                initIsMainNet(psbtBase64);
+                JSONObject signTx = parseTxData(psbtBase64);
                 transaction = AbsTx.newInstance(signTx);
                 checkTransaction();
-                CasaSignature sig = generateCasaSignature(signTx);
-                observableCasaSignature.postValue(sig);
+                observableCasaSignature.postValue(generateCasaSignature(signTx));
+                observableSignTx.postValue(signTx);
             } catch (WatchWalletNotMatchException | NotMyCasaKeyException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
@@ -73,9 +73,21 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
         });
     }
 
+    public void generateTx(String signTx) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                JSONObject jsonObject = new JSONObject(signTx);
+                transaction = AbsTx.newInstance(jsonObject);
+                observableCasaSignature.postValue(generateCasaSignature(jsonObject));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                parseTxException.postValue(new InvalidTransactionException("invalid data"));
+            }
+        });
+    }
+
     @Override
-    protected void initIsMainNet(Bundle bundle) throws Exception {
-        String psbtBase64 = bundle.getString("psbt_base64");
+    protected void initIsMainNet(String psbtBase64) throws InvalidTransactionException, JSONException {
         Btc btc = new Btc(new BtcImpl(true));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
@@ -85,8 +97,8 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
     }
 
     @Override
-    protected JSONObject parseTxData(Bundle bundle) throws Exception {
-        String psbtBase64 = bundle.getString("psbt_base64");
+    protected JSONObject parseTxData(String psbtBase64) throws InvalidTransactionException, JSONException,
+            WatchWalletNotMatchException, NotMyCasaKeyException {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
