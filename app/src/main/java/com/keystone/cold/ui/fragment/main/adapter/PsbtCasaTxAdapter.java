@@ -2,10 +2,10 @@ package com.keystone.cold.ui.fragment.main.adapter;
 
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.accounts.MultiSig;
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.util.HashUtil;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONArray;
@@ -53,7 +53,7 @@ public class PsbtCasaTxAdapter {
         return isCasaMainnet;
     }
 
-    public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, NotMyCasaKeyException, InvalidTransactionException {
+    public JSONObject adapt(JSONObject psbt) throws JSONException, FingerPrintNotMatchException, NotMyCasaKeyException, InvalidTransactionException {
         if (psbt == null) {
             throw new InvalidTransactionException("parse failed,invalid psbt data");
         }
@@ -62,7 +62,7 @@ public class PsbtCasaTxAdapter {
         JSONArray outputs = new JSONArray();
         adaptInputs(psbt.getJSONArray("inputs"), inputs);
         if (inputs.length() < 1) {
-            throw new WatchWalletNotMatchException("no input match masterFingerprint");
+            throw new FingerPrintNotMatchException("no input match masterFingerprint");
         }
         adaptOutputs(psbt.getJSONArray("outputs"), outputs);
         object.put("inputs", inputs);

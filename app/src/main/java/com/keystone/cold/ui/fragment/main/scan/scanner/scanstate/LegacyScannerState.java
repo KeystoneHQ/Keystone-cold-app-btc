@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.cold.AppExecutors;
@@ -14,7 +15,6 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.PsbtLegacyConfirmViewModel;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
 
@@ -54,7 +54,7 @@ public class LegacyScannerState extends ScannerState {
                 mFragment.alert(getString(R.string.incorrect_tx_data));
             }
             return true;
-        } else if (e instanceof WatchWalletNotMatchException) {
+        } else if (e instanceof FingerPrintNotMatchException) {
             mFragment.alert(getString(R.string.master_pubkey_not_match));
         } else if (e instanceof NoMatchedMultisigWalletException) {
             mFragment.alert(getString(R.string.no_matched_wallet), getString(R.string.no_matched_wallet_hint));

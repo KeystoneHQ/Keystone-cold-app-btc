@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.cold.AppExecutors;
@@ -13,7 +14,6 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.PsbtCasaConfirmViewModel;
 import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
@@ -50,7 +50,7 @@ public class CasaScannerState extends ScannerState {
                 mFragment.alert(getString(R.string.incorrect_tx_data));
             }
             return true;
-        } else if (e instanceof WatchWalletNotMatchException || e instanceof NotMyCasaKeyException) {
+        } else if (e instanceof FingerPrintNotMatchException || e instanceof NotMyCasaKeyException) {
             mFragment.alert(getString(R.string.master_pubkey_not_match));
         } else if (e instanceof UnknowQrCodeException) {
             mFragment.alert(getString(R.string.unsupported_qrcode));

@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.exception.CoinNotFindException;
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.coinlib.utils.Base43;
@@ -79,14 +80,17 @@ public class AssetScannerState extends ScannerState {
         } else if (e instanceof XfpNotMatchException) {
             mFragment.alert(getString(R.string.uuid_not_match));
             return true;
-        } else if (e instanceof UnknowQrCodeException) {
-            mFragment.alert(getString(R.string.unsupported_qrcode));
+        } else if (e instanceof FingerPrintNotMatchException) {
+            mFragment.alert(getString(R.string.master_pubkey_not_match));
             return true;
         } else if (e instanceof WatchWalletNotMatchException) {
             mFragment.alert(getString(R.string.identification_failed),
                     getString(R.string.master_pubkey_not_match)
                             + mFragment.getString(R.string.watch_wallet_not_match,
                             WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
+            return true;
+        } else if (e instanceof UnknowQrCodeException) {
+            mFragment.alert(getString(R.string.unsupported_qrcode));
             return true;
         } else if (e instanceof UnknownTransactionException) {
             mFragment.alert(getString(R.string.electrum_decode_txn_fail),

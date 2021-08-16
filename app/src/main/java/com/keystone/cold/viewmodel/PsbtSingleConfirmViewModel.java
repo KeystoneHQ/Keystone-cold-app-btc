@@ -13,6 +13,7 @@ import com.keystone.coinlib.coins.BTC.Btc;
 import com.keystone.coinlib.coins.BTC.BtcImpl;
 import com.keystone.coinlib.coins.BTC.Deriver;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.exception.UnknownTransactionException;
@@ -30,7 +31,6 @@ import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryption.ChipSigner;
 import com.keystone.cold.ui.fragment.main.adapter.PsbtSingleTxAdapter;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,7 +68,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
                 checkTransaction();
                 observableTx.postValue(generateTxEntity(signTx));
                 observableSignTx.postValue(signTx);
-            } catch (WatchWalletNotMatchException | InvalidTransactionException e) {
+            } catch (FingerPrintNotMatchException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             } catch (JSONException e) {
@@ -101,7 +101,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
 
     @Override
     protected JSONObject parseTxData(String psbtBase64) throws InvalidTransactionException, JSONException,
-            WatchWalletNotMatchException {
+            FingerPrintNotMatchException {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {

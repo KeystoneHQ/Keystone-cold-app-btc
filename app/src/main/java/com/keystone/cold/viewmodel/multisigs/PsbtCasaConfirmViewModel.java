@@ -1,7 +1,6 @@
 package com.keystone.cold.viewmodel.multisigs;
 
 import android.app.Application;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -13,6 +12,7 @@ import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.Btc;
 import com.keystone.coinlib.coins.BTC.BtcImpl;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.coinlib.interfaces.SignPsbtCallback;
@@ -25,7 +25,6 @@ import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.encryption.ChipSigner;
 import com.keystone.cold.ui.fragment.main.adapter.PsbtCasaTxAdapter;
 import com.keystone.cold.viewmodel.ParsePsbtViewModel;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.exceptions.NotMyCasaKeyException;
 
 import org.json.JSONException;
@@ -60,7 +59,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
                 checkTransaction();
                 observableCasaSignature.postValue(generateCasaSignature(signTx));
                 observableSignTx.postValue(signTx);
-            } catch (WatchWalletNotMatchException | NotMyCasaKeyException | InvalidTransactionException e) {
+            } catch (FingerPrintNotMatchException | NotMyCasaKeyException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             } catch (JSONException e) {
@@ -98,7 +97,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
 
     @Override
     protected JSONObject parseTxData(String psbtBase64) throws InvalidTransactionException, JSONException,
-            WatchWalletNotMatchException, NotMyCasaKeyException {
+            FingerPrintNotMatchException, NotMyCasaKeyException {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {

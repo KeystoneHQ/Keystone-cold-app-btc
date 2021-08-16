@@ -13,6 +13,7 @@ import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.Btc;
 import com.keystone.coinlib.coins.BTC.BtcImpl;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
+import com.keystone.coinlib.exception.FingerPrintNotMatchException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.exception.UnknownTransactionException;
 import com.keystone.coinlib.interfaces.SignPsbtCallback;
@@ -29,7 +30,6 @@ import com.keystone.cold.encryption.ChipSigner;
 import com.keystone.cold.ui.fragment.main.adapter.PsbtLegacyTxAdapter;
 import com.keystone.cold.viewmodel.ParsePsbtViewModel;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
-import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +65,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                 checkTransaction();
                 observableTx.postValue(generateLegacyTxEntity(signTx));
                 observableSignTx.postValue(signTx);
-            } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException | InvalidTransactionException e) {
+            } catch (FingerPrintNotMatchException | NoMatchedMultisigWalletException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
             } catch (JSONException e) {
@@ -98,7 +98,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
 
     @Override
     protected JSONObject parseTxData(String psbtBase64) throws InvalidTransactionException, JSONException,
-            WatchWalletNotMatchException, NoMatchedMultisigWalletException {
+            FingerPrintNotMatchException, NoMatchedMultisigWalletException {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
