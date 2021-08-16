@@ -1,7 +1,6 @@
 package com.keystone.cold.viewmodel.multisigs;
 
 import android.app.Application;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -57,15 +56,15 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         observableTx.setValue(null);
     }
 
-    public void handleTx(Bundle bundle) {
+    public void handleTx(String psbtBase64) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
-                initIsMainNet(null);
-                JSONObject signTx = parseTxData(bundle);
+                initIsMainNet(psbtBase64);
+                JSONObject signTx = parseTxData(psbtBase64);
                 transaction = AbsTx.newInstance(signTx);
                 checkTransaction();
-                TxEntity tx = generateLegacyTxEntity(signTx);
-                observableTx.postValue(tx);
+                observableTx.postValue(generateLegacyTxEntity(signTx));
+                observableSignTx.postValue(signTx);
             } catch (WatchWalletNotMatchException | NoMatchedMultisigWalletException | InvalidTransactionException e) {
                 e.printStackTrace();
                 parseTxException.postValue(e);
@@ -79,14 +78,26 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         });
     }
 
+    public void generateTx(String signTx) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                JSONObject jsonObject = new JSONObject(signTx);
+                transaction = AbsTx.newInstance(jsonObject);
+                observableTx.postValue(generateLegacyTxEntity(jsonObject));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                parseTxException.postValue(new InvalidTransactionException("invalid data"));
+            }
+        });
+    }
+
     @Override
-    protected void initIsMainNet(Bundle bundle) {
+    protected void initIsMainNet(String psbtBase64) {
         isMainNet = Utilities.isMainNet(getApplication());
     }
 
     @Override
-    protected JSONObject parseTxData(Bundle bundle) throws Exception {
-        String psbtBase64 = bundle.getString("psbt_base64");
+    protected JSONObject parseTxData(String psbtBase64) throws Exception {
         Btc btc = new Btc(new BtcImpl(isMainNet));
         JSONObject psbtTx = btc.parsePsbt(psbtBase64);
         if (psbtTx == null) {
