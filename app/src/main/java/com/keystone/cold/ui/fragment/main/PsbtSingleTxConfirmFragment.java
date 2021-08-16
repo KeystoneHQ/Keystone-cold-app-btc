@@ -105,7 +105,6 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
             if (feeAttackCheckingState != NORMAL) {
                 feeAttackChecking = new FeeAttackChecking(this);
             }
-
         } else {
             String psbtBase64 = bundle.getString("psbt_base64");
             psbtSigleTxConfirmViewModel.handleTx(psbtBase64);

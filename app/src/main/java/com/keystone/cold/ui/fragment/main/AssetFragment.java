@@ -50,7 +50,7 @@ import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
-import com.keystone.cold.ui.fragment.scanstate.AssetScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.scanstate.AssetScannerState;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.viewmodel.AddAddressViewModel;
 import com.keystone.cold.viewmodel.SetupVaultViewModel;

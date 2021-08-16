@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PsbtSigleTxAdapter {
+public class PsbtSingleTxAdapter {
     public JSONObject adapt(JSONObject psbt) throws JSONException, WatchWalletNotMatchException, InvalidTransactionException {
         if (psbt == null) {
             throw new InvalidTransactionException("parse failed,invalid psbt data");

@@ -1,11 +1,8 @@
-package com.keystone.cold.ui.fragment.scanstate;
+package com.keystone.cold.ui.fragment.main.scan.scanner.scanstate;
 
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.exception.CoinNotFindException;
@@ -47,7 +44,7 @@ public class AssetScannerState extends ScannerState {
     @Override
     public void handleScanResult(ScanResult result) throws Exception {
         if (result.getType().equals(ScanResultTypes.PLAIN_TEXT)) {
-            if (handleSignPlainTextPSBT(result)) return;
+            if (handleSignElectrumPSBT(result)) return;
             throw new UnknowQrCodeException("not a electrum psbt transaction!");
         } else if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
             if (handleWebAuth(result)) return;
@@ -133,7 +130,7 @@ public class AssetScannerState extends ScannerState {
         return false;
     }
 
-    private boolean handleSignPlainTextPSBT(ScanResult result) {
+    private boolean handleSignElectrumPSBT(ScanResult result) {
         byte[] data = Base43.decode(result.getData());
         if (new String(data).startsWith("psbt")) {
             String hex = result.getData();
@@ -196,10 +193,5 @@ public class AssetScannerState extends ScannerState {
                 }
             });
         });
-    }
-
-    @NonNull
-    private String getString(@StringRes int resId, @Nullable Object... formatArgs) {
-        return mActivity.getString(resId, formatArgs);
     }
 }

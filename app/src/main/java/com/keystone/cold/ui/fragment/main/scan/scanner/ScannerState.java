@@ -1,5 +1,8 @@
 package com.keystone.cold.ui.fragment.main.scan.scanner;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.keystone.cold.databinding.ScannerFragmentBinding;
@@ -36,5 +39,10 @@ public class ScannerState {
             throw new InvalidParameterException("No ScannerFragment bond");
         }
         return false;
+    }
+
+    @NonNull
+    public String getString(@StringRes int resId, @Nullable Object... formatArgs) {
+        return mActivity.getString(resId, formatArgs);
     }
 }
