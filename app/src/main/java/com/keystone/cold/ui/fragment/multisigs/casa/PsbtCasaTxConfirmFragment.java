@@ -95,10 +95,17 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
                 .get(GlobalViewModel.class)
                 .getChangeAddress()
                 .observe(this, address -> this.changeAddress = address);
-        psbtCasaTxConfirmViewModel.handleTx(requireArguments());
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
+        Bundle bundle = requireArguments();
+        String signTx = bundle.getString("signTx");
+        if (signTx != null) {
+            psbtCasaTxConfirmViewModel.generateTx(signTx);
+        } else {
+            String psbtBase64 = bundle.getString("psbt_base64");
+            psbtCasaTxConfirmViewModel.handleTx(psbtBase64);
+        }
     }
 
     private void subscribeTx() {

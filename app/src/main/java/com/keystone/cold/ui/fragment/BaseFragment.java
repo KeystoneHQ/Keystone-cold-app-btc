@@ -34,15 +34,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.ui.modal.ModalDialog;
+import com.keystone.cold.ui.modal.ProgressModalDialog;
 
 import java.util.Objects;
 
 public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     private static final boolean DEBUG = false;
     private ModalDialog dialog;
+    private ProgressModalDialog progressModalDialog;
     protected final String TAG = getClass().getSimpleName();
 
     protected T mBinding;
@@ -188,6 +191,9 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     }
 
     public void alert(String title, String message, Runnable run) {
+        if (dialog != null){
+            dialog.dismiss();
+        }
         dialog = ModalDialog.newInstance();
         CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                 R.layout.common_modal, null, false);
@@ -208,5 +214,21 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
         dialog.setBinding(binding);
         dialog.show(mActivity.getSupportFragmentManager(), "failed");
     }
+
+    public void showLoading(String tag) {
+        AppExecutors.getInstance().mainThread().execute(() -> {
+            progressModalDialog = ProgressModalDialog.newInstance();
+            progressModalDialog.show(mActivity.getSupportFragmentManager(), tag);
+        });
+    }
+
+    public void dismissLoading() {
+        AppExecutors.getInstance().mainThread().execute(() -> {
+            if (progressModalDialog != null) {
+                progressModalDialog.dismiss();
+            }
+        });
+    }
+
 }
 

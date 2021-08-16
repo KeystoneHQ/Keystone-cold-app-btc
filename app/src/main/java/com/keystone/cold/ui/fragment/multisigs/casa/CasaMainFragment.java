@@ -20,15 +20,11 @@ import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.FilterableBaseBindingAdapter;
-import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
-import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
+import com.keystone.cold.ui.fragment.main.scan.scanner.scanstate.CasaScannerState;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
-import com.sparrowwallet.hummingbird.registry.CryptoPSBT;
-
-import org.spongycastle.util.encoders.Base64;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,19 +139,8 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
         if (id == R.id.action_scan) {
-            ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_CRYPTO_PSBT)) {
-                @Override
-                public void handleScanResult(ScanResult result) {
-                    if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
-                        CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
-                        byte[] bytes = cryptoPSBT.getPsbt();
-                        String psbtB64 = Base64.toBase64String(bytes);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("psbt_base64", psbtB64);
-                        mFragment.navigate(R.id.action_to_psbtCasaTxConfirmFragment, bundle);
-                    }
-                }
-            });
+            ViewModelProviders.of(mActivity).get(ScannerViewModel.class)
+                    .setState(new CasaScannerState(Collections.singletonList(ScanResultTypes.UR_CRYPTO_PSBT)));
             navigate(R.id.action_to_scanner);
             return true;
         } else if (id == R.id.action_sdcard) {
