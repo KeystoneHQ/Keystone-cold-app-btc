@@ -1177,7 +1177,7 @@ public class TxConfirmViewModel extends AndroidViewModel {
                         }
                         String path = hdPath.replace("m/", "");
                         String[] index = path.split("/");
-                        isCasaMainnet = !index[1].equals("1'");
+                        isCasaMainnet = index[1].startsWith("0");
                         utxo.put("publicKey", myCasaKey);
                         utxo.put("value", psbtInput.optInt("value"));
                         in.put("utxo", utxo);
