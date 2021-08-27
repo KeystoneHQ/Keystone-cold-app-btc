@@ -68,7 +68,7 @@ public class QrCodeModal extends DialogFragment {
         modalBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()),
                 R.layout.dynamic_qrcode_modal, null, false);
         modalBinding.close.setOnClickListener(v -> dismiss());
-        Bundle bundle = Objects.requireNonNull(getArguments());
+        Bundle bundle = requireArguments();
         data = bundle.getString("data");
         boolean multipart = bundle.getBoolean("multipart");
 
@@ -79,6 +79,11 @@ public class QrCodeModal extends DialogFragment {
         setupSeekbar();
         setupController();
         setupCapacitySwitch();
+        modalBinding.qrcodeLayout.qrcode.getURSubscriber().observe(getActivity(), ur -> {
+            if (!multipart || ur.getCborBytes().length <= DynamicQrCodeView.QrCapacity.LOW.capacity) {
+                modalBinding.switchCapacity.setVisibility(View.GONE);
+            }
+        });
         updateUI();
         return modalBinding.getRoot();
     }
