@@ -63,16 +63,11 @@ public class CasaScannerState extends ScannerState {
     }
 
     private boolean handleSignCryptoPSBT(ScanResult result) {
-        WatchWallet watchWallet = WatchWallet.getWatchWallet(mActivity);
-        if (watchWallet.supportBc32QrCode() && watchWallet.supportPsbt()) {
-            CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
-            byte[] bytes = cryptoPSBT.getPsbt();
-            String psbtB64 = Base64.toBase64String(bytes);
-            handlePsbtBase64(psbtB64);
-            return true;
-        } else {
-            return false;
-        }
+        CryptoPSBT cryptoPSBT = (CryptoPSBT) result.resolve();
+        byte[] bytes = cryptoPSBT.getPsbt();
+        String psbtB64 = Base64.toBase64String(bytes);
+        handlePsbtBase64(psbtB64);
+        return true;
     }
 
     private void handlePsbtBase64(String psbtB64) {
