@@ -55,7 +55,7 @@ public class PsbtViewModel extends AndroidViewModel {
                 File[] files = storage.getExternalDir().listFiles();
                 if (files != null) {
                     for (File f : files) {
-                        if (f.getName().endsWith(".psbt")
+                        if (!f.getName().startsWith(".") && f.getName().endsWith(".psbt")
                                 && !isSignedPsbt(f.getName())) {
                             fileList.add(f.getName());
                         }
