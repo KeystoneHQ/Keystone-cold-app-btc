@@ -54,7 +54,7 @@ public class AssetScannerState extends ScannerState {
             throw new UnknowQrCodeException("unknown qrcode");
         } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
             if (handleSignCryptoPSBT(result)) return;
-            throw new UnknowQrCodeException("current watch wallet not support bc32 or psbt");
+            throw new WatchWalletNotMatchException("current watch wallet not support bc32 or psbt");
         }
     }
 
@@ -65,8 +65,7 @@ public class AssetScannerState extends ScannerState {
         if (e instanceof InvalidTransactionException) {
             InvalidTransactionException ex = (InvalidTransactionException) e;
             if (ex.getErrorCode() == InvalidTransactionException.IS_MULTISIG_TX) {
-                mFragment.alert(getString(R.string.open_int_multisig_wallet),
-                        getString(R.string.open_int_multisig_wallet_hint));
+                mFragment.alert(getString(R.string.wallet_not_match_tips), getString(R.string.wallet_not_match));
             } else {
                 mFragment.alert(getString(R.string.incorrect_tx_data));
             }
@@ -84,10 +83,8 @@ public class AssetScannerState extends ScannerState {
             mFragment.alert(getString(R.string.master_pubkey_not_match));
             return true;
         } else if (e instanceof WatchWalletNotMatchException) {
-            mFragment.alert(getString(R.string.identification_failed),
-                    getString(R.string.master_pubkey_not_match)
-                            + mFragment.getString(R.string.watch_wallet_not_match,
-                            WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
+            mFragment.alert(getString(R.string.error_hint),
+                    getString(R.string.unknown_qrcode,WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
             return true;
         } else if (e instanceof UnknowQrCodeException) {
             mFragment.alert(getString(R.string.unsupported_qrcode));

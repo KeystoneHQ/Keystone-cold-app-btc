@@ -44,8 +44,7 @@ public class CasaScannerState extends ScannerState {
         if (e instanceof InvalidTransactionException) {
             InvalidTransactionException ex = (InvalidTransactionException) e;
             if (ex.getErrorCode() == InvalidTransactionException.IS_NOTMULTISIG_TX) {
-                mFragment.alert(getString(R.string.open_int_siglesig_wallet),
-                        getString(R.string.open_int_siglesig_wallet_hint));
+                mFragment.alert(getString(R.string.wallet_not_match_tips), getString(R.string.wallet_not_match));
             } else {
                 mFragment.alert(getString(R.string.incorrect_tx_data));
             }
