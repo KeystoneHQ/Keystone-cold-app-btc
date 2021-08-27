@@ -37,6 +37,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txid"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -45,8 +46,7 @@
             android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="15sp"
-            android:text="@{String.valueOf(cs.id)}"
-            tools:text="adadadadadadadada" />
+            tools:text="txid"/>
 
         <ImageView
             android:layout_width="wrap_content"
