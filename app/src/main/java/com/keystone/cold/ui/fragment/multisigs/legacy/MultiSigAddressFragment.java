@@ -108,6 +108,7 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
             updateAddressList(addressEntities);
         }
         address.observe(this, entities -> {
+            entities.sort((t0, t1) -> t1.getIndex() - t0.getIndex());
             addressEntities = entities;
             updateAddressList(entities);
         });

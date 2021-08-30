@@ -18,10 +18,7 @@
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -84,7 +81,6 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
             mBinding.setTx(casaSignature);
             this.casaSignature = casaSignature;
             displaySignResult(casaSignature);
-            refreshFromList();
             refreshReceiveList();
             refreshSignStatus();
             mBinding.txDetail.exportToSdcard.setOnClickListener(v -> showExportDialog());
@@ -119,27 +115,6 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
 
     protected void showExportDialog() {
         showExportPsbtDialog(mActivity, casaSignature, null);
-    }
-
-    private void refreshFromList() {
-        String from = casaSignature.getFrom();
-        List<TransactionItem> items = new ArrayList<>();
-        try {
-            JSONArray outputs = new JSONArray(from);
-            for (int i = 0; i < outputs.length(); i++) {
-                JSONObject out = outputs.getJSONObject(i);
-                items.add(new TransactionItem(i,
-                        out.getLong("value"), out.getString("address"),
-                        casaSignature.getCoinCode()));
-            }
-        } catch (JSONException e) {
-            return;
-        }
-        TransactionItemAdapter adapter
-                = new TransactionItemAdapter(mActivity,
-                TransactionItem.ItemType.INPUT, changeAddress);
-        adapter.setItems(items);
-        mBinding.txDetail.fromList.setAdapter(adapter);
     }
 
     private void refreshReceiveList() {
@@ -177,20 +152,24 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
     }
 
     protected void displaySignResult(CasaSignature casaSignature) {
-        mBinding.txDetail.txIdInfo.setVisibility(View.GONE);
+        if (casaSignature.getTxId().startsWith("unknown_txid_")) {
+            mBinding.txDetail.txIdInfo.setVisibility(View.GONE);
+        }
         mBinding.txDetail.arrowDown.setVisibility(View.GONE);
+        mBinding.txDetail.fromList.setVisibility(View.GONE);
         mBinding.txDetail.scanInfo.setVisibility(View.GONE);
         mBinding.txDetail.export.setVisibility(View.GONE);
 
         mBinding.txDetail.dynamicQrcodeLayout.qrcode.setVisibility(View.VISIBLE);
         mBinding.txDetail.exportToSdcardHint.setVisibility(View.VISIBLE);
+        mBinding.txDetail.exportToSdcardHint.setOnClickListener(v ->
+                showExportPsbtDialog(mActivity, casaSignature, null));
         byte[] psbtBytes = Base64.decode(casaSignature.getSignedHex());
         mBinding.txDetail.dynamicQrcodeLayout.qrcode.setData(new CryptoPSBT(psbtBytes).toUR().toString());
         mBinding.txDetail.dynamicQrcodeLayout.hint.setVisibility(View.GONE);
         mBinding.txDetail.qrcodeLayout.qrcode.setVisibility(View.GONE);
         mBinding.txDetail.broadcastGuide.setVisibility(View.GONE);
         mBinding.txDetail.export.setVisibility(View.GONE);
-        mBinding.txDetail.exportToSdcardHint.setVisibility(View.INVISIBLE);
     }
 
 }

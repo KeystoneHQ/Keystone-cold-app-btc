@@ -166,7 +166,12 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
 
         @Override
         protected void onBindItem(MultisigCasaListItemBinding binding, CasaSignature item) {
+            String txid = item.getTxId();
+            if (txid.startsWith("unknown_txid_")) {
+                txid = String.valueOf(item.id);
+            }
             binding.setCs(item);
+            binding.txid.setText(txid);
             binding.setCasaCallback(casaCallback);
         }
     }

@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
@@ -54,6 +55,7 @@ public class DynamicQrCodeView extends LinearLayout implements QrCodeHolder {
     public final Runnable runnable;
     private final AppCompatActivity mActivity;
     private boolean detached = false;
+    private MutableLiveData<UR> URSubscriber = new MutableLiveData<>();
 
     private UREncoder encoder;
 
@@ -90,6 +92,10 @@ public class DynamicQrCodeView extends LinearLayout implements QrCodeHolder {
         multiPart = false;
     }
 
+    public MutableLiveData<UR> getURSubscriber() {
+        return URSubscriber;
+    }
+
     /*
      if multiPart, s should be hex string or ur:xxxx/xxxxx
      */
@@ -105,6 +111,7 @@ public class DynamicQrCodeView extends LinearLayout implements QrCodeHolder {
                     } else {
                         ur = fromBytes(Hex.decode(data));
                     }
+                    URSubscriber.postValue(ur);
                     encoder = new UREncoder(ur, qrCapacity.capacity, 10, 0);
                     mCache.restart();
                     handler.removeCallbacks(runnable);
@@ -114,6 +121,7 @@ public class DynamicQrCodeView extends LinearLayout implements QrCodeHolder {
                 }
             });
         } else {
+            URSubscriber.postValue(null);
             count = 1;
             showQrCode();
         }
