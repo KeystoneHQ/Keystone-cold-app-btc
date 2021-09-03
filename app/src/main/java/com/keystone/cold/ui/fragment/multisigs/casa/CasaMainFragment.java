@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.keystone.cold.R;
+import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.MultisigCasaListItemBinding;
 import com.keystone.cold.databinding.MultisigCasaMainBinding;
 import com.keystone.cold.db.entity.CasaSignature;
@@ -50,6 +51,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     @Override
     protected void init(View view) {
         super.init(view);
+        Utilities.setMultiSigMode(mActivity, MultiSigMode.CASA.getModeId());
         casaSignatureLiveData = casaMultiSigViewModel.allCasaSignatures();
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);

@@ -797,4 +797,21 @@
     <string name="retry">重试</string>
     <string name="formatting">格式化中…</string>
     <string name="export_failed">导出失败</string>
+
+
+    <string name="connect_casa">连接Casa</string>
+    <string name="casa_use">使用带有Casa的恺石钱包:</string>
+    <string name="casa_member">你需要成为Casa成员</string>
+    <string name="casa_app_phone">你的手机上装有Casa App</string>
+    <string name="casa_guide_one_tip"><![CDATA[关于如何设置你的Casa？请前往 <font color="#00cdc3">[keys.casa/keystone]<font>]]></string>
+    <string name="casa_continue">继续</string>
+    <string name="casa_app_ready">准备Casa App</string>
+    <string name="casa_scan_device">接下来，让Casa App准备好扫描此设备上显示的二维码</string>
+    <string name="casa_open_app">打开Casa App</string>
+    <string name="casa_sec_tab">导航到您的 \'Security\' 选项卡</string>
+    <string name="casa_hardware">点击设置[硬件]钱包</string>
+    <string name="casa_sel_keystone">选择\'KeyStone\'</string>
+    <string name="casa_con_scan_qr_code">继续\'扫描二维码\'</string>
+    <string name="casa_guide_two_tip"><![CDATA[如果遇到问题，请参考我们的指南 <font color="#00cdc3">support.keyst.one<font>]]></string>
+    <string name="casa_continue_ready">继续，准备好了</string>
 </resources>

@@ -17,6 +17,8 @@
 
 package com.keystone.cold.ui;
 
+import static com.keystone.cold.update.utils.Storage.hasSdcard;
+
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -41,9 +43,11 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.ActivityMainBinding;
+import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.fingerprint.FingerprintKit;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
@@ -53,10 +57,10 @@ import com.keystone.cold.ui.fragment.setting.SettingFragment;
 import com.keystone.cold.ui.views.DrawerAdapter;
 import com.keystone.cold.ui.views.FullScreenDrawer;
 import com.keystone.cold.ui.views.UpdatingHelper;
-import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.update.data.UpdateManifest;
+import com.keystone.cold.viewmodel.GlobalViewModel;
+import com.keystone.cold.viewmodel.multisigs.CasaMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
-
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,8 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import static com.keystone.cold.update.utils.Storage.hasSdcard;
 
 public class MainActivity extends FullScreenActivity {
 
@@ -79,8 +81,6 @@ public class MainActivity extends FullScreenActivity {
 
     private String belongTo;
     private String vaultId;
-    private boolean hasMultiSigMode;
-    private String multiSigMode;
 
     int currentFragmentIndex = R.id.drawer_wallet;
     private DrawerAdapter drawerAdapter;
@@ -89,7 +89,6 @@ public class MainActivity extends FullScreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
         if (savedInstanceState != null) {
             currentFragmentIndex = savedInstanceState.getInt("currentFragmentIndex");
         }
@@ -98,8 +97,6 @@ public class MainActivity extends FullScreenActivity {
         prefs = Utilities.getPrefs(this);
         belongTo = Utilities.getCurrentBelongTo(this);
         vaultId = Utilities.getVaultId(this);
-        hasMultiSigMode = Utilities.hasMultiSigMode(this);
-        multiSigMode = Utilities.getMultiSigMode(this);
 
         if (savedInstanceState == null) {
             if (hasSdcard()) {
@@ -201,11 +198,20 @@ public class MainActivity extends FullScreenActivity {
                     break;
                 case R.id.drawer_multisig:
                     mNavController.navigateUp();
-                    if (hasMultiSigMode) {
-                        if (multiSigMode.equals(MultiSigMode.LEGACY.getModeId())) {
+                    if (Utilities.hasMultiSigMode(MainActivity.this)) {
+                        if (Utilities.getMultiSigMode(MainActivity.this).equals(MultiSigMode.LEGACY.getModeId())) {
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment);
                         } else {
-                            mNavController.navigate(R.id.action_to_casaMultisigFragment);
+                            AppExecutors.getInstance().diskIO().execute(() -> {
+                                List<CasaSignature> casaSignatures = ViewModelProviders.of(MainActivity.this).get(CasaMultiSigViewModel.class).allCasaSignaturesSync();
+                                AppExecutors.getInstance().mainThread().execute(() -> {
+                                    if (casaSignatures == null || casaSignatures.size() == 0) {
+                                        mNavController.navigate(R.id.action_to_casaGuidePageOneFragment);
+                                    } else {
+                                        mNavController.navigate(R.id.action_to_casaMultisigFragment);
+                                    }
+                                });
+                            });
                         }
                     } else {
                         mNavController.navigate(R.id.action_to_multisigSelectionFragment);

@@ -33,7 +33,7 @@ public interface CasaDao {
     @Query("SELECT * FROM casa_signature ORDER BY id DESC")
     LiveData<List<CasaSignature>> loadSignatures();
 
-    @Query("SELECT * FROM casa_signature")
+    @Query("SELECT * FROM casa_signature ORDER BY id DESC")
     List<CasaSignature> loadTxsSync();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

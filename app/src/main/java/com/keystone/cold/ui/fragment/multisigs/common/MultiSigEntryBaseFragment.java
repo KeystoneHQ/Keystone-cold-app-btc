@@ -20,8 +20,9 @@
 package com.keystone.cold.ui.fragment.multisigs.common;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +34,13 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.MultisigModeBottomSheetBinding;
 import com.keystone.cold.databinding.SettingItemWithArrowCallableBinding;
+import com.keystone.cold.db.entity.CasaSignature;
+import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.setting.ListPreferenceCallback;
@@ -98,16 +102,25 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
 
     @Override
     public void onSelect(int modeId) {
-        navigateUp();
         String _modeId = String.valueOf(modeId);
         if (_modeId.equals(MultiSigMode.LEGACY.getModeId())) {
-            Utilities.setMultiSigMode(mActivity, MultiSigMode.LEGACY.getModeId());
             dialog.dismiss();
             navigate(R.id.action_to_legacyMultisigFragment);
         } else {
-            Utilities.setMultiSigMode(mActivity, MultiSigMode.CASA.getModeId());
-            dialog.dismiss();
-            navigate(R.id.action_to_casaMultisigFragment);
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                List<CasaSignature> casaSignatures = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class)
+                        .allCasaSignaturesSync();
+                AppExecutors.getInstance().mainThread().execute(() -> {
+                    if (casaSignatures == null || casaSignatures.size() == 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("isFromLegacy", true);
+                        navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
+                    } else {
+                        navigate(R.id.action_to_casaMultisigFragment);
+                    }
+                    dialog.dismiss();
+                });
+            });
         }
     }
 

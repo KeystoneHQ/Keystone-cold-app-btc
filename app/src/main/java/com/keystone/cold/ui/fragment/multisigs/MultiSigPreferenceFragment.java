@@ -42,12 +42,10 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         adapter = new Adapter(mActivity);
         mBinding.list.setAdapter(adapter);
         mBinding.confirm.setOnClickListener(v -> {
-            Utilities.setMultiSigMode(mActivity, value);
-            navigateUp();
             if (value.equals(MultiSigMode.LEGACY.getModeId())) {
                 navigate(R.id.action_to_legacyMultisigFragment);
             } else {
-                navigate(R.id.action_to_casaMultisigFragment);
+                navigate(R.id.action_to_casaGuidePageOneFragment, getArguments());
             }
         });
         entries = getResources().getStringArray(getEntries());

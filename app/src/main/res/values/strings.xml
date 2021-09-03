@@ -854,4 +854,20 @@
     <string name="retry">Retry</string>
     <string name="formatting">Formatting…</string>
     <string name="export_failed">Export failed</string>
+
+    <string name="connect_casa">Connect Keystone to Casa</string>
+    <string name="casa_use">To use a Keystone device with Casa:</string>
+    <string name="casa_member">You need to be a Casa member</string>
+    <string name="casa_app_phone">Have Casa App set up your phone</string>
+    <string name="casa_guide_one_tip"><![CDATA[Questions about how to get set up with Casa? Go to <font color="#00cdc3">[keys.casa/keystone]<font>]]></string>
+    <string name="casa_continue">Continue</string>
+    <string name="casa_app_ready">Get Casa App Ready</string>
+    <string name="casa_scan_device">Next, get the Casa App ready to scan a QR code displayed on this device by</string>
+    <string name="casa_open_app">Open Casa App</string>
+    <string name="casa_sec_tab">Navigate to your \'Security\' tab</string>
+    <string name="casa_hardware">Tap \'Set Up [Hardware] Wallet</string>
+    <string name="casa_sel_keystone">Select \'Keystone\'</string>
+    <string name="casa_con_scan_qr_code">Continue to \'Scan QR Code\'</string>
+    <string name="casa_guide_two_tip"><![CDATA[Questions? Follow our guide at <font color="#00cdc3">support.keyst.one<font>]]></string>
+    <string name="casa_continue_ready">Continue, It\'s Ready</string>
 </resources>

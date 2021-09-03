@@ -36,6 +36,10 @@ public class CasaMultiSigViewModel extends ViewModelBase {
         return repo.loadCasaSignatures();
     }
 
+    public List<CasaSignature> allCasaSignaturesSync() {
+        return repo.loadCasaSignaturesSync();
+    }
+
     public CryptoHDKey exportCryptoHDKey() {
         return URRegistryHelper.generateCryptoHDKey(MultiSig.CASA, Hex.decode(getXfp()), getXPub(MultiSig.CASA));
     }
