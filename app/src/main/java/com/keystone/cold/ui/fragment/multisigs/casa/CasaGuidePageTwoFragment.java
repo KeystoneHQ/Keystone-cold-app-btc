@@ -17,9 +17,7 @@ public class CasaGuidePageTwoFragment extends BaseFragment<MultiCasaGuideTwoBind
     protected void init(View view) {
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.btContinue.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean("isFromGuide", true);
-            navigate(R.id.action_to_casaExportXPubFragment, bundle);
+            navigate(R.id.action_to_casaExportXPubFragment, getArguments());
         });
 
     }

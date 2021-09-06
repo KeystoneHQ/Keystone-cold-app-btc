@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
+            android:textSize="15sp"
             android:text="@string/casa_use"
             android:textColor="@color/white" />
 

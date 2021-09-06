@@ -1,5 +1,6 @@
 package com.keystone.cold.ui.fragment.multisigs;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Pair;
@@ -45,7 +46,9 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
             if (value.equals(MultiSigMode.LEGACY.getModeId())) {
                 navigate(R.id.action_to_legacyMultisigFragment);
             } else {
-                navigate(R.id.action_to_casaGuidePageOneFragment, getArguments());
+                Bundle bundle = new Bundle();
+                bundle.putString("from", "MultiSigPreferenceFragment");
+                navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
             }
         });
         entries = getResources().getStringArray(getEntries());
@@ -83,7 +86,6 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         if (!old.equals(value)) {
             adapter.notifyDataSetChanged();
         }
-
     }
 
     protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SelectWalletModeBinding> {

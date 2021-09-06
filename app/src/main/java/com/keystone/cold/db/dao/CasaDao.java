@@ -44,4 +44,7 @@ public interface CasaDao {
 
     @Query("SELECT * FROM casa_signature WHERE id = :id")
     CasaSignature loadSync(int id);
+
+    @Query("DELETE FROM casa_signature")
+    void clear();
 }

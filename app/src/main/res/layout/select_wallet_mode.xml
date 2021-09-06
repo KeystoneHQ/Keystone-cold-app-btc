@@ -49,6 +49,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
+            android:textStyle="bold"
             android:textSize="15sp"
             tools:text="title"/>
 
@@ -68,17 +69,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp"
             android:layout_centerVertical="true"
-            app:visibleGone="@{checked}"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/checked"
-            tools:ignore="ContentDescription"
-            app:tint="@color/colorAccent" />
+            app:tint="@color/colorAccent"
+            app:visibleGone="@{checked}"
+            tools:ignore="ContentDescription" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/line"
+            android:background="@color/divider"
             android:layout_below="@id/sub_title"
             android:layout_marginTop="5dp"
             android:layout_marginHorizontal="16dp"/>

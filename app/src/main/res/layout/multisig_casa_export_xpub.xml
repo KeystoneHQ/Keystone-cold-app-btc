@@ -106,8 +106,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="6dp"
-                    android:paddingVertical="10dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingVertical="5dp"
                     android:gravity="center"
                     android:text="@string/electrum_qrcode_hint"
                     android:textColor="@color/white"
@@ -124,7 +124,7 @@
 
                 <TextView
                     android:id="@+id/path"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="3dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Path: m"
@@ -135,7 +135,7 @@
                     android:id="@+id/done"
                     android:layout_width="match_parent"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="5dp"
                     style="@style/AcceptButton"
                     android:text="@string/complete" />
             </LinearLayout>

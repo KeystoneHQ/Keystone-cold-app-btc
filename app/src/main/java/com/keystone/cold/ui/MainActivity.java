@@ -202,16 +202,7 @@ public class MainActivity extends FullScreenActivity {
                         if (Utilities.getMultiSigMode(MainActivity.this).equals(MultiSigMode.LEGACY.getModeId())) {
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment);
                         } else {
-                            AppExecutors.getInstance().diskIO().execute(() -> {
-                                List<CasaSignature> casaSignatures = ViewModelProviders.of(MainActivity.this).get(CasaMultiSigViewModel.class).allCasaSignaturesSync();
-                                AppExecutors.getInstance().mainThread().execute(() -> {
-                                    if (casaSignatures == null || casaSignatures.size() == 0) {
-                                        mNavController.navigate(R.id.action_to_casaGuidePageOneFragment);
-                                    } else {
-                                        mNavController.navigate(R.id.action_to_casaMultisigFragment);
-                                    }
-                                });
-                            });
+                            mNavController.navigate(R.id.action_to_casaMultisigFragment);
                         }
                     } else {
                         mNavController.navigate(R.id.action_to_multisigSelectionFragment);

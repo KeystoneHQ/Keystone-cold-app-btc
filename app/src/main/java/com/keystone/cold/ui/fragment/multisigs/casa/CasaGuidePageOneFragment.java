@@ -15,14 +15,8 @@ public class CasaGuidePageOneFragment extends BaseFragment<MultiCasaGuideOneBind
 
     @Override
     protected void init(View view) {
-        mBinding.toolbar.setNavigationOnClickListener(v -> {
-            if (getArguments() != null && getArguments().getBoolean("isFromLegacy")) {
-                navigate(R.id.action_to_legacyMultisigFragment);
-            } else {
-                navigateUp();
-            }
-        });
-        mBinding.btContinue.setOnClickListener(v -> navigate(R.id.action_to_casaGuidePageTwoFragment));
+        mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
+        mBinding.btContinue.setOnClickListener(v -> navigate(R.id.action_to_casaGuidePageTwoFragment, getArguments()));
     }
 
     @Override
