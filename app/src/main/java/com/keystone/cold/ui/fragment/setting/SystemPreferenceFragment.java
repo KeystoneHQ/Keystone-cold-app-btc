@@ -17,7 +17,13 @@
 
 package com.keystone.cold.ui.fragment.setting;
 
+import static android.content.Context.STORAGE_SERVICE;
+import static com.keystone.cold.Utilities.SHARED_PREFERENCES_KEY;
+import static com.keystone.cold.ui.fragment.Constants.KEY_TITLE;
+
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.storage.DiskInfo;
 import android.os.storage.StorageManager;
@@ -40,10 +46,6 @@ import com.keystone.cold.ui.preference.SwitchPreference;
 
 import java.util.List;
 import java.util.Objects;
-
-import static android.content.Context.STORAGE_SERVICE;
-import static com.keystone.cold.Utilities.SHARED_PREFERENCES_KEY;
-import static com.keystone.cold.ui.fragment.Constants.KEY_TITLE;
 
 public class SystemPreferenceFragment extends PreferenceFragmentCompat {
 
@@ -73,7 +75,7 @@ public class SystemPreferenceFragment extends PreferenceFragmentCompat {
         SwitchPreference switchPreference = findPreference(SETTING_VIBRATOR);
         if (switchPreference != null) {
             try {
-                switchPreference.setChecked(Settings.System.getInt(mActivity.getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED)==1);
+                switchPreference.setChecked(Settings.System.getInt(mActivity.getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED) == 1);
             } catch (Settings.SettingNotFoundException e) {
                 e.printStackTrace();
             }
@@ -117,6 +119,21 @@ public class SystemPreferenceFragment extends PreferenceFragmentCompat {
         return super.onPreferenceTreeClick(preference);
     }
 
+    public static void resetSetting(Context context) {
+        try {
+            Settings.System.putInt(context.getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED, 1);
+            VibratorHelper.vibrate(context);
+
+            final ContentResolver contentResolver = context.getContentResolver();
+            Settings.System.putInt(contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS, 125);
+            Settings.System.putInt(contentResolver,
+                    Settings.System.SCREEN_OFF_TIMEOUT, 60000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void formatSdcard() {
         StorageManager storageManager = (StorageManager) mActivity.getSystemService(STORAGE_SERVICE);
         List<DiskInfo> diskInfoList = storageManager.getDisks();
@@ -129,7 +146,7 @@ public class SystemPreferenceFragment extends PreferenceFragmentCompat {
         } else {
             ModalDialog dialog = new ModalDialog();
             ModalWithTwoButtonBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                    R.layout.modal_with_two_button, null,false);
+                    R.layout.modal_with_two_button, null, false);
             binding.title.setText(getString(R.string.confirm_format));
             binding.subTitle.setText(getString(R.string.format_sd_card_hint));
             binding.subTitle.setGravity(Gravity.START);
@@ -141,7 +158,7 @@ public class SystemPreferenceFragment extends PreferenceFragmentCompat {
                 new SdcardFormatHelper().showFormatProgress((AppCompatActivity) getActivity(), storageManager, diskInfoList.get(0));
             });
             dialog.setBinding(binding);
-            dialog.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(),"");
+            dialog.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(), "");
         }
     }
 
