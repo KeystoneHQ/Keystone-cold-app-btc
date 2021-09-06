@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.MultisigModePreferenceBinding;
-import com.keystone.cold.databinding.SettingItemSelectableBinding;
+import com.keystone.cold.databinding.SelectWalletModeBinding;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -50,6 +50,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         });
         entries = getResources().getStringArray(getEntries());
         values = getResources().getStringArray(getValues());
+        subTitles = new CharSequence[]{"Blue Wallet,Sparrow Wallet,Specter,Electrum...", "Hardware Key,Mobile Key,Casa Recovery Key"};
         value = Utilities.getMultiSigMode(mActivity);
         displayItems = new ArrayList<>();
         for (int i = 0; i < entries.length; i++) {
@@ -85,7 +86,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
     }
 
-    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SettingItemSelectableBinding> {
+    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SelectWalletModeBinding> {
 
         public Adapter(Context context) {
             super(context);
@@ -93,20 +94,26 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
         @Override
         protected int getLayoutResId(int viewType) {
-            return R.layout.setting_item_selectable;
+            return R.layout.select_wallet_mode;
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            SettingItemSelectableBinding binding = DataBindingUtil.getBinding(holder.itemView);
+            SelectWalletModeBinding binding = DataBindingUtil.getBinding(holder.itemView);
             binding.title.setText(displayItems.get(position).second);
+            if (subTitles == null) {
+                binding.subTitle.setVisibility(View.GONE);
+            } else {
+                binding.subTitle.setText(subTitles[position]);
+                binding.subTitle.setVisibility(View.VISIBLE);
+            }
             binding.setIndex(Integer.parseInt(displayItems.get(position).first));
             binding.setCallback(MultiSigPreferenceFragment.this);
             binding.setChecked(displayItems.get(position).first.equals(value));
         }
 
         @Override
-        protected void onBindItem(SettingItemSelectableBinding binding, Pair<String, String> item) {
+        protected void onBindItem(SelectWalletModeBinding binding, Pair<String, String> item) {
         }
     }
 }

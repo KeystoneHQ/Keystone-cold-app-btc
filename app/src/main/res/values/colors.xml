@@ -34,6 +34,7 @@
     <color name="stepview_done_color">@color/colorAccent</color>
     <color name="stepview_todo_text_color">@color/white40</color>
     <color name="white40">#66ffffff</color>
+    <color name="line">#A3A1A1</color>
     <color name="stepview_done_text_color">@color/white</color>
     <color name="black">#000000</color>
     <color name="id_color">#FF874B</color>
