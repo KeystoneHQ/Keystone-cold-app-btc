@@ -17,6 +17,8 @@
 
 package com.keystone.cold;
 
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_MULTI_SIG_MODE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
@@ -24,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -40,6 +43,7 @@ import com.keystone.cold.sdcard.SdcardFormatHelper;
 import com.keystone.cold.service.AttackCheckingService;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.UnlockActivity;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import java.lang.ref.SoftReference;
 
@@ -62,6 +66,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        compatibleMultisigModeSp();
         mAppExecutors = AppExecutors.getInstance();
         EncryptionCoreProvider.getInstance().initialize(this);
         mAppExecutors.diskIO().execute(() -> {
@@ -77,6 +82,21 @@ public class MainApplication extends Application {
         startAttackCheckingService();
         RestartSe();
         registerSdcardStatusMonitor();
+    }
+
+    private void compatibleMultisigModeSp() {
+        SharedPreferences prefs = Utilities.getPrefs(sApplication);
+        String mutlisigMode = prefs.getString(SETTING_MULTI_SIG_MODE, MultiSigMode.CASA.getModeId());
+        switch (mutlisigMode) {
+            case "0":
+                prefs.edit().putString(SETTING_MULTI_SIG_MODE, MultiSigMode.LEGACY.getModeId()).apply();
+                break;
+            case "1":
+                prefs.edit().putString(SETTING_MULTI_SIG_MODE, MultiSigMode.CASA.getModeId()).apply();
+                break;
+            default:
+                break;
+        }
     }
 
     private void registerSdcardStatusMonitor() {

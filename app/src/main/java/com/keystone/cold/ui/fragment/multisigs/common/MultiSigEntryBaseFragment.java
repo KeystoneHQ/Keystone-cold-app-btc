@@ -21,8 +21,6 @@ package com.keystone.cold.ui.fragment.multisigs.common;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,12 +36,11 @@ import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.MultisigModeBottomSheetBinding;
-import com.keystone.cold.databinding.SettingItemWithArrowCallableBinding;
+import com.keystone.cold.databinding.SelectWalletModeBinding;
 import com.keystone.cold.db.entity.CasaSignature;
-import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
-import com.keystone.cold.ui.fragment.setting.ListPreferenceCallback;
+import com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment;
 import com.keystone.cold.viewmodel.multisigs.CasaMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
@@ -52,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
-        extends BaseFragment<T> implements ListPreferenceCallback {
+        extends BaseFragment<T> implements MultiSigPreferenceFragment.MultiSigModeCallback {
     protected LegacyMultiSigViewModel legacyMultiSigViewModel;
     protected CasaMultiSigViewModel casaMultiSigViewModel;
     private BottomSheetDialog dialog;
@@ -101,9 +98,8 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
     }
 
     @Override
-    public void onSelect(int modeId) {
-        String _modeId = String.valueOf(modeId);
-        if (_modeId.equals(MultiSigMode.LEGACY.getModeId())) {
+    public void onSelect(String modeId) {
+        if (modeId.equals(MultiSigMode.LEGACY.getModeId())) {
             dialog.dismiss();
             navigate(R.id.action_to_legacyMultisigFragment);
         } else {
@@ -124,7 +120,7 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         }
     }
 
-    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SettingItemWithArrowCallableBinding> {
+    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SelectWalletModeBinding> {
 
         public Adapter(Context context) {
             super(context);
@@ -132,19 +128,23 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
 
         @Override
         protected int getLayoutResId(int viewType) {
-            return R.layout.setting_item_with_arrow_callable;
+            return R.layout.select_wallet_mode;
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            SettingItemWithArrowCallableBinding binding = DataBindingUtil.getBinding(holder.itemView);
+            SelectWalletModeBinding binding = DataBindingUtil.getBinding(holder.itemView);
             binding.title.setText(items.get(position).second);
-            binding.setIndex(Integer.parseInt(items.get(position).first));
+            binding.checkbox.setVisibility(View.GONE);
+            binding.subTitle.setVisibility(View.GONE);
+            binding.arrowRight.setVisibility(View.VISIBLE);
+            binding.setModeId(items.get(position).first);
             binding.setCallback(MultiSigEntryBaseFragment.this);
         }
 
         @Override
-        protected void onBindItem(SettingItemWithArrowCallableBinding binding, Pair<String, String> item) {
+        protected void onBindItem(SelectWalletModeBinding binding, Pair<String, String> item) {
+
         }
     }
 }

@@ -484,8 +484,8 @@
     </string-array>
 
     <string-array name="multisig_mode_list">
-        <item>通用模式</item>
         <item>Casa</item>
+        <item>通用模式</item>
     </string-array>
 
     <string name="multisig_legacy">通用模式</string>
