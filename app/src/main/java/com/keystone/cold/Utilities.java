@@ -56,7 +56,7 @@ public class Utilities {
     private static final String ATTACK_DETECTED = "attack_detected";
     private static final String INPUT_SETTINGS_CLEARED = "input_settings_cleared";
     public static final String NET_MDOE = "network_mode";
-    public static final String CASA_SET_UP_FROM_LEGACY = "casa_set_up_from_legacy";
+    public static final String CASA_GUIDE_VISITED_TIME = "casa_guide_visited_time";
 
     public static void alert(AppCompatActivity activity,
                              @Nullable String title, @NonNull String message,
@@ -229,10 +229,10 @@ public class Utilities {
     }
 
     public static int getCasaSetUpFromLegacy(Context context) {
-        return getPrefs(context).getInt(CASA_SET_UP_FROM_LEGACY, 0);
+        return getPrefs(context).getInt(CASA_GUIDE_VISITED_TIME, 0);
     }
 
     public static void setCasaSetUpFromLegacy(Context context, int time) {
-        getPrefs(context).edit().putInt(CASA_SET_UP_FROM_LEGACY, time).apply();
+        getPrefs(context).edit().putInt(CASA_GUIDE_VISITED_TIME, time).apply();
     }
 }
