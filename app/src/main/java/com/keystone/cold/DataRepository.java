@@ -160,7 +160,7 @@ public class DataRepository {
         return mDb.casaDao().loadTxsSync();
     }
 
-    public LiveData<CasaSignature> loadCasaSignature(String id){
+    public LiveData<CasaSignature> loadCasaSignature(String id) {
         return mDb.casaDao().load(Long.parseLong(id));
     }
 
@@ -172,7 +172,7 @@ public class DataRepository {
         mDb.txDao().insert(tx);
     }
 
-    public Long insertCasaSignature(CasaSignature casaSignature){
+    public Long insertCasaSignature(CasaSignature casaSignature) {
         return mDb.casaDao().insert(casaSignature);
     }
 
@@ -231,7 +231,7 @@ public class DataRepository {
     }
 
     public AccountEntity loadAccountsByPath(long id, String path) {
-        return mDb.accountDao().loadAccountByPath(id,path);
+        return mDb.accountDao().loadAccountByPath(id, path);
     }
 
     public CoinEntity loadCoinEntityByCoinCode(String coinCode) {
@@ -244,6 +244,9 @@ public class DataRepository {
         mDb.txDao().deleteHidden();
         mDb.addressDao().deleteHidden();
         mDb.whiteListDao().deleteHidden();
+    }
+
+    public void clearCasaDao() {
         mDb.casaDao().clear();
     }
 
@@ -260,7 +263,7 @@ public class DataRepository {
         String netmode = Utilities.isMainNet(context) ? "main" : "testnet";
         String xfp = new GetMasterFingerprintCallable().call();
         return mDb.multiSigWalletDao().loadAllSync(xfp)
-                .stream().filter(w->w.getNetwork().equals(netmode))
+                .stream().filter(w -> w.getNetwork().equals(netmode))
                 .collect(Collectors.toList());
     }
 
@@ -283,6 +286,7 @@ public class DataRepository {
     public List<MultiSigAddressEntity> loadAddressForWalletSync(String walletId) {
         return mDb.multiSigAddressDao().loadAllMultiSigAddressSync(walletId);
     }
+
     public LiveData<List<MultiSigAddressEntity>> loadAddressForWallet(String walletId) {
         return mDb.multiSigAddressDao().loadAllMultiSigAddress(walletId);
     }
