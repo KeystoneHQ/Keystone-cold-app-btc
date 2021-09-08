@@ -5,17 +5,17 @@ import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
 import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
 
 import android.os.Bundle;
-import android.view.Gravity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.keystone.coinlib.accounts.Account;
 import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
-import com.keystone.cold.databinding.CommonModalBinding;
+import com.keystone.cold.Utilities;
+import com.keystone.cold.databinding.CasaGuideBinding;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.databinding.MultisigCasaExportXpubBinding;
 import com.keystone.cold.ui.modal.ModalDialog;
@@ -38,8 +38,23 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
         mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
         mBinding.qrcodeLayout.qrcode.setData(ur.toString());
         mBinding.qrcodeLayout.frame.setLayoutParams(new LinearLayout.LayoutParams(320, 320));
-        mBinding.done.setOnClickListener(v -> navigateUp());
-        mBinding.scanHint.setOnClickListener(v -> showExportGuide());
+        mBinding.done.setOnClickListener(v -> {
+            Bundle bundle = getArguments();
+            if (bundle == null) {
+                navigateUp();
+                return;
+            }
+            if (TextUtils.equals(bundle.getString("from"), "MultiSigPreferenceFragment")) {
+                navigate(R.id.action_to_casaMultisigFragment_from_multiSigPreferenceFragment);
+            } else if (TextUtils.equals(bundle.getString("from"), "MultisigMainFragment")) {
+                int time = Utilities.getCasaSetUpFromLegacy(mActivity);
+                Utilities.setCasaSetUpFromLegacy(mActivity, ++time);
+                navigate(R.id.action_to_casaMultisigFragment_from_multisigMainFragment);
+            } else {
+                navigateUp();
+            }
+        });
+        mBinding.info.setOnClickListener(v -> showExportGuide());
         mBinding.path.setText("Path: " + MultiSig.CASA.getPath());
         mBinding.xpub.setText(casaMultiSigViewModel.getXPub(MultiSig.CASA));
         mBinding.exportToSdcard.setOnClickListener(v -> exportXpub());
@@ -88,13 +103,9 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
 
     private void showExportGuide() {
         ModalDialog modalDialog = ModalDialog.newInstance();
-        CommonModalBinding binding = DataBindingUtil.inflate(
-                LayoutInflater.from(mActivity), R.layout.common_modal,
+        CasaGuideBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mActivity), R.layout.casa_guide,
                 null, false);
-        binding.title.setText(R.string.scan_qrcode_with_casa_hint_title);
-        binding.subTitle.setText(R.string.scan_qrcode_with_casa_hint);
-        binding.subTitle.setGravity(Gravity.START);
-        binding.close.setVisibility(View.GONE);
         binding.confirm.setText(R.string.know);
         binding.confirm.setOnClickListener(vv -> modalDialog.dismiss());
         modalDialog.setBinding(binding);

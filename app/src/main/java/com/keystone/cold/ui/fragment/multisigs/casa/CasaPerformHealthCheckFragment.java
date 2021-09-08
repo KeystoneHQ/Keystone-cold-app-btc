@@ -3,7 +3,6 @@ package com.keystone.cold.ui.fragment.multisigs.casa;
 import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
 import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,59 +72,58 @@ public class CasaPerformHealthCheckFragment extends BaseFragment<MultisigCasaPer
         return matcher.matches();
     }
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        int id = menuItem.getItemId();
-        if (id == R.id.action_scan) {
-            ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
-                @Override
-                public void handleScanResult(ScanResult result) throws Exception {
-                    if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
-                        if (handleCasaMessage(result)) return;
-                        throw new UnknowQrCodeException("unknown qr code");
-                    }
-                }
-
-                private boolean handleCasaMessage(ScanResult result) throws IOException {
-                    byte[] bytes = (byte[]) result.resolve();
-                    String signData = new String(bytes, StandardCharsets.UTF_8);
-                    BufferedReader reader = new BufferedReader(new StringReader(signData));
-                    String message = reader.readLine();
-                    if (!isMessageValid(message))
-                        throw new InvalidParameterException("invalid message");
-                    String path = reader.readLine();
-                    if (!isPathValid(path)) throw new InvalidParameterException("invalid path");
-                    Bundle bundle = new Bundle();
-                    bundle.putString("message", message);
-                    bundle.putString("path", path);
-                    mFragment.navigate(R.id.action_to_casaSignMessageFragment, bundle);
-                    return true;
-                }
-
-                @Override
-                public boolean handleException(Exception e) {
-                    if (e instanceof InvalidParameterException) {
-                        ModalDialog.showCommonModal(mActivity,
-                                getString(R.string.electrum_decode_txn_fail),
-                                getString(R.string.error_txn_file),
-                                getString(R.string.confirm),
-                                null);
-                        return true;
-                    }
-                    return super.handleException(e);
-                }
-            });
-            navigate(R.id.action_to_scanner);
-            return true;
-        }
-        return false;
-    }
-
-
     @Override
     protected void init(View view) {
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
+        mBinding.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.action_scan) {
+                    ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(new ScannerState(Collections.singletonList(ScanResultTypes.UR_BYTES)) {
+                        @Override
+                        public void handleScanResult(ScanResult result) throws Exception {
+                            if (result.getType().equals(ScanResultTypes.UR_BYTES)) {
+                                if (handleCasaMessage(result)) return;
+                                throw new UnknowQrCodeException("unknown qr code");
+                            }
+                        }
+
+                        private boolean handleCasaMessage(ScanResult result) throws IOException {
+                            byte[] bytes = (byte[]) result.resolve();
+                            String signData = new String(bytes, StandardCharsets.UTF_8);
+                            BufferedReader reader = new BufferedReader(new StringReader(signData));
+                            String message = reader.readLine();
+                            if (!isMessageValid(message))
+                                throw new InvalidParameterException("invalid message");
+                            String path = reader.readLine();
+                            if (!isPathValid(path)) throw new InvalidParameterException("invalid path");
+                            Bundle bundle = new Bundle();
+                            bundle.putString("message", message);
+                            bundle.putString("path", path);
+                            mFragment.navigate(R.id.action_scanner_to_casaSignMessageFragment, bundle);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean handleException(Exception e) {
+                            if (e instanceof InvalidParameterException) {
+                                ModalDialog.showCommonModal(mActivity,
+                                        getString(R.string.electrum_decode_txn_fail),
+                                        getString(R.string.error_txn_file),
+                                        getString(R.string.confirm),
+                                        null);
+                                return true;
+                            }
+                            return super.handleException(e);
+                        }
+                    });
+                    navigate(R.id.action_to_scanner);
+                    return true;
+                }
+                return false;
+            }
+        });
         casaMultiSigViewModel = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class);
         adapter = new FileListAdapter(mActivity, this);
         initViews();

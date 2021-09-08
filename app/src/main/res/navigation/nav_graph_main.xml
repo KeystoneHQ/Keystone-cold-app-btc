@@ -373,6 +373,9 @@
             android:id="@+id/action_to_casaMultisigFragment"
             app:destination="@id/casaMultisigFragment" />
         <action
+            android:id="@+id/action_to_casaGuidePageOneFragment"
+            app:destination="@id/casaGuidePageOneFragment" />
+        <action
             android:id="@+id/action_to_multisigSelectionFragment"
             app:destination="@id/multisigSelectionFragment" />
         <action
@@ -424,10 +427,42 @@
         android:label="MultisigEntry">
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
-            app:destination="@id/legacyMultisigFragment" />
+            app:destination="@id/legacyMultisigFragment"
+            app:popUpTo="@+id/multisigSelectionFragment"
+            app:popUpToInclusive="true"/>
         <action
-            android:id="@+id/action_to_casaMultisigFragment"
-            app:destination="@id/casaMultisigFragment" />
+            android:id="@+id/action_to_casaGuidePageOneFragment"
+            app:destination="@id/casaGuidePageOneFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/casaGuidePageOneFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaGuidePageOneFragment"
+        android:label="CasaGuidePageOneFragment">
+        <action
+            android:id="@+id/action_to_casaGuidePageTwoFragment"
+            app:destination="@id/casaGuidePageTwoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/casaGuidePageTwoFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaGuidePageTwoFragment"
+        android:label="CasaGuidePageTwoFragment">
+        <action
+            android:id="@+id/action_to_casaExportXPubFragment"
+            app:destination="@id/casaExportXPubFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -461,6 +496,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -469,7 +511,9 @@
         android:label="MultisigEntry">
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
-            app:destination="@id/legacyMultisigFragment" />
+            app:destination="@id/legacyMultisigFragment"
+            app:popUpTo="@id/casaMultisigFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_to_casaExportXPubFragment"
             app:destination="@id/casaExportXPubFragment"
@@ -511,7 +555,16 @@
         android:id="@+id/casaExportXPubFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaExportXPubFragment"
         android:label="CasaExportXPubFragment">
-
+        <action
+            android:id="@+id/action_to_casaMultisigFragment_from_multisigMainFragment"
+            app:destination="@id/casaMultisigFragment"
+            app:popUpTo="@id/legacyMultisigFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_casaMultisigFragment_from_multiSigPreferenceFragment"
+            app:destination="@id/casaMultisigFragment"
+            app:popUpTo="@id/multisigSelectionFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -520,7 +573,16 @@
         android:label="MultisigEntry">
         <action
             android:id="@+id/action_to_casaMultisigFragment"
-            app:destination="@id/casaMultisigFragment" />
+            app:destination="@id/casaMultisigFragment"
+            app:popUpTo="@id/legacyMultisigFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_casaGuidePageOneFragment"
+            app:destination="@id/casaGuidePageOneFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/export_export_multisig_expub"
             app:destination="@id/exportMultisigExpubFragment"

@@ -78,6 +78,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     @Override
     protected void init(View view) {
         super.init(view);
+        Utilities.setMultiSigMode(mActivity, MultiSigMode.LEGACY.getModeId());
         coinId = Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId();
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);

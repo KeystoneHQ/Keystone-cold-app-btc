@@ -156,6 +156,10 @@ public class DataRepository {
         return mDb.casaDao().loadSignatures();
     }
 
+    public List<CasaSignature> loadCasaSignaturesSync() {
+        return mDb.casaDao().loadTxsSync();
+    }
+
     public LiveData<CasaSignature> loadCasaSignature(String id){
         return mDb.casaDao().load(Long.parseLong(id));
     }
@@ -240,6 +244,7 @@ public class DataRepository {
         mDb.txDao().deleteHidden();
         mDb.addressDao().deleteHidden();
         mDb.whiteListDao().deleteHidden();
+        mDb.casaDao().clear();
     }
 
     public long addMultisigWallet(MultiSigWalletEntity entity) {
