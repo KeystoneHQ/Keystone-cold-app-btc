@@ -1,5 +1,12 @@
 package com.keystone.cold.viewmodel;
 
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
+import static com.keystone.cold.viewmodel.AddAddressViewModel.AddAddressTask.getAddressType;
+import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
+import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
+
 import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,13 +53,6 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
 
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.viewmodel.AddAddressViewModel.AddAddressTask.getAddressType;
-import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
-import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
-
 public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "PsbtSigleConfirmViewModel";
     protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
@@ -87,6 +87,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
     public void generateTx(String signTx) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
+                isMainNet = Utilities.isMainNet(getApplication());
                 JSONObject jsonObject = new JSONObject(signTx);
                 transaction = AbsTx.newInstance(jsonObject);
                 observableTx.postValue(generateTxEntity(jsonObject));

@@ -221,7 +221,7 @@ public class Utilities {
     }
 
     public static String getMultiSigMode(Context context) {
-        return getPrefs(context).getString(SETTING_MULTI_SIG_MODE, MultiSigMode.LEGACY.getModeId());
+        return getPrefs(context).getString(SETTING_MULTI_SIG_MODE, MultiSigMode.CASA.getModeId());
     }
 
     public static void setMultiSigMode(Context context, String modeId) {

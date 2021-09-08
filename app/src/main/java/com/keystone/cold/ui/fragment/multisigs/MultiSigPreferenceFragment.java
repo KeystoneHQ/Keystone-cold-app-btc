@@ -1,6 +1,5 @@
 package com.keystone.cold.ui.fragment.multisigs;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Pair;
@@ -17,13 +16,12 @@ import com.keystone.cold.databinding.SelectWalletModeBinding;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
-import com.keystone.cold.ui.fragment.setting.ListPreferenceCallback;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePreferenceBinding> implements ListPreferenceCallback {
+public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePreferenceBinding> {
     public static final String TAG = "MultisigEntry";
     private Adapter adapter;
     protected CharSequence[] values;
@@ -53,7 +51,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         });
         entries = getResources().getStringArray(getEntries());
         values = getResources().getStringArray(getValues());
-        subTitles = new CharSequence[]{"Blue Wallet,Sparrow Wallet,Specter,Electrum...", "Hardware Key,Mobile Key,Casa Recovery Key"};
+        subTitles = getResources().getStringArray(getSubTitles());
         value = Utilities.getMultiSigMode(mActivity);
         displayItems = new ArrayList<>();
         for (int i = 0; i < entries.length; i++) {
@@ -70,6 +68,10 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         return R.array.multisig_mode_list_values;
     }
 
+    protected int getSubTitles() {
+        return R.array.multisig_mode_list_sub_titles;
+    }
+
     protected String defaultValue() {
         return MultiSigMode.LEGACY.getModeId();
     }
@@ -79,16 +81,8 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
     }
 
-    @Override
-    public void onSelect(int modeId) {
-        String old = value;
-        value = String.valueOf(modeId);
-        if (!old.equals(value)) {
-            adapter.notifyDataSetChanged();
-        }
-    }
 
-    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SelectWalletModeBinding> {
+    protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SelectWalletModeBinding> implements MultiSigModeCallback {
 
         public Adapter(Context context) {
             super(context);
@@ -109,13 +103,26 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
                 binding.subTitle.setText(subTitles[position]);
                 binding.subTitle.setVisibility(View.VISIBLE);
             }
-            binding.setIndex(Integer.parseInt(displayItems.get(position).first));
-            binding.setCallback(MultiSigPreferenceFragment.this);
+            binding.setModeId(displayItems.get(position).first);
+            binding.setCallback(this);
             binding.setChecked(displayItems.get(position).first.equals(value));
         }
 
         @Override
         protected void onBindItem(SelectWalletModeBinding binding, Pair<String, String> item) {
         }
+
+        @Override
+        public void onSelect(String modeId) {
+            String old = value;
+            value = modeId;
+            if (!old.equals(value)) {
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public interface MultiSigModeCallback {
+        void onSelect(String modeId);
     }
 }

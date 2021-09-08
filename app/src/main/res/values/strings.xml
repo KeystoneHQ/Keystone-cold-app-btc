@@ -114,13 +114,18 @@
     </string-array>
 
     <string-array name="multisig_mode_list">
-        <item>Generic Mode</item>
         <item>Casa Mode</item>
+        <item>Generic Mode</item>
     </string-array>
 
     <string-array name="multisig_mode_list_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
+        <item>casa</item>
+        <item>legacy</item>
+    </string-array>
+
+    <string-array name="multisig_mode_list_sub_titles" translatable="false">
+        <item>Hardware Key,Mobile Key,Casa Recovery Key</item>
+        <item>Blue Wallet,Sparrow Wallet,Specter,Electrum...</item>
     </string-array>
 
     <string name="multisig_legacy">Generic</string>

@@ -1,7 +1,9 @@
 package com.keystone.cold.viewmodel;
 
+import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
+import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
+
 import android.app.Application;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -39,9 +41,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
-import static com.keystone.cold.viewmodel.WatchWallet.ELECTRUM;
-
 public abstract class ParsePsbtViewModel extends AndroidViewModel {
     public static final String STATE_NONE = "";
     public static final String STATE_SIGNING = "signing";
@@ -78,6 +77,10 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
 
     public MutableLiveData<JSONObject> getObservableSignTx() {
         return observableSignTx;
+    }
+
+    public void setMainNet(boolean mainNet) {
+        isMainNet = mainNet;
     }
 
     public boolean isMainNet() {

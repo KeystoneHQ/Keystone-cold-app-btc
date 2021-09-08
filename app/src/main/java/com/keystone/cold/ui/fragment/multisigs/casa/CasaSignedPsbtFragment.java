@@ -17,6 +17,9 @@
 
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -25,6 +28,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.keystone.cold.R;
+import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.SignedTxBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.ui.fragment.BaseFragment;
@@ -42,9 +46,6 @@ import org.spongycastle.util.encoders.Base64;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
-import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
 
 public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
 
@@ -78,12 +79,14 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
                 .observe(this, address -> this.changeAddress = address);
         CoinListViewModel viewModel = ViewModelProviders.of(mActivity).get(CoinListViewModel.class);
         viewModel.loadCasaSignature(String.valueOf(data.getLong(KEY_ID))).observe(this, casaSignature -> {
-            mBinding.setTx(casaSignature);
-            this.casaSignature = casaSignature;
-            displaySignResult(casaSignature);
-            refreshReceiveList();
-            refreshSignStatus();
-            mBinding.txDetail.exportToSdcard.setOnClickListener(v -> showExportDialog());
+            if (casaSignature != null) {
+                mBinding.setTx(casaSignature);
+                this.casaSignature = casaSignature;
+                displaySignResult();
+                refreshReceiveList();
+                refreshSignStatus();
+                mBinding.txDetail.exportToSdcard.setOnClickListener(v -> showExportDialog());
+            }
         });
 
     }
@@ -120,6 +123,7 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
     private void refreshReceiveList() {
         String to = casaSignature.getTo();
         List<TransactionItem> items = new ArrayList<>();
+        boolean isMainNet = Utilities.isMainNet(mActivity);
         try {
             JSONArray outputs = new JSONArray(to);
             for (int i = 0; i < outputs.length(); i++) {
@@ -129,10 +133,15 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
                 if (isChange) {
                     changePath = output.getString("changeAddressPath");
                 }
-
+                String address = output.getString("address");
+                if (address.startsWith("1") || address.startsWith("3") || address.startsWith("bc1")) {
+                    isMainNet = true;
+                } else {
+                    isMainNet = false;
+                }
                 items.add(new TransactionItem(i,
                         output.getLong("value"),
-                        output.getString("address"),
+                        address,
                         casaSignature.getCoinCode(), changePath));
             }
         } catch (JSONException e) {
@@ -144,6 +153,16 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
                         changeAddress);
         adapter.setItems(items);
         mBinding.txDetail.toList.setAdapter(adapter);
+        refreshNewWorkStatus(isMainNet);
+    }
+
+    private void refreshNewWorkStatus(boolean isMainNet) {
+        if (isMainNet) {
+            mBinding.txDetail.networkText.setText("Mainnet");
+        } else {
+            mBinding.txDetail.networkText.setText("Testnet");
+        }
+        mBinding.txDetail.network.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -151,14 +170,13 @@ public class CasaSignedPsbtFragment extends BaseFragment<SignedTxBinding> {
 
     }
 
-    protected void displaySignResult(CasaSignature casaSignature) {
+    protected void displaySignResult() {
         if (casaSignature.getTxId().startsWith("unknown_txid_")) {
             mBinding.txDetail.txIdInfo.setVisibility(View.GONE);
         }
         mBinding.txDetail.arrowDown.setVisibility(View.GONE);
         mBinding.txDetail.fromList.setVisibility(View.GONE);
         mBinding.txDetail.scanInfo.setVisibility(View.GONE);
-        mBinding.txDetail.export.setVisibility(View.GONE);
 
         mBinding.txDetail.dynamicQrcodeLayout.qrcode.setVisibility(View.VISIBLE);
         mBinding.txDetail.exportToSdcardHint.setVisibility(View.VISIBLE);

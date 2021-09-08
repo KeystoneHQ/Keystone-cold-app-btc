@@ -409,6 +409,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat {
         dialog.show(Objects.requireNonNull(activity.getSupportFragmentManager()), "");
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
+                SystemPreferenceFragment.resetSetting(activity);
                 new ResetCallable().call();
                 DataCleaner.cleanApplicationData(activity);
                 removeAllFingerprint(activity);

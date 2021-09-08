@@ -1,5 +1,7 @@
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
+import static com.keystone.cold.ui.fragment.multisigs.casa.CasaSignedPsbtFragment.KEY_ID;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
@@ -31,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import static com.keystone.cold.ui.fragment.multisigs.casa.CasaSignedPsbtFragment.KEY_ID;
 
 public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMainBinding> {
     public static final String TAG = "MultisigEntry";
@@ -87,6 +87,8 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                 if (position == 0) {
                     isShowSignature = false;
                     mBinding.operations.setVisibility(View.VISIBLE);
+                    mBinding.signaturesList.setVisibility(View.GONE);
+                    mBinding.signaturesEmpty.setVisibility(View.GONE);
                 } else {
                     isShowSignature = true;
                     casaSignatureLiveData.observe(CasaMainFragment.this, casaSignatures -> {
@@ -94,9 +96,13 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
                         signatureAdapter.setItems(casaSignatures);
                         if (casaSignatures.isEmpty()) {
                             mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
+                            mBinding.operations.setVisibility(View.GONE);
+                            mBinding.signaturesList.setVisibility(View.GONE);
                         } else {
                             mBinding.signaturesList.setAdapter(signatureAdapter);
                             mBinding.signaturesList.setVisibility(View.VISIBLE);
+                            mBinding.operations.setVisibility(View.GONE);
+                            mBinding.signaturesEmpty.setVisibility(View.GONE);
                         }
                     });
                 }

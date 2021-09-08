@@ -27,12 +27,12 @@
             type="boolean" />
 
         <variable
-            name="index"
-            type="int" />
+            name="modeId"
+            type="String" />
 
         <variable
             name="callback"
-            type="com.keystone.cold.ui.fragment.setting.ListPreferenceCallback" />
+            type="com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment.MultiSigModeCallback" />
     </data>
 
     <RelativeLayout
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:minHeight="45dp"
         android:background="?attr/selectableItemBackground"
-        android:onClick="@{()->callback.onSelect(index)}">
+        android:onClick="@{()->callback.onSelect(modeId)}">
 
         <TextView
             android:id="@+id/title"
@@ -66,6 +66,7 @@
             android:textSize="12sp" />
 
         <ImageView
+            android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -75,6 +76,17 @@
             app:tint="@color/colorAccent"
             app:visibleGone="@{checked}"
             tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/arrow_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/arrow_right"
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
 
         <View
             android:layout_width="match_parent"

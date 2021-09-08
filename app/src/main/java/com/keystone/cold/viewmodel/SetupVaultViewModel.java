@@ -17,11 +17,13 @@
 
 package com.keystone.cold.viewmodel;
 
+import static com.keystone.cold.mnemonic.MnemonicInputTable.THIRTYTHREE;
+import static com.keystone.cold.mnemonic.MnemonicInputTable.TWEENTY;
+
 import android.app.Application;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableField;
@@ -64,9 +66,6 @@ import iton.slip.secret.Share;
 import iton.slip.secret.SharedSecret;
 import iton.slip.secret.SharedSecretException;
 import iton.slip.secret.words.Mnemonic;
-
-import static com.keystone.cold.mnemonic.MnemonicInputTable.THIRTYTHREE;
-import static com.keystone.cold.mnemonic.MnemonicInputTable.TWEENTY;
 
 public class SetupVaultViewModel extends AndroidViewModel {
 
@@ -236,6 +235,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
             if (success) {
                 vaultId = new GetVaultIdCallable().call();
                 deleteHiddenVaultData();
+                mRepository.clearCasaDao();
                 password = null;
                 signature = null;
                 vaultCreateState.postValue(VAULT_STATE_CREATED);
