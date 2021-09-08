@@ -1,5 +1,10 @@
 package com.keystone.cold.viewmodel.multisigs;
 
+import static com.keystone.coinlib.Util.getExpubFingerprint;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
+
 import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
@@ -48,11 +53,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.keystone.coinlib.Util.getExpubFingerprint;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.DUPLICATE_TX;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-
 public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "PsbtLegacyConfirmViewModel";
     protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
@@ -88,6 +88,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     public void generateTx(String signTx) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
+                isMainNet = Utilities.isMainNet(getApplication());
                 JSONObject jsonObject = new JSONObject(signTx);
                 transaction = AbsTx.newInstance(jsonObject);
                 observableTx.postValue(generateLegacyTxEntity(jsonObject));

@@ -1,5 +1,12 @@
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
+import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
+import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,13 +49,6 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
-import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
-import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
-import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
 public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
     private PsbtCasaConfirmViewModel psbtCasaTxConfirmViewModel;
@@ -99,6 +99,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
         Bundle bundle = requireArguments();
+        psbtCasaTxConfirmViewModel.setMainNet(bundle.getBoolean("isMainNet"));
         String signTx = bundle.getString("signTx");
         if (signTx != null) {
             psbtCasaTxConfirmViewModel.generateTx(signTx);
