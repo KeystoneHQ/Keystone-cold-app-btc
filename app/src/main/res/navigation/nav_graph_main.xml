@@ -150,13 +150,27 @@
         android:id="@+id/aboutFragment"
         android:name="com.keystone.cold.ui.fragment.AboutFragment"
         android:label="AboutFragment"
-        tools:layout="@layout/about_fragment" />
+        tools:layout="@layout/about_fragment" >
+
+        <action
+            android:id="@id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.keystone.cold.ui.fragment.setting.SettingFragment"
         android:label="SettingFragment"
         tools:layout="@layout/setting_fragment">
+        <action
+            android:id="@id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_to_licenseFragment"
             app:destination="@id/licenseFragment"
@@ -509,6 +523,13 @@
         android:id="@+id/casaMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaMainFragment"
         android:label="MultisigEntry">
+
+        <action
+            android:id="@id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment"
@@ -556,21 +577,20 @@
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaExportXPubFragment"
         android:label="CasaExportXPubFragment">
         <action
-            android:id="@+id/action_to_casaMultisigFragment_from_multisigMainFragment"
-            app:destination="@id/casaMultisigFragment"
-            app:popUpTo="@id/legacyMultisigFragment"
-            app:popUpToInclusive="true"/>
-        <action
-            android:id="@+id/action_to_casaMultisigFragment_from_multiSigPreferenceFragment"
-            app:destination="@id/casaMultisigFragment"
-            app:popUpTo="@id/multisigSelectionFragment"
-            app:popUpToInclusive="true"/>
+            android:id="@+id/action_to_casaMultisigFragment"
+            app:destination="@id/casaMultisigFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/legacyMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.legacy.MultisigMainFragment"
         android:label="MultisigEntry">
+        <action
+            android:id="@id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_to_casaMultisigFragment"
             app:destination="@id/casaMultisigFragment"

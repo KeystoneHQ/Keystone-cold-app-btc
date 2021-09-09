@@ -43,11 +43,9 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.ActivityMainBinding;
-import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.fingerprint.FingerprintKit;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
@@ -59,7 +57,6 @@ import com.keystone.cold.ui.views.FullScreenDrawer;
 import com.keystone.cold.ui.views.UpdatingHelper;
 import com.keystone.cold.update.data.UpdateManifest;
 import com.keystone.cold.viewmodel.GlobalViewModel;
-import com.keystone.cold.viewmodel.multisigs.CasaMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import java.util.Arrays;
@@ -194,7 +191,7 @@ public class MainActivity extends FullScreenActivity {
 
             switch (position) {
                 case R.id.drawer_wallet:
-                    mNavController.navigateUp();
+                    mNavController.navigate(R.id.action_to_home);
                     break;
                 case R.id.drawer_multisig:
                     mNavController.navigateUp();

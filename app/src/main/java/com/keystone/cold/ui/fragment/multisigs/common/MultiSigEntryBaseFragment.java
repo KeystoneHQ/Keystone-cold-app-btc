@@ -105,7 +105,7 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         } else {
             if (Utilities.getCasaSetUpVisitedTime(mActivity) < 1) {
                 Bundle bundle = new Bundle();
-                bundle.putString("from", "MultisigMainFragment");
+                bundle.putBoolean("isGuide", true);
                 navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
             } else {
                 navigate(R.id.action_to_casaMultisigFragment);
