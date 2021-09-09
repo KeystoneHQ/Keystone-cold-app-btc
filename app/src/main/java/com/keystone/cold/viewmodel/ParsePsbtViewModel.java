@@ -14,8 +14,12 @@ import com.googlecode.protobuf.format.JsonFormat;
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
+import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
+import com.keystone.coinlib.path.AddressIndex;
+import com.keystone.coinlib.path.CoinPath;
 import com.keystone.coinlib.utils.Account;
+import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.Utilities;
@@ -118,7 +122,7 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
         }
         boolean isMultisig = adaptTx.optBoolean("multisig");
         TransactionProtoc.SignTransaction.Builder builder = TransactionProtoc.SignTransaction.newBuilder();
-        builder.setCoinCode(Utilities.currentCoin(getApplication()).coinCode())
+        builder.setCoinCode((isMainNet ? Coins.BTC : Coins.XTN).coinCode())
                 .setSignId(isMultisig ? "PSBT_MULTISIG" : signId)
                 .setTimestamp(generateAutoIncreaseId())
                 .setDecimal(8);
@@ -189,6 +193,16 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
             return null;
         }
         return accountEntity;
+    }
+
+    protected boolean isChangeAddress(String path) {
+        try {
+            AddressIndex addressIndex = CoinPath.parsePath(path);
+            return !addressIndex.getParent().isExternal();
+        } catch (InvalidPathException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     protected abstract void initIsMainNet(String psbtBase64) throws Exception;

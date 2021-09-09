@@ -1,5 +1,12 @@
 package com.keystone.cold.ui.fragment.main;
 
+import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
+import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,19 +46,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
-import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
-
 public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
 
     private PsbtSingleConfirmViewModel psbtSigleTxConfirmViewModel;
     private SigningDialog signingDialog;
     private TxEntity txEntity;
-    private List<String> changeAddress = new ArrayList<>();
     private int feeAttackCheckingState;
     private FeeAttackChecking feeAttackChecking;
     private boolean signed;
@@ -90,10 +89,6 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
     @Override
     protected void initData(Bundle savedInstanceState) {
         psbtSigleTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtSingleConfirmViewModel.class);
-        ViewModelProviders.of(mActivity)
-                .get(GlobalViewModel.class)
-                .getChangeAddress()
-                .observe(this, address -> this.changeAddress = address);
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
@@ -167,7 +162,14 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
 
     private void refreshUI() {
         refreshFromList();
-        refreshReceiveList();
+        ViewModelProviders.of(mActivity)
+                .get(GlobalViewModel.class)
+                .getChangeAddress()
+                .observe(this, address -> {
+                    if (address != null) {
+                        refreshReceiveList(address);
+                    }
+                });
         checkBtcFee();
     }
 
@@ -197,7 +199,7 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
 
     }
 
-    private void refreshReceiveList() {
+    private void refreshReceiveList(List<String> changeAddress) {
         String to = txEntity.getTo();
         List<TransactionItem> items = new ArrayList<>();
         try {

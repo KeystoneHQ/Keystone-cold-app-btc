@@ -34,7 +34,6 @@ import com.keystone.cold.ui.modal.SigningDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
-import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
@@ -53,7 +52,6 @@ import java.util.List;
 public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
     private PsbtCasaConfirmViewModel psbtCasaTxConfirmViewModel;
     private SigningDialog signingDialog;
-    private List<String> changeAddress = new ArrayList<>();
     private boolean signed;
     private CasaSignature casaSignature;
     private ProgressModalDialog progressModalDialog;
@@ -91,10 +89,6 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
     @Override
     protected void initData(Bundle savedInstanceState) {
         psbtCasaTxConfirmViewModel = ViewModelProviders.of(this).get(PsbtCasaConfirmViewModel.class);
-        ViewModelProviders.of(mActivity)
-                .get(GlobalViewModel.class)
-                .getChangeAddress()
-                .observe(this, address -> this.changeAddress = address);
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
@@ -177,24 +171,17 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
             JSONArray outputs = new JSONArray(to);
             for (int i = 0; i < outputs.length(); i++) {
                 JSONObject output = outputs.getJSONObject(i);
-                boolean isChange = output.optBoolean("isChange");
-                String changePath = null;
-                if (isChange) {
-                    changePath = output.getString("changeAddressPath");
-                }
-
                 items.add(new TransactionItem(i,
                         output.getLong("value"),
                         output.getString("address"),
-                        casaSignature.getCoinCode(), changePath));
+                        casaSignature.getCoinCode(), null));
             }
         } catch (JSONException e) {
             return;
         }
         TransactionItemAdapter adapter
                 = new TransactionItemAdapter(mActivity,
-                TransactionItem.ItemType.OUTPUT,
-                changeAddress);
+                TransactionItem.ItemType.OUTPUT);
         adapter.setItems(items);
         mBinding.txDetail.toList.setVisibility(View.VISIBLE);
         mBinding.txDetail.toList.setAdapter(adapter);

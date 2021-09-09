@@ -251,6 +251,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     public void alert(String title, String subTitle, String message, Runnable run) {
         handler.post(() -> {
+            dismissLoading();
             ModalDialog.showCommonModal(mActivity, title, subTitle, message, run);
         });
     }

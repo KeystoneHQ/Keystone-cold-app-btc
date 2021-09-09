@@ -17,13 +17,19 @@
 
 package com.keystone.cold.ui.fragment.main.electrum;
 
+import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
+import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
+import static com.keystone.cold.ui.fragment.main.BroadcastTxFragment.KEY_TXID;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
+import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -37,8 +43,8 @@ import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.config.FeatureFlags;
-import com.keystone.cold.databinding.PsbtTxConfirmFragmentBinding;
 import com.keystone.cold.databinding.ProgressModalBinding;
+import com.keystone.cold.databinding.PsbtTxConfirmFragmentBinding;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryptioncore.utils.ByteFormatter;
@@ -54,9 +60,9 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.viewmodel.GlobalViewModel;
-import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
+import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.exceptions.XpubNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
@@ -71,15 +77,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
-import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
-import static com.keystone.cold.ui.fragment.main.BroadcastTxFragment.KEY_TXID;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
-import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
-
 public class UnsignedTxFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
 
     private final Runnable forgetPassword = () -> {
@@ -92,7 +89,6 @@ public class UnsignedTxFragment extends BaseFragment<PsbtTxConfirmFragmentBindin
     private TxEntity txEntity;
     private CasaSignature casaSignature;
     private ModalDialog addingAddressDialog;
-    private List<String> changeAddress = new ArrayList<>();
     private int feeAttackCheckingState;
     private FeeAttackChecking feeAttackChecking;
     private boolean signed;
@@ -115,10 +111,6 @@ public class UnsignedTxFragment extends BaseFragment<PsbtTxConfirmFragmentBindin
 
         viewModel = ViewModelProviders.of(this).get(TxConfirmViewModel.class);
         mBinding.setViewModel(viewModel);
-        ViewModelProviders.of(mActivity)
-                .get(GlobalViewModel.class)
-                .getChangeAddress()
-                .observe(this, address -> this.changeAddress = address);
         subscribeTxEntityState();
         mBinding.sign.setOnClickListener(new OnMultiClickListener() {
             @Override
@@ -213,7 +205,14 @@ public class UnsignedTxFragment extends BaseFragment<PsbtTxConfirmFragmentBindin
 
     private void refreshUI() {
         refreshFromList();
-        refreshReceiveList();
+        ViewModelProviders.of(mActivity)
+                .get(GlobalViewModel.class)
+                .getChangeAddress()
+                .observe(this, address -> {
+                    if (address != null) {
+                        refreshReceiveList(address);
+                    }
+                });
         refreshSignStatus();
         checkBtcFee();
     }
@@ -350,7 +349,7 @@ public class UnsignedTxFragment extends BaseFragment<PsbtTxConfirmFragmentBindin
         });
     }
 
-    private void refreshReceiveList() {
+    private void refreshReceiveList(List<String> changeAddress) {
         if (viewModel.mode == null || viewModel.mode.equals(MultiSigMode.LEGACY)) {
             String to = txEntity.getTo();
             List<TransactionItem> items = new ArrayList<>();
