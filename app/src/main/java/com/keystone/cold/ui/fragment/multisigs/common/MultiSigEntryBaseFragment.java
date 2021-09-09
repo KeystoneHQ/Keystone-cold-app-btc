@@ -103,20 +103,14 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
             dialog.dismiss();
             navigate(R.id.action_to_legacyMultisigFragment);
         } else {
-            AppExecutors.getInstance().diskIO().execute(() -> {
-                List<CasaSignature> casaSignatures = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class)
-                        .allCasaSignaturesSync();
-                AppExecutors.getInstance().mainThread().execute(() -> {
-                    if ((casaSignatures == null || casaSignatures.size() == 0) && Utilities.getCasaSetUpFromLegacy(mActivity) < 1) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("from", "MultisigMainFragment");
-                        navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
-                    } else {
-                        navigate(R.id.action_to_casaMultisigFragment);
-                    }
-                    dialog.dismiss();
-                });
-            });
+            if (Utilities.getCasaSetUpVisitedTime(mActivity) < 1) {
+                Bundle bundle = new Bundle();
+                bundle.putString("from", "MultisigMainFragment");
+                navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
+            } else {
+                navigate(R.id.action_to_casaMultisigFragment);
+            }
+            dialog.dismiss();
         }
     }
 

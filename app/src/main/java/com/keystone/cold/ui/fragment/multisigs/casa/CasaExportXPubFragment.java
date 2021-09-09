@@ -44,11 +44,12 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
                 navigateUp();
                 return;
             }
+            int time = Utilities.getCasaSetUpVisitedTime(mActivity);
             if (TextUtils.equals(bundle.getString("from"), "MultiSigPreferenceFragment")) {
+                Utilities.setCasaSetUpVisitedTime(mActivity, ++time);
                 navigate(R.id.action_to_casaMultisigFragment_from_multiSigPreferenceFragment);
             } else if (TextUtils.equals(bundle.getString("from"), "MultisigMainFragment")) {
-                int time = Utilities.getCasaSetUpFromLegacy(mActivity);
-                Utilities.setCasaSetUpFromLegacy(mActivity, ++time);
+                Utilities.setCasaSetUpVisitedTime(mActivity, ++time);
                 navigate(R.id.action_to_casaMultisigFragment_from_multisigMainFragment);
             } else {
                 navigateUp();
