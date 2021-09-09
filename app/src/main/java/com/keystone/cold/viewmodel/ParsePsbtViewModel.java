@@ -14,7 +14,10 @@ import com.googlecode.protobuf.format.JsonFormat;
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
+import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
+import com.keystone.coinlib.path.AddressIndex;
+import com.keystone.coinlib.path.CoinPath;
 import com.keystone.coinlib.utils.Account;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
@@ -189,6 +192,16 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
             return null;
         }
         return accountEntity;
+    }
+
+    protected boolean isChangeAddress(String path) {
+        try {
+            AddressIndex addressIndex = CoinPath.parsePath(path);
+            return !addressIndex.getParent().isExternal();
+        } catch (InvalidPathException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     protected abstract void initIsMainNet(String psbtBase64) throws Exception;

@@ -56,7 +56,6 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
     private static final String KEY_TX_ID = "txid";
     protected TxEntity txEntity;
     protected WatchWallet watchWallet;
-    private List<String> changeAddress = new ArrayList<>();
     private boolean isMultiSig;
 
     @Override
@@ -79,10 +78,6 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
         String walletName = watchWallet.getWalletName(mActivity);
         mBinding.txDetail.watchWallet.setText(walletName);
 
-        ViewModelProviders.of(mActivity)
-                .get(GlobalViewModel.class)
-                .getChangeAddress()
-                .observe(this, address -> this.changeAddress = address);
         CoinListViewModel viewModel = ViewModelProviders.of(mActivity).get(CoinListViewModel.class);
         viewModel.loadTx(data.getString(KEY_TX_ID)).observe(this, txEntity -> {
             mBinding.setTx(txEntity);
@@ -90,7 +85,14 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
             isMultiSig = txEntity.getSignId().equals(PSBT_MULTISIG_SIGN_ID);
             displaySignResult(txEntity);
             refreshFromList();
-            refreshReceiveList();
+            ViewModelProviders.of(mActivity)
+                    .get(GlobalViewModel.class)
+                    .getChangeAddress()
+                    .observe(this, address -> {
+                        if (address != null) {
+                            refreshReceiveList(address);
+                        }
+                    });
             refreshSignStatus();
             mBinding.txDetail.exportToSdcard.setOnClickListener(v -> showExportDialog());
         });
@@ -141,12 +143,12 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
         }
         TransactionItemAdapter adapter
                 = new TransactionItemAdapter(mActivity,
-                TransactionItem.ItemType.INPUT, changeAddress);
+                TransactionItem.ItemType.INPUT);
         adapter.setItems(items);
         mBinding.txDetail.fromList.setAdapter(adapter);
     }
 
-    private void refreshReceiveList() {
+    private void refreshReceiveList(List<String> changeAddress) {
         String to = txEntity.getTo();
         List<TransactionItem> items = new ArrayList<>();
         try {

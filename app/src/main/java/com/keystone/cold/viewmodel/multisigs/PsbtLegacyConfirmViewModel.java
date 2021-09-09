@@ -535,7 +535,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                         String hdPath = item.getString("path");
                         String xfp = item.getString("masterFingerprint");
                         String rootXfp = new GetMasterFingerprintCallable().call();
-                        if (xfp.equalsIgnoreCase(rootXfp)) {
+                        if (xfp.equalsIgnoreCase(rootXfp) && isChangeAddress(hdPath)) {
                             if (!hdPath.startsWith(wallet.getExPubPath())) {
                                 hdPath = wallet.getExPubPath() + hdPath.substring(1);
                             }

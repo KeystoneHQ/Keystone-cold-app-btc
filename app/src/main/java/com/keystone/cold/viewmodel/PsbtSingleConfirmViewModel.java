@@ -505,7 +505,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
                             hdPath = account.getPath().toLowerCase() + hdPath.substring(1);
                         }
 
-                        if (match) {
+                        if (match && isChangeAddress(hdPath)) {
                             out.put("isChange", true);
                             out.put("changeAddressPath", hdPath);
 
