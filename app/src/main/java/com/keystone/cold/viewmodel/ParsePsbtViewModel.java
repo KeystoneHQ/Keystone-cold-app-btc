@@ -196,11 +196,15 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
     }
 
     protected boolean isChangeAddress(String path) {
-        try {
-            AddressIndex addressIndex = CoinPath.parsePath(path);
-            return !addressIndex.getParent().isExternal();
-        } catch (InvalidPathException e) {
-            e.printStackTrace();
+        if (!TextUtils.isEmpty(path) && path.length() > 2) {
+            path = path.substring(2);
+            path = path.replace("'", "");
+            String[] pathArr = path.split("/");
+            if (pathArr.length < 2) return false;
+            String change = pathArr[pathArr.length - 2];
+            if (TextUtils.equals("1", change)) {
+                return true;
+            }
         }
         return false;
     }
