@@ -19,6 +19,7 @@ import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.coinlib.path.AddressIndex;
 import com.keystone.coinlib.path.CoinPath;
 import com.keystone.coinlib.utils.Account;
+import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.Utilities;
@@ -121,7 +122,7 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
         }
         boolean isMultisig = adaptTx.optBoolean("multisig");
         TransactionProtoc.SignTransaction.Builder builder = TransactionProtoc.SignTransaction.newBuilder();
-        builder.setCoinCode(Utilities.currentCoin(getApplication()).coinCode())
+        builder.setCoinCode((isMainNet ? Coins.BTC : Coins.XTN).coinCode())
                 .setSignId(isMultisig ? "PSBT_MULTISIG" : signId)
                 .setTimestamp(generateAutoIncreaseId())
                 .setDecimal(8);
