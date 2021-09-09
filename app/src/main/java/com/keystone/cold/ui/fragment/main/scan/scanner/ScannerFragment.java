@@ -183,12 +183,12 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void navigate(int id) {
-        handler.post(() -> super.navigate(id));
+        AppExecutors.getInstance().mainThread().execute(() -> super.navigate(id));
     }
 
     @Override
     public void navigate(int id, Bundle data) {
-        handler.post(() -> super.navigate(id, data));
+        AppExecutors.getInstance().mainThread().execute(() -> super.navigate(id, data));
     }
 
     @Override
