@@ -172,6 +172,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     public void navigate(@IdRes int id, Bundle data) {
         try {
+            dismissLoading();
             NavHostFragment.findNavController(this).navigate(id, data);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -191,6 +192,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     }
 
     public void alert(String title, String message, Runnable run) {
+        dismissLoading();
         if (dialog != null){
             dialog.dismiss();
         }
