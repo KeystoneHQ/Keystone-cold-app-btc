@@ -122,7 +122,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="32dp"
-            android:src="@drawable/plus" />
+            android:src="@drawable/plus"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/empty"
