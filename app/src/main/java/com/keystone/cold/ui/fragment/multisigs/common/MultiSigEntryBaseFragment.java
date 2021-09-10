@@ -133,6 +133,7 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
             binding.subTitle.setVisibility(View.GONE);
             binding.arrowRight.setVisibility(View.VISIBLE);
             binding.setModeId(items.get(position).first);
+            binding.divider.setVisibility(View.GONE);
             binding.setCallback(MultiSigEntryBaseFragment.this);
         }
 
