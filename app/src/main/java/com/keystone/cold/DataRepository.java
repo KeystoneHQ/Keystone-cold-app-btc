@@ -177,12 +177,7 @@ public class DataRepository {
     }
 
     public Long insertCasaSignature(CasaSignature casaSignature) {
-        String txId = casaSignature.getTxId();
-        CasaSignature loadSyncbTx = mDb.casaDao().loadSync(txId);
-        if (loadSyncbTx != null) {
-            mDb.casaDao().deleteTx(txId);
-        }
-        return mDb.casaDao().insert(casaSignature);
+        return mDb.casaDao().removeAndInsert(casaSignature);
     }
 
     public void insertCoins(List<CoinEntity> coins) {
