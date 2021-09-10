@@ -11,6 +11,8 @@ import androidx.room.PrimaryKey;
 
 import com.keystone.cold.model.Tx;
 
+import java.util.Objects;
+
 @Entity(tableName = "casa_signature", indices = {@Index(value = "id", unique = true)})
 public class CasaSignature implements Tx, FilterableItem {
     @PrimaryKey(autoGenerate = true)
@@ -24,6 +26,7 @@ public class CasaSignature implements Tx, FilterableItem {
     private String to;
     private String fee;
     private String memo;
+        private String belongTo;
 
     public String getTxId() {
         return txId;
@@ -134,7 +137,11 @@ public class CasaSignature implements Tx, FilterableItem {
 
     @Override
     public String getBelongTo() {
-        return "";
+        return belongTo;
+    }
+
+    public void setBelongTo(String belongTo) {
+        this.belongTo = belongTo;
     }
 
     @Override
@@ -162,5 +169,10 @@ public class CasaSignature implements Tx, FilterableItem {
                 || to.toLowerCase().contains(s)
                 || txId.toLowerCase().contains(s)
                 || memo.toLowerCase().contains(s);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, to);
     }
 }

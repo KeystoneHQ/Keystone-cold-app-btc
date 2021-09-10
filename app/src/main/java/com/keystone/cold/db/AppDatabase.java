@@ -156,7 +156,8 @@ public abstract class AppDatabase extends RoomDatabase {
                         "`from` TEXT  , " +
                         "`to` TEXT  , " +
                         "`fee` TEXT  , " +
-                        "`memo` TEXT )");
+                        "`memo` TEXT  , " +
+                        "`belongTo` TEXT )");
                 database.execSQL("CREATE UNIQUE INDEX index_casa_signature_id ON casa_signature (id)");
                 database.setTransactionSuccessful();
             } finally {

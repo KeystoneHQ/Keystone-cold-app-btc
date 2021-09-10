@@ -243,6 +243,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
         sig.setAmount(nf.format(transaction.getAmount()) + " " + transaction.getUnit());
         sig.setFee(nf.format(transaction.getFee()) + " BTC");
         sig.setMemo(transaction.getMemo());
+        sig.setBelongTo(mRepository.getBelongTo());
         String signStatus = null;
         if (object.has("btcTx")) {
             signStatus = object.getJSONObject("btcTx").getString("signStatus");

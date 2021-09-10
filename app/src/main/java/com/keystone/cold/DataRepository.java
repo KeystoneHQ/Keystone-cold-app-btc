@@ -244,10 +244,7 @@ public class DataRepository {
         mDb.txDao().deleteHidden();
         mDb.addressDao().deleteHidden();
         mDb.whiteListDao().deleteHidden();
-    }
-
-    public void clearCasaDao() {
-        mDb.casaDao().clear();
+        mDb.casaDao().deleteHidden();
     }
 
     public long addMultisigWallet(MultiSigWalletEntity entity) {
