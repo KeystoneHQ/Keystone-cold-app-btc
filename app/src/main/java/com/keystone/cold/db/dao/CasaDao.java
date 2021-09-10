@@ -39,11 +39,17 @@ public interface CasaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Long insert(CasaSignature tx);
 
+    @Query("DELETE FROM casa_signature WHERE txId = :txId")
+    int deleteTx(String txId);
+
     @Query("SELECT * FROM casa_signature WHERE id = :id")
     LiveData<CasaSignature> load(long id);
 
-    @Query("SELECT * FROM casa_signature WHERE id = :id")
-    CasaSignature loadSync(int id);
+    @Query("SELECT * FROM casa_signature WHERE txId = :txId")
+    CasaSignature loadSync(String txId);
+
+    @Query("SELECT * FROM casa_signature WHERE belongTo = :belongTo")
+    LiveData<List<CasaSignature>> loadCasaTxs(String belongTo);
 
     @Query("DELETE FROM casa_signature WHERE belongTo = 'hidden'")
     int deleteHidden();

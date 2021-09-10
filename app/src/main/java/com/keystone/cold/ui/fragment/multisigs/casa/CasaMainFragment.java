@@ -29,7 +29,6 @@ import com.keystone.cold.ui.fragment.main.scan.scanner.scanstate.CasaScannerStat
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +37,6 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     public static final String TAG = "MultisigEntry";
     private SignatureAdapter signatureAdapter;
     private CasaCallback casaCallback;
-    private boolean isShowSignature;
     private int position;
 
     private LiveData<List<CasaSignature>> casaSignatureLiveData;
@@ -52,7 +50,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     protected void init(View view) {
         super.init(view);
         Utilities.setMultiSigMode(mActivity, MultiSigMode.CASA.getModeId());
-        casaSignatureLiveData = casaMultiSigViewModel.allCasaSignatures();
+        casaSignatureLiveData = casaMultiSigViewModel.loadCasaTxs(Utilities.getCurrentBelongTo(mActivity));
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
         mBinding.toolbarModeSelection.setOnClickListener(l -> {
@@ -65,61 +63,15 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
             navigate(R.id.action_to_psbtSignedCasaFragment, bundle);
         };
         signatureAdapter = new SignatureAdapter(mActivity);
-        signatureAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                if (isShowSignature) {
-                    if (position == 0) {
-                        mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
-                        mBinding.signaturesList.setVisibility(View.GONE);
-                    } else {
-                        mBinding.signaturesEmpty.setVisibility(View.GONE);
-                        mBinding.signaturesList.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
         mBinding.tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 position = tab.getPosition();
-                if (position == 0) {
-                    isShowSignature = false;
-                    mBinding.operations.setVisibility(View.VISIBLE);
-                    mBinding.signaturesList.setVisibility(View.GONE);
-                    mBinding.signaturesEmpty.setVisibility(View.GONE);
-                } else {
-                    isShowSignature = true;
-                    casaSignatureLiveData.observe(CasaMainFragment.this, casaSignatures -> {
-                        casaSignatures = new ArrayList<>(casaSignatures);
-                        signatureAdapter.setItems(casaSignatures);
-                        if (casaSignatures.isEmpty()) {
-                            mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
-                            mBinding.operations.setVisibility(View.GONE);
-                            mBinding.signaturesList.setVisibility(View.GONE);
-                        } else {
-                            mBinding.signaturesList.setAdapter(signatureAdapter);
-                            mBinding.signaturesList.setVisibility(View.VISIBLE);
-                            mBinding.operations.setVisibility(View.GONE);
-                            mBinding.signaturesEmpty.setVisibility(View.GONE);
-                        }
-                    });
-                }
+                initView();
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                if (position == 0) {
-                    mBinding.operations.setVisibility(View.GONE);
-                } else {
-                    if (casaSignatureLiveData.getValue() == null || casaSignatureLiveData.getValue().isEmpty()) {
-                        mBinding.signaturesEmpty.setVisibility(View.GONE);
-                    } else {
-                        mBinding.signaturesList.setVisibility(View.GONE);
-                    }
-                }
             }
 
             @Override
@@ -133,7 +85,36 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
     @Override
     public void onResume() {
         super.onResume();
+        restoreView();
+    }
+
+    private void restoreView(){
         Objects.requireNonNull(mBinding.tab.getTabAt(position)).select();
+        initView();
+    }
+
+    private void initView() {
+        if (position == 0) {
+            mBinding.signaturesList.setVisibility(View.GONE);
+            mBinding.signaturesEmpty.setVisibility(View.GONE);
+            mBinding.operations.setVisibility(View.VISIBLE);
+        } else if (position == 1) {
+            mBinding.operations.setVisibility(View.GONE);
+            casaSignatureLiveData.observe(CasaMainFragment.this, casaSignatures -> {
+                Collections.reverse(casaSignatures);
+                if (casaSignatures.isEmpty()) {
+                    mBinding.operations.setVisibility(View.GONE);
+                    mBinding.signaturesList.setVisibility(View.GONE);
+                    mBinding.signaturesEmpty.setVisibility(View.VISIBLE);
+                } else {
+                    signatureAdapter.setItems(casaSignatures);
+                    mBinding.signaturesList.setAdapter(signatureAdapter);
+                    mBinding.operations.setVisibility(View.GONE);
+                    mBinding.signaturesEmpty.setVisibility(View.GONE);
+                    mBinding.signaturesList.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     @Override
@@ -175,9 +156,6 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         @Override
         protected void onBindItem(MultisigCasaListItemBinding binding, CasaSignature item) {
             String txid = item.getTxId();
-            if (txid.startsWith("unknown_txid_")) {
-                txid = String.valueOf(item.id);
-            }
             binding.setCs(item);
             binding.txid.setText(txid);
             binding.setCasaCallback(casaCallback);

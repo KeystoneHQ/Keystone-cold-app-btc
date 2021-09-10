@@ -164,6 +164,10 @@ public class DataRepository {
         return mDb.casaDao().load(Long.parseLong(id));
     }
 
+    public LiveData<List<CasaSignature>> loadCasaTxs(String belongTo) {
+        return mDb.casaDao().loadCasaTxs(belongTo);
+    }
+
     public TxEntity loadTxSync(String txId) {
         return mDb.txDao().loadSync(txId);
     }
@@ -173,6 +177,11 @@ public class DataRepository {
     }
 
     public Long insertCasaSignature(CasaSignature casaSignature) {
+        String txId = casaSignature.getTxId();
+        CasaSignature loadSyncbTx = mDb.casaDao().loadSync(txId);
+        if (loadSyncbTx != null) {
+            mDb.casaDao().deleteTx(txId);
+        }
         return mDb.casaDao().insert(casaSignature);
     }
 

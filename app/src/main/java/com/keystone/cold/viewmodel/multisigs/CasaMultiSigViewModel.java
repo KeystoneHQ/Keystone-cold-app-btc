@@ -32,8 +32,8 @@ public class CasaMultiSigViewModel extends ViewModelBase {
         repo = ((MainApplication) application).getRepository();
     }
 
-    public LiveData<List<CasaSignature>> allCasaSignatures() {
-        return repo.loadCasaSignatures();
+    public LiveData<List<CasaSignature>> loadCasaTxs(String belongto) {
+        return repo.loadCasaTxs(belongto);
     }
 
     public List<CasaSignature> allCasaSignaturesSync() {

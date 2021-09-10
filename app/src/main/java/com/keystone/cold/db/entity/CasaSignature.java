@@ -3,7 +3,6 @@ package com.keystone.cold.db.entity;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
@@ -26,7 +25,7 @@ public class CasaSignature implements Tx, FilterableItem {
     private String to;
     private String fee;
     private String memo;
-        private String belongTo;
+    private String belongTo;
 
     public String getTxId() {
         return txId;
@@ -156,6 +155,7 @@ public class CasaSignature implements Tx, FilterableItem {
                 ", to='" + to + '\'' +
                 ", fee='" + fee + '\'' +
                 ", memo='" + memo + '\'' +
+                ", belongTo='" + belongTo + '\'' +
                 '}';
     }
 
@@ -169,6 +169,15 @@ public class CasaSignature implements Tx, FilterableItem {
                 || to.toLowerCase().contains(s)
                 || txId.toLowerCase().contains(s)
                 || memo.toLowerCase().contains(s);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CasaSignature casaSignature = (CasaSignature) o;
+        return Objects.equals(from, casaSignature.from) &&
+                Objects.equals(to, casaSignature.to);
     }
 
     @Override
