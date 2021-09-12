@@ -17,6 +17,9 @@
 
 package com.keystone.cold.viewmodel;
 
+import static com.keystone.coinlib.ExtendPubkeyFormat.convertExtendPubkey;
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_ADDRESS_FORMAT;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -67,9 +70,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.keystone.coinlib.ExtendPubkeyFormat.convertExtendPubkey;
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_ADDRESS_FORMAT;
 
 public class GlobalViewModel extends AndroidViewModel {
 
@@ -336,6 +336,9 @@ public class GlobalViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<String>> getChangeAddress() {
+        if (changeAddress.getValue() != null) {
+            return changeAddress;
+        }
         deriveChangeAddress();
         return changeAddress;
     }
