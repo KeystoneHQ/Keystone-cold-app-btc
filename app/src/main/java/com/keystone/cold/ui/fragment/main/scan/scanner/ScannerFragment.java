@@ -188,7 +188,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void navigate(int id, Bundle data) {
-        handler.post(() -> super.navigate(id));
+        handler.post(() -> super.navigate(id, data));
     }
 
     @Override
