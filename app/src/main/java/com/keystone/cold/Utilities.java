@@ -228,11 +228,11 @@ public class Utilities {
         getPrefs(context).edit().putString(SETTING_MULTI_SIG_MODE, modeId).apply();
     }
 
-    public static int getCasaSetUpFromLegacy(Context context) {
+    public static int getCasaSetUpVisitedTime(Context context) {
         return getPrefs(context).getInt(CASA_GUIDE_VISITED_TIME, 0);
     }
 
-    public static void setCasaSetUpFromLegacy(Context context, int time) {
+    public static void setCasaSetUpVisitedTime(Context context, int time) {
         getPrefs(context).edit().putInt(CASA_GUIDE_VISITED_TIME, time).apply();
     }
 }

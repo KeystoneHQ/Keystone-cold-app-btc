@@ -124,12 +124,11 @@
 
                 <TextView
                     android:id="@+id/path"
-                    android:layout_marginTop="3dp"
+                    android:layout_marginVertical="3dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Path: m"
-                    android:textColor="@color/white40"
-                    android:textSize="20sp" />
+                    android:textColor="@color/white40" />
 
                 <Button
                     android:id="@+id/done"

@@ -65,7 +65,7 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
 
     @Override
     protected void init(View view) {
-        Bundle data = Objects.requireNonNull(getArguments());
+        Bundle data = requireArguments();
         mBinding.toolbar.setNavigationOnClickListener(v -> {
             if (data.getBoolean(KEY_DUPLICATE_TX)) {
                 NavHostFragment.findNavController(this)
@@ -170,10 +170,14 @@ public class SignedTxFragment extends BaseFragment<SignedTxBinding> {
         } catch (JSONException e) {
             return;
         }
-        TransactionItemAdapter adapter =
-                new TransactionItemAdapter(mActivity,
-                        TransactionItem.ItemType.OUTPUT,
-                        changeAddress);
+        TransactionItemAdapter adapter;
+        if (isMultiSig) {
+            adapter = new TransactionItemAdapter(mActivity,
+                            TransactionItem.ItemType.OUTPUT);
+        } else {
+            adapter = new TransactionItemAdapter(mActivity,
+                    TransactionItem.ItemType.OUTPUT, changeAddress);
+        }
         adapter.setItems(items);
         mBinding.txDetail.toList.setAdapter(adapter);
     }

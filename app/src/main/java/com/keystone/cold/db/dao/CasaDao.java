@@ -23,6 +23,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import com.keystone.cold.db.entity.CasaSignature;
 
@@ -39,12 +40,34 @@ public interface CasaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Long insert(CasaSignature tx);
 
+    @Query("DELETE FROM casa_signature WHERE txId = :txId")
+    int deleteTx(String txId);
+
     @Query("SELECT * FROM casa_signature WHERE id = :id")
     LiveData<CasaSignature> load(long id);
 
-    @Query("SELECT * FROM casa_signature WHERE id = :id")
-    CasaSignature loadSync(int id);
+    @Query("SELECT * FROM casa_signature WHERE txId = :txId")
+    CasaSignature loadSync(String txId);
 
-    @Query("DELETE FROM casa_signature")
-    void clear();
+    @Query("SELECT * FROM casa_signature WHERE belongTo = :belongTo")
+    LiveData<List<CasaSignature>> loadCasaTxs(String belongTo);
+
+    @Query("DELETE FROM casa_signature WHERE belongTo = 'hidden'")
+    int deleteHidden();
+
+    /**
+     * Remove duplicate entries in the datcasa_signature table,abase, and then insert new ones
+     *
+     * @param casaSignature casaSignature
+     * @return id
+     */
+    @Transaction
+    default Long removeAndInsert(CasaSignature casaSignature) {
+        String txId = casaSignature.getTxId();
+        CasaSignature loadSyncbTx = loadSync(txId);
+        if (loadSyncbTx != null) {
+            deleteTx(txId);
+        }
+        return insert(casaSignature);
+    }
 }

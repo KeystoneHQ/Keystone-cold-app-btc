@@ -45,7 +45,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
                 navigate(R.id.action_to_legacyMultisigFragment);
             } else {
                 Bundle bundle = new Bundle();
-                bundle.putString("from", "MultiSigPreferenceFragment");
+                bundle.putBoolean("isGuide", true);
                 navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
             }
         });

@@ -80,6 +80,8 @@ public class CasaScannerState extends ScannerState {
                 if (jsonObject != null) {
                     psbtCasaConfirmViewModel.getObservableSignTx().postValue(null);
                     psbtCasaConfirmViewModel.getObservableSignTx().removeObservers(mActivity);
+                    psbtCasaConfirmViewModel.getObservableCasaSignature().postValue(null);
+                    psbtCasaConfirmViewModel.getObservableCasaSignature().removeObservers(mActivity);
                     mFragment.dismissLoading();
                     Bundle bundle = new Bundle();
                     bundle.putString("psbt_base64", psbtB64);

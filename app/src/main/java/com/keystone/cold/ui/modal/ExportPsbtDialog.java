@@ -63,7 +63,11 @@ public class ExportPsbtDialog {
         LegacyMultiSigViewModel vm = ViewModelProviders.of(activity).get(LegacyMultiSigViewModel.class);
         String fileName;
         if (signed) {
-            fileName = "signed_" + txId.substring(0, 8) + ".psbt";
+            if (txId.startsWith("unknown_txid")) {
+                fileName = "signed_unknown_" + txId.substring(13) + ".psbt";
+            } else {
+                fileName = "signed_" + txId.substring(0, 8) + ".psbt";
+            }
         } else {
             if (txId.startsWith("unknown_txid")) {
                 fileName = "part_" + vm.getXfp() + ".psbt";

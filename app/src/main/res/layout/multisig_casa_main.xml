@@ -48,13 +48,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:drawableEnd="@drawable/arrow_right"
-                    android:drawableTint="@color/colorAccent"
                     android:gravity="center"
                     android:text="@string/multisig_casa"
                     android:textColor="@color/white"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:drawablePadding="4dp"
+                    app:drawableEndCompat="@drawable/arrow_right"
+                    app:drawableTint="@color/colorAccent" />
             </FrameLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -172,6 +173,7 @@
             android:textColor="@color/white"
             android:gravity="center"
             android:paddingBottom="200dp"
+            android:layout_below="@+id/tab"
             android:text="@string/no_signatures"
             android:visibility="gone" />
 

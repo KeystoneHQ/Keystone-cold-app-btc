@@ -164,6 +164,10 @@ public class DataRepository {
         return mDb.casaDao().load(Long.parseLong(id));
     }
 
+    public LiveData<List<CasaSignature>> loadCasaTxs(String belongTo) {
+        return mDb.casaDao().loadCasaTxs(belongTo);
+    }
+
     public TxEntity loadTxSync(String txId) {
         return mDb.txDao().loadSync(txId);
     }
@@ -173,7 +177,7 @@ public class DataRepository {
     }
 
     public Long insertCasaSignature(CasaSignature casaSignature) {
-        return mDb.casaDao().insert(casaSignature);
+        return mDb.casaDao().removeAndInsert(casaSignature);
     }
 
     public void insertCoins(List<CoinEntity> coins) {
@@ -244,10 +248,7 @@ public class DataRepository {
         mDb.txDao().deleteHidden();
         mDb.addressDao().deleteHidden();
         mDb.whiteListDao().deleteHidden();
-    }
-
-    public void clearCasaDao() {
-        mDb.casaDao().clear();
+        mDb.casaDao().deleteHidden();
     }
 
     public long addMultisigWallet(MultiSigWalletEntity entity) {

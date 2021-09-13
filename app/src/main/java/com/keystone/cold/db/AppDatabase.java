@@ -29,6 +29,8 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.keystone.cold.AppExecutors;
+import com.keystone.cold.MainApplication;
+import com.keystone.cold.Utilities;
 import com.keystone.cold.db.dao.AccountDao;
 import com.keystone.cold.db.dao.AddressDao;
 import com.keystone.cold.db.dao.CasaDao;
@@ -49,7 +51,7 @@ import com.keystone.cold.db.entity.WhiteListEntity;
 @Database(entities = {CoinEntity.class, AddressEntity.class,
         TxEntity.class, WhiteListEntity.class,
         AccountEntity.class, MultiSigWalletEntity.class,
-        MultiSigAddressEntity.class, CasaSignature.class}, version = 6)
+        MultiSigAddressEntity.class, CasaSignature.class}, version = 7)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "keystone-db";
     private static AppDatabase sInstance;
@@ -102,6 +104,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 })
                 .addMigrations(MIGRATION_1_5)
                 .addMigrations(MIGRATION_5_6)
+                .addMigrations(MIGRATION_6_7)
                 .fallbackToDestructiveMigration()
                 .build();
     }
@@ -158,6 +161,19 @@ public abstract class AppDatabase extends RoomDatabase {
                         "`fee` TEXT  , " +
                         "`memo` TEXT )");
                 database.execSQL("CREATE UNIQUE INDEX index_casa_signature_id ON casa_signature (id)");
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+    private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                String currentBelongTo = Utilities.getCurrentBelongTo(MainApplication.getApplication());
+                database.execSQL("ALTER TABLE casa_signature ADD COLUMN belongTo TEXT DEFAULT " + currentBelongTo);
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

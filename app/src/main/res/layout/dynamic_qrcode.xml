@@ -45,7 +45,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:visibility="visible"
-                android:padding="20dp"
+                android:padding="10dp"
                 tools:ignore="ContentDescription" />
 
             <ProgressBar

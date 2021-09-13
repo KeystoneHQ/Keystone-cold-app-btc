@@ -219,7 +219,11 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     public void showLoading(String tag) {
         AppExecutors.getInstance().mainThread().execute(() -> {
-            progressModalDialog = ProgressModalDialog.newInstance();
+            if (progressModalDialog == null) {
+                progressModalDialog = ProgressModalDialog.newInstance();
+            } else {
+                progressModalDialog.dismiss();
+            }
             progressModalDialog.show(mActivity.getSupportFragmentManager(), tag);
         });
     }

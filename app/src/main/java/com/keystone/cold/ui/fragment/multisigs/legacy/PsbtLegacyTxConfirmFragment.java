@@ -37,7 +37,6 @@ import com.keystone.cold.ui.modal.SigningDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
-import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
@@ -176,14 +175,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
 
     private void refreshUI() {
         refreshFromList();
-        ViewModelProviders.of(mActivity)
-                .get(GlobalViewModel.class)
-                .getChangeAddress()
-                .observe(this, address -> {
-                    if (address != null) {
-                        refreshReceiveList(address);
-                    }
-                });
+        refreshReceiveList();
         refreshSignStatus();
         checkBtcFee();
     }
@@ -214,7 +206,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
 
     }
 
-    private void refreshReceiveList(List<String> changeAddress) {
+    private void refreshReceiveList() {
         String to = txEntity.getTo();
         List<TransactionItem> items = new ArrayList<>();
         try {
@@ -237,8 +229,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
         }
         TransactionItemAdapter adapter
                 = new TransactionItemAdapter(mActivity,
-                TransactionItem.ItemType.OUTPUT,
-                changeAddress);
+                TransactionItem.ItemType.OUTPUT);
         adapter.setItems(items);
         mBinding.txDetail.toList.setVisibility(View.VISIBLE);
         mBinding.txDetail.toList.setAdapter(adapter);

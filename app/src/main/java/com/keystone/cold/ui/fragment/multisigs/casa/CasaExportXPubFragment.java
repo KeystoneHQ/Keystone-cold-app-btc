@@ -5,7 +5,6 @@ import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
 import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -44,12 +43,10 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
                 navigateUp();
                 return;
             }
-            if (TextUtils.equals(bundle.getString("from"), "MultiSigPreferenceFragment")) {
-                navigate(R.id.action_to_casaMultisigFragment_from_multiSigPreferenceFragment);
-            } else if (TextUtils.equals(bundle.getString("from"), "MultisigMainFragment")) {
-                int time = Utilities.getCasaSetUpFromLegacy(mActivity);
-                Utilities.setCasaSetUpFromLegacy(mActivity, ++time);
-                navigate(R.id.action_to_casaMultisigFragment_from_multisigMainFragment);
+            int time = Utilities.getCasaSetUpVisitedTime(mActivity);
+            if (bundle.containsKey("isGuide") && bundle.getBoolean("isGuide", false)) {
+                Utilities.setCasaSetUpVisitedTime(mActivity, ++time);
+                navigate(R.id.action_to_casaMultisigFragment);
             } else {
                 navigateUp();
             }

@@ -1,5 +1,8 @@
 package com.keystone.cold.ui.fragment.main.scan.scanner.scanstate;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.ui.fragment.setup.WebAuthResultFragment.WEB_AUTH_DATA;
+
 import android.os.Bundle;
 import android.util.Log;
 
@@ -30,9 +33,6 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.ui.fragment.setup.WebAuthResultFragment.WEB_AUTH_DATA;
 
 public class AssetScannerState extends ScannerState {
     private static final String TAG = "AssetScannerState";
@@ -84,7 +84,7 @@ public class AssetScannerState extends ScannerState {
             return true;
         } else if (e instanceof WatchWalletNotMatchException) {
             mFragment.alert(getString(R.string.error_hint),
-                    getString(R.string.unknown_qrcode,WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
+                    getString(R.string.unknown_qrcode, WatchWallet.getWatchWallet(mActivity).getWalletName(mActivity)));
             return true;
         } else if (e instanceof UnknowQrCodeException) {
             mFragment.alert(getString(R.string.unsupported_qrcode));
@@ -177,6 +177,8 @@ public class AssetScannerState extends ScannerState {
                 if (jsonObject != null) {
                     psbtSigleTxConfirmViewModel.getObservableSignTx().postValue(null);
                     psbtSigleTxConfirmViewModel.getObservableSignTx().removeObservers(mActivity);
+                    psbtSigleTxConfirmViewModel.getObservableTx().postValue(null);
+                    psbtSigleTxConfirmViewModel.getObservableTx().removeObservers(mActivity);
                     mFragment.dismissLoading();
                     Bundle bundle = new Bundle();
                     bundle.putString("psbt_base64", psbtB64);

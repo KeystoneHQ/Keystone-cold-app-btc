@@ -12,7 +12,6 @@ import com.keystone.cold.R;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
-import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.keystone.cold.viewmodel.multisigs.PsbtLegacyConfirmViewModel;
@@ -99,6 +98,8 @@ public class LegacyScannerState extends ScannerState {
                 if (jsonObject != null) {
                     psbtLegacyConfirmViewModell.getObservableSignTx().postValue(null);
                     psbtLegacyConfirmViewModell.getObservableSignTx().removeObservers(mActivity);
+                    psbtLegacyConfirmViewModell.getObservableTx().postValue(null);
+                    psbtLegacyConfirmViewModell.getObservableTx().removeObservers(mActivity);
                     mFragment.dismissLoading();
                     Bundle bundle = new Bundle();
                     bundle.putString("psbt_base64", psbtB64);

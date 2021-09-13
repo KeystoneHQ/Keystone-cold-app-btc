@@ -188,7 +188,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void navigate(int id, Bundle data) {
-        handler.post(() -> super.navigate(id, data));
+        handler.post(() -> super.navigate(id));
     }
 
     @Override
@@ -202,7 +202,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 }
             } catch (Exception e) {
                 if (!scannerState.handleException(e)) {
-                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                    alert(mActivity.getString(R.string.scan_failed), mActivity.getString(R.string.unsupported_qrcode));
                 }
             }
         });
@@ -220,7 +220,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 }
             } catch (Exception e) {
                 if (!scannerState.handleException(e)) {
-                    alert(getString(R.string.scan_failed), getString(R.string.unsupported_qrcode));
+                    alert(mActivity.getString(R.string.scan_failed), mActivity.getString(R.string.unsupported_qrcode));
                 }
             }
         });
@@ -265,7 +265,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void handleProgressPercent(double percent) {
-        mActivity.runOnUiThread(() -> mBinding.scanProgress.setText(getString(R.string.scan_progress, (int) Math.floor((percent * 100)) + "%")));
+        mActivity.runOnUiThread(() -> mBinding.scanProgress.setText(mActivity.getString(R.string.scan_progress, (int) Math.floor((percent * 100)) + "%")));
     }
 
     @Override

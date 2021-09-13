@@ -235,7 +235,6 @@ public class SetupVaultViewModel extends AndroidViewModel {
             if (success) {
                 vaultId = new GetVaultIdCallable().call();
                 deleteHiddenVaultData();
-                mRepository.clearCasaDao();
                 password = null;
                 signature = null;
                 vaultCreateState.postValue(VAULT_STATE_CREATED);
