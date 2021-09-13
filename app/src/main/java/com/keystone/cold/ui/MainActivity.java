@@ -194,7 +194,7 @@ public class MainActivity extends FullScreenActivity {
                     mNavController.navigate(R.id.action_to_home);
                     break;
                 case R.id.drawer_multisig:
-                    mNavController.navigateUp();
+                    mNavController.navigate(R.id.action_to_home);
                     if (Utilities.hasMultiSigMode(MainActivity.this)) {
                         if (Utilities.getMultiSigMode(MainActivity.this).equals(MultiSigMode.LEGACY.getModeId())) {
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment);
@@ -206,11 +206,11 @@ public class MainActivity extends FullScreenActivity {
                     }
                     break;
                 case R.id.drawer_settings:
-                    mNavController.navigateUp();
+                    mNavController.navigate(R.id.action_to_home);
                     mNavController.navigate(R.id.action_to_settingFragment);
                     break;
                 case R.id.drawer_about:
-                    mNavController.navigateUp();
+                    mNavController.navigate(R.id.action_to_home);
                     mNavController.navigate(R.id.action_to_aboutFragment);
                     break;
 
