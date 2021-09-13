@@ -13,7 +13,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.keystone.cold.R;
@@ -88,7 +87,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         restoreView();
     }
 
-    private void restoreView(){
+    private void restoreView() {
         Objects.requireNonNull(mBinding.tab.getTabAt(position)).select();
         initView();
     }
@@ -101,7 +100,7 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         } else if (position == 1) {
             mBinding.operations.setVisibility(View.GONE);
             casaSignatureLiveData.observe(CasaMainFragment.this, casaSignatures -> {
-                Collections.reverse(casaSignatures);
+                casaSignatures.sort((t0, t1) -> (int) (t1.getId() - t0.getId()));
                 if (casaSignatures.isEmpty()) {
                     mBinding.operations.setVisibility(View.GONE);
                     mBinding.signaturesList.setVisibility(View.GONE);

@@ -17,6 +17,14 @@
 
 package com.keystone.cold.ui.fragment.multisigs.legacy;
 
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS;
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_NAME;
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_PATH;
+import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_CODE;
+import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_ID;
+import static com.keystone.cold.ui.fragment.Constants.KEY_IS_CHANGE_ADDRESS;
+import static com.keystone.cold.ui.fragment.Constants.KEY_WALLET_FINGERPRINT;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -33,14 +41,6 @@ import com.keystone.cold.ui.common.BaseBindingAdapter;
 
 import java.util.List;
 import java.util.Objects;
-
-import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS;
-import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_NAME;
-import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_PATH;
-import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_CODE;
-import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_ID;
-import static com.keystone.cold.ui.fragment.Constants.KEY_IS_CHANGE_ADDRESS;
-import static com.keystone.cold.ui.fragment.Constants.KEY_WALLET_FINGERPRINT;
 
 public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmentBinding> {
 
@@ -108,7 +108,6 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
             updateAddressList(addressEntities);
         }
         address.observe(this, entities -> {
-            entities.sort((t0, t1) -> t1.getIndex() - t0.getIndex());
             addressEntities = entities;
             updateAddressList(entities);
         });

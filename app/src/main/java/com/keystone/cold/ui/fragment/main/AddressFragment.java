@@ -17,6 +17,14 @@
 
 package com.keystone.cold.ui.fragment.main;
 
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS;
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_NAME;
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_PATH;
+import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_CODE;
+import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_ID;
+import static com.keystone.cold.ui.fragment.Constants.KEY_IS_CHANGE_ADDRESS;
+import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -36,14 +44,6 @@ import com.keystone.cold.viewmodel.CoinViewModel;
 
 import java.util.List;
 import java.util.Objects;
-
-import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS;
-import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_NAME;
-import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_PATH;
-import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_CODE;
-import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_ID;
-import static com.keystone.cold.ui.fragment.Constants.KEY_IS_CHANGE_ADDRESS;
-import static com.keystone.cold.viewmodel.GlobalViewModel.getAccount;
 
 public class AddressFragment extends BaseFragment<AddressFragmentBinding> {
 
@@ -77,7 +77,7 @@ public class AddressFragment extends BaseFragment<AddressFragmentBinding> {
     private AddressAdapter mAddressAdapter;
 
     public static AddressFragment newInstance(@NonNull String coinId,
-                                       boolean isChange) {
+                                              boolean isChange) {
         AddressFragment fragment = new AddressFragment();
         Bundle args = new Bundle();
         args.putString(KEY_COIN_ID, coinId);
@@ -126,7 +126,6 @@ public class AddressFragment extends BaseFragment<AddressFragmentBinding> {
             updateAddressList(addressEntities);
         }
         address.observe(this, entities -> {
-            entities.sort((t0, t1) -> t1.getIndex() - t0.getIndex());
             addressEntities = entities;
             updateAddressList(entities);
         });
