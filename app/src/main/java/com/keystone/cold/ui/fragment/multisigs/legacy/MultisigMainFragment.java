@@ -28,6 +28,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,6 +45,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.tabs.TabLayout;
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
@@ -83,7 +85,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     private AddressAdapter receiveAdapter;
     private AddressAdapter changeAdapter;
     private ViewPagerAdapter viewPagerAdapter;
-    private int position;
+    private int position = 0;
 
     @Override
     protected int setView() {
@@ -102,6 +104,9 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
             if (w != null) {
                 isEmpty = false;
+                if (wallet != null && !TextUtils.equals(wallet.getWalletFingerPrint(), w.getWalletFingerPrint())) {
+                    position = 0;
+                }
                 wallet = w;
             } else {
                 isEmpty = true;
@@ -113,7 +118,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     @Override
     public void onPause() {
         super.onPause();
-        position = mBinding.tab.getSelectedTabPosition();
+        position = mBinding.tab.getSelectedTabPosition() == -1 ? 0 : mBinding.tab.getSelectedTabPosition();
     }
 
     private void refreshUI() {
@@ -130,6 +135,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
                 if (scan != null) scan.setVisible(false);
             }
             mBinding.walletLabelContainer.setVisibility(View.GONE);
+            position = 0;
         } else {
             mBinding.empty.setVisibility(View.GONE);
             mBinding.viewpager.setVisibility(View.VISIBLE);
@@ -168,7 +174,10 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
             viewPagerAdapter.setItems(Arrays.asList(receiveAddressRecycerView, changeAddressRecycerView));
             mBinding.viewpager.setAdapter(viewPagerAdapter);
             mBinding.tab.setupWithViewPager(mBinding.viewpager);
-            Objects.requireNonNull(mBinding.tab.getTabAt(position)).select();
+            TabLayout.Tab tabAt = mBinding.tab.getTabAt(position);
+            if (tabAt != null) {
+                tabAt.select();
+            }
         });
     }
 
@@ -296,7 +305,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
 
         @Override
         public int getCount() {
-            return list.size();
+            return title.length;
         }
 
         @Override

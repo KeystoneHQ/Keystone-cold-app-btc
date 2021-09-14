@@ -46,6 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.ActivityMainBinding;
+import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.fingerprint.FingerprintKit;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.ui.fragment.AboutFragment;
@@ -57,6 +58,7 @@ import com.keystone.cold.ui.views.FullScreenDrawer;
 import com.keystone.cold.ui.views.UpdatingHelper;
 import com.keystone.cold.update.data.UpdateManifest;
 import com.keystone.cold.viewmodel.GlobalViewModel;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import java.util.Arrays;
@@ -71,8 +73,6 @@ public class MainActivity extends FullScreenActivity {
     private ActivityMainBinding mBinding;
     private NavController mNavController;
 
-    private SharedPreferences prefs;
-
     private Toolbar toolbar;
     private final Handler mHandler = new Handler();
 
@@ -81,6 +81,8 @@ public class MainActivity extends FullScreenActivity {
 
     int currentFragmentIndex = R.id.drawer_wallet;
     private DrawerAdapter drawerAdapter;
+    private MainActivity mActivity = this;
+    private MultiSigWalletEntity multiSigWalletEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +91,11 @@ public class MainActivity extends FullScreenActivity {
         if (savedInstanceState != null) {
             currentFragmentIndex = savedInstanceState.getInt("currentFragmentIndex");
         }
+        ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class).getCurrentWallet().observe(mActivity, w -> {
+            multiSigWalletEntity = w;
+        });
         initViews();
         initNavController();
-        prefs = Utilities.getPrefs(this);
         belongTo = Utilities.getCurrentBelongTo(this);
         vaultId = Utilities.getVaultId(this);
 
@@ -195,8 +199,10 @@ public class MainActivity extends FullScreenActivity {
                     break;
                 case R.id.drawer_multisig:
                     mNavController.navigate(R.id.action_to_home);
-                    if (Utilities.hasMultiSigMode(MainActivity.this)) {
-                        if (Utilities.getMultiSigMode(MainActivity.this).equals(MultiSigMode.LEGACY.getModeId())) {
+                    if (!Utilities.hasMultiSigMode(mActivity) && multiSigWalletEntity != null) {
+                        mNavController.navigate(R.id.action_to_legacyMultisigFragment);
+                    } else if (Utilities.hasMultiSigMode(mActivity)) {
+                        if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.LEGACY.getModeId())) {
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment);
                         } else {
                             mNavController.navigate(R.id.action_to_casaMultisigFragment);
