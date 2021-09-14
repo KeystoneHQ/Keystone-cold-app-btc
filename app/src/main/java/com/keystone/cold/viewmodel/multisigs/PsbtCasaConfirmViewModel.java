@@ -285,7 +285,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
                     }
                     String path = hdPath.replace("m/", "");
                     String[] index = path.split("/");
-                    isCasaMainnet = !index[1].equals("1'");
+                    isCasaMainnet = index[1].startsWith("0");
                 }
             }
             return isCasaMainnet;
