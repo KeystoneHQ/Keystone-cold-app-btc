@@ -21,6 +21,7 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 
 import org.spongycastle.util.encoders.Hex;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SignatureException;
 import java.util.Objects;
 
@@ -62,7 +63,8 @@ public class SignViewModel extends AndroidViewModel {
                 signStatus.postValue(STATE_SIGNING);
                 AbsCoin coin = AbsCoin.newInstance("BTC");
                 Objects.requireNonNull(coin);
-                String result = coin.signMessage(message, getSigner(path));
+                String messageHex = Hex.toHexString(message.getBytes(StandardCharsets.UTF_8));
+                String result = coin.signMessage(messageHex, getSigner(path));
                 Log.d(TAG, "handleSignMessage: " + result);
                 if (!TextUtils.isEmpty(result)) {
                     signStatus.postValue(STATE_SIGN_SUCCESS);

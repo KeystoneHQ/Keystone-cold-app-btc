@@ -102,6 +102,7 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
                     signingDialog = null;
                     onSignSuccess();
                     signStatus.removeObservers(this);
+                    signViewModel.resetAllState();
                 }, 500);
             } else if (SignViewModel.STATE_SIGN_FAIL.equals(s)) {
                 if (signingDialog == null) {
@@ -114,8 +115,8 @@ public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessag
                         signingDialog.dismiss();
                     }
                     signingDialog = null;
-                    signStatus.setValue(SignViewModel.STATE_NONE);
                     signStatus.removeObservers(this);
+                    signViewModel.resetAllState();
                 }, 2000);
             }
         });
