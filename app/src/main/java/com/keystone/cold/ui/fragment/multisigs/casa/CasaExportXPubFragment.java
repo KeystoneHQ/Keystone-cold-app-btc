@@ -52,7 +52,7 @@ public class CasaExportXPubFragment extends CasaBaseFragment<MultisigCasaExportX
             }
         });
         mBinding.info.setOnClickListener(v -> showExportGuide());
-        mBinding.path.setText("Path: " + MultiSig.CASA.getPath());
+        mBinding.path.setText("(Path: " + MultiSig.CASA.getPath() + ")");
         mBinding.xpub.setText(casaMultiSigViewModel.getXPub(MultiSig.CASA));
         mBinding.exportToSdcard.setOnClickListener(v -> exportXpub());
     }

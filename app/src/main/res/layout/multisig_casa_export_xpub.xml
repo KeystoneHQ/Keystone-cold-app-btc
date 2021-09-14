@@ -120,14 +120,16 @@
                     android:layout_height="wrap_content"
                     android:text="ypub6XsyMmCyC7o9aXNfXzxwFgz3XPub9HadNzaZraotUtYjRHkJR7YXvaPmdZvvxhrYh9ajWXBJaPNjPsEPo3M4uNG9LyrrPTaYuee44qgWJW3"
                     android:textColor="@color/white40"
+                    android:textSize="13sp"
                     android:textAlignment="center" />
 
                 <TextView
                     android:id="@+id/path"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Path: m"
+                    android:textSize="13sp"
+                    android:text="(Path: m)"
                     android:textColor="@color/white40" />
 
                 <Button
