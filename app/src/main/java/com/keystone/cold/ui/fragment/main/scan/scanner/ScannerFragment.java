@@ -60,8 +60,6 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     private ScannerViewModel scannerViewModel;
     private ScannerState scannerState;
 
-    private final Handler handler = new Handler();
-
     @Override
     protected int setView() {
         return R.layout.scanner_fragment;
@@ -176,19 +174,23 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
         AppExecutors.getInstance().diskIO().execute(runnable);
     }
 
+    private void runInMainThread(Runnable runnable) {
+        AppExecutors.getInstance().mainThread().execute(runnable);
+    }
+
     @Override
     public void navigateUp() {
-        handler.post(super::navigateUp);
+        runInMainThread(super::navigateUp);
     }
 
     @Override
     public void navigate(int id) {
-        handler.post(() -> super.navigate(id));
+        runInMainThread(() -> super.navigate(id));
     }
 
     @Override
     public void navigate(int id, Bundle data) {
-        handler.post(() -> super.navigate(id, data));
+        runInMainThread(() -> super.navigate(id, data));
     }
 
     @Override
@@ -238,7 +240,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
 
     @Override
     public void alert(String title, String message, Runnable run) {
-        handler.post(() -> {
+        runInMainThread(() -> {
             super.alert(title, message, () -> {
                 if (run != null) {
                     run.run();
@@ -250,7 +252,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
     }
 
     public void alert(String title, String subTitle, String message, Runnable run) {
-        handler.post(() -> {
+        runInMainThread(() -> {
             dismissLoading();
             ModalDialog.showCommonModal(mActivity, title, subTitle, message, run);
         });
