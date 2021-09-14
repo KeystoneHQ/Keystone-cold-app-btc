@@ -19,6 +19,13 @@
 
 package com.keystone.cold.ui.fragment.multisigs.legacy;
 
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS;
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_NAME;
+import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_PATH;
+import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_CODE;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -26,13 +33,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.keystone.coinlib.utils.Coins;
@@ -40,10 +49,13 @@ import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.AddAddressBottomSheetBinding;
+import com.keystone.cold.databinding.MultisigAddressItemBinding;
 import com.keystone.cold.databinding.MultisigBottomSheetBinding;
 import com.keystone.cold.databinding.MultisigMainBinding;
+import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
+import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
@@ -52,23 +64,26 @@ import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
-
-import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMainBinding>
         implements NumberPickerCallback {
     public static final String TAG = "MultisigEntry";
 
-    private MultiSigAddressFragment[] fragments;
     private String[] title;
-    private String coinId;
     private MultiSigWalletEntity wallet;
     private boolean isEmpty;
     private Menu mMenu;
-    private FragmentManager fm;
+    private RecyclerView receiveAddressRecycerView;
+    private RecyclerView changeAddressRecycerView;
+    private AddressAdapter receiveAdapter;
+    private AddressAdapter changeAdapter;
+    private ViewPagerAdapter viewPagerAdapter;
+    private int position;
 
     @Override
     protected int setView() {
@@ -79,9 +94,11 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     protected void init(View view) {
         super.init(view);
         Utilities.setMultiSigMode(mActivity, MultiSigMode.LEGACY.getModeId());
-        coinId = Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId();
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
+        mBinding.toolbarModeSelection.setOnClickListener(l -> {
+            showMultisigSelection();
+        });
         legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
             if (w != null) {
                 isEmpty = false;
@@ -91,14 +108,18 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
             }
             refreshUI();
         });
-        mBinding.toolbarModeSelection.setOnClickListener(l -> {
-            showMultisigSelection();
-        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        position = mBinding.tab.getSelectedTabPosition();
     }
 
     private void refreshUI() {
         if (isEmpty) {
             mBinding.empty.setVisibility(View.VISIBLE);
+            mBinding.viewpager.setVisibility(View.GONE);
             mBinding.fab.hide();
             mBinding.createMultisig.setOnClickListener(v -> navigate(R.id.create_multisig_wallet));
             mBinding.importMultisig.setOnClickListener(v -> navigate(R.id.import_multisig_file_list));
@@ -108,29 +129,47 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
                 MenuItem scan = mMenu.findItem(R.id.action_scan);
                 if (scan != null) scan.setVisible(false);
             }
-            if (fm != null) {
-                if (fragments != null) {
-                    fm.beginTransaction().remove(fragments[0]).remove(fragments[1]).commit();
-                }
-            }
             mBinding.walletLabelContainer.setVisibility(View.GONE);
         } else {
             mBinding.empty.setVisibility(View.GONE);
+            mBinding.viewpager.setVisibility(View.VISIBLE);
             mBinding.fab.show();
             mBinding.fab.setOnClickListener(v -> addAddress());
             mBinding.walletLabelContainer.setVisibility(View.VISIBLE);
             mBinding.walletLabel.setText(wallet.getWalletName());
             mBinding.walletLabelContainer.setOnClickListener(v -> navigateToManageWallet());
             title = new String[]{getString(R.string.tab_my_address), getString(R.string.tab_my_change_address)};
-            fm = getChildFragmentManager();
-            initViewPager();
             if (mMenu != null) {
                 MenuItem sdcard = mMenu.findItem(R.id.action_sdcard);
                 if (sdcard != null) sdcard.setVisible(true);
                 MenuItem scan = mMenu.findItem(R.id.action_scan);
                 if (scan != null) scan.setVisible(true);
             }
+            refreshViewPager();
         }
+    }
+
+    @SuppressLint("CutPasteId")
+    private void refreshViewPager() {
+        legacyMultiSigViewModel.getMultiSigAddress(wallet.getWalletFingerPrint()).observe(mActivity, multiSigAddressEntities -> {
+            if (receiveAdapter == null) {
+                receiveAddressRecycerView = new RecyclerView(mActivity);
+                changeAddressRecycerView = new RecyclerView(mActivity);
+                receiveAddressRecycerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.VERTICAL, false));
+                changeAddressRecycerView.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.VERTICAL, false));
+                receiveAdapter = new AddressAdapter(mActivity);
+                changeAdapter = new AddressAdapter(mActivity);
+                viewPagerAdapter = new ViewPagerAdapter();
+                receiveAddressRecycerView.setAdapter(receiveAdapter);
+                changeAddressRecycerView.setAdapter(changeAdapter);
+            }
+            receiveAdapter.setItems(legacyMultiSigViewModel.filterReceiveAddress(multiSigAddressEntities));
+            changeAdapter.setItems(legacyMultiSigViewModel.filterChangeAddress(multiSigAddressEntities));
+            viewPagerAdapter.setItems(Arrays.asList(receiveAddressRecycerView, changeAddressRecycerView));
+            mBinding.viewpager.setAdapter(viewPagerAdapter);
+            mBinding.tab.setupWithViewPager(mBinding.viewpager);
+            Objects.requireNonNull(mBinding.tab.getTabAt(position)).select();
+        });
     }
 
     private void navigateToManageWallet() {
@@ -141,6 +180,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     }
 
     private void addAddress() {
+        position = mBinding.tab.getSelectedTabPosition();
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
         AddAddressBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                 R.layout.add_address_bottom_sheet, null, false);
@@ -148,7 +188,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
                 .mapToObj(i -> String.valueOf(i + 1))
                 .toArray(String[]::new);
         binding.setValue(1);
-        binding.title.setText(getString(R.string.select_address_num, title[mBinding.tab.getSelectedTabPosition()]));
+        binding.title.setText(getString(R.string.select_address_num, title[position]));
         binding.close.setOnClickListener(v -> dialog.dismiss());
         binding.picker.setValue(0);
         binding.picker.setDisplayedValues(displayValue);
@@ -170,14 +210,12 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         dialog.show(Objects.requireNonNull(mActivity.getSupportFragmentManager()), "");
         Handler handler = new Handler();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            int tabPosition = mBinding.tab.getSelectedTabPosition();
-            legacyMultiSigViewModel.addAddress(wallet.getWalletFingerPrint(), value, tabPosition);
+            legacyMultiSigViewModel.addAddress(wallet.getWalletFingerPrint(), value, position);
             handler.post(() -> legacyMultiSigViewModel.getObservableAddState().observe(this, complete -> {
                 if (complete) {
                     handler.postDelayed(dialog::dismiss, 500);
                 }
             }));
-
         });
     }
 
@@ -220,41 +258,6 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         navigate(R.id.action_to_scanner);
     }
 
-
-    private void initViewPager() {
-        fragments = new MultiSigAddressFragment[title.length];
-        fragments[0] = MultiSigAddressFragment.newInstance(coinId, false, wallet.getWalletFingerPrint());
-        fragments[1] = MultiSigAddressFragment.newInstance(coinId, true, wallet.getWalletFingerPrint());
-
-        FragmentStatePagerAdapter pagerAdapter = new FragmentStatePagerAdapter(fm,
-                BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-            @NonNull
-            @Override
-            public Fragment getItem(int position) {
-                return fragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                return title.length;
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return title[position];
-            }
-
-            @Override
-            public int getItemPosition(@NonNull Object object) {
-                return POSITION_NONE;
-            }
-
-
-        };
-        mBinding.viewpager.setAdapter(pagerAdapter);
-        mBinding.tab.setupWithViewPager(mBinding.viewpager);
-    }
-
     private void showBottomSheetMenu() {
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
         MultisigBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
@@ -280,5 +283,73 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
 
         dialog.setContentView(binding.getRoot());
         dialog.show();
+    }
+
+    class ViewPagerAdapter extends PagerAdapter {
+        private List<View> list = new ArrayList<>();
+
+        public void setItems(List<View> list) {
+            this.list.clear();
+            this.list.addAll(list);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
+            return view == o;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return title[position];
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView(list.get(position));
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            ViewGroup parent = (ViewGroup) list.get(position).getParent();
+            if (parent != null) {
+                parent.removeView(list.get(position));
+            }
+            container.addView(list.get(position));
+            return list.get(position);
+        }
+    }
+
+    private final AddressClickCallback mAddrCallback = addr -> {
+        Bundle data = new Bundle();
+        data.putString(KEY_COIN_CODE, Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId());
+        data.putString(KEY_ADDRESS, addr.getAddress());
+        data.putString(KEY_ADDRESS_NAME, addr.getName());
+        data.putString(KEY_ADDRESS_PATH, addr.getPath());
+        navigate(R.id.action_to_receiveCoinFragment, data);
+    };
+
+    class AddressAdapter extends BaseBindingAdapter<MultiSigAddressEntity, MultisigAddressItemBinding> {
+
+        AddressAdapter(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected int getLayoutResId(int viewType) {
+            return R.layout.multisig_address_item;
+        }
+
+        @Override
+        protected void onBindItem(MultisigAddressItemBinding binding, MultiSigAddressEntity item) {
+            binding.setAddress(item);
+            binding.setCallback(mAddrCallback);
+        }
     }
 }

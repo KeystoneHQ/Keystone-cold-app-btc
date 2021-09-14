@@ -37,6 +37,8 @@ public class LegacyScannerState extends ScannerState {
         } else if (result.getType().equals(ScanResultTypes.UR_CRYPTO_PSBT)) {
             if (handleSignCryptoPSBT(result)) return;
             throw new UnknowQrCodeException("current watch wallet not support bc32 or psbt");
+        } else {
+            throw new UnknowQrCodeException("not support other scan result type!");
         }
     }
 

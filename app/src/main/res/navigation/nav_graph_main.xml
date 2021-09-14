@@ -326,6 +326,12 @@
         android:label="AssetFragment"
         tools:layout="@layout/asset_fragment">
         <action
+            android:id="@+id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
+        <action
             android:id="@+id/action_to_receiveCoinFragment"
             app:destination="@id/receiveCoinFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -439,6 +445,12 @@
         android:id="@+id/multisigSelectionFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment"
         android:label="MultisigEntry">
+        <action
+            android:id="@+id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment"
