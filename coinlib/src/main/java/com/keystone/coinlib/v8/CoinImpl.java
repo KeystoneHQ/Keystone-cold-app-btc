@@ -34,8 +34,14 @@ import com.keystone.coinlib.interfaces.SignCallback;
 import com.keystone.coinlib.interfaces.Signer;
 import com.keystone.coinlib.utils.Coins;
 
+import org.bitcoinj.core.Sha256Hash;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class CoinImpl implements Coin {
@@ -114,21 +120,34 @@ public class CoinImpl implements Coin {
     /**
      * sign message with signer
      *
-     * @param msg    message to be sign
+     * @param msgHex    message hex to be sign
      * @param signer signer
      * @return signed message in format R + S + recId (if has)
      */
-    private String signMessageImpl(String msg, Signer signer) {
-        if (this.signMessageFunction == null) {
-            this.signMessageFunction = (V8Function) coin.get("signMessageSync");
+    private String signMessageImpl(String msgHex, Signer signer) {
+        String signature = signer.sign(Hex.toHexString(Objects.requireNonNull(constructMessageHash(msgHex))));
+        if (TextUtils.isEmpty(signature)) return null;
+        byte[] r = Hex.decode(signature.substring(0, 64));
+        byte[] s = Hex.decode(signature.substring(64, 128));
+        int recId = Integer.parseInt(signature.substring(128), 16);
+        //we use compressed public key.
+        return Hex.toHexString(new byte[]{(byte) (recId + 31)}) + Hex.toHexString(r) + Hex.toHexString(s);
+    }
+
+    private byte[] constructMessageHash(String messageHex) {
+        try {
+            byte[] messageBytes = Hex.decode(messageHex);
+            byte[] prefix = "\u0018Bitcoin Signed Message:\n".getBytes(StandardCharsets.UTF_8);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(prefix);
+            baos.write(messageBytes.length);
+            baos.write(messageBytes);
+            byte[] buffer = baos.toByteArray();
+            return Sha256Hash.hashTwice(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        V8Object signProvider = createSignerProvider(signer);
-
-        V8Array params = new V8Array(v8);
-        params.push(msg).push(signProvider);
-
-        return (String) signMessageFunction.call(coin, params);
     }
 
     protected V8Object createSignerProvider(Signer signer) {
@@ -182,8 +201,8 @@ public class CoinImpl implements Coin {
             if (TextUtils.isEmpty(signedStr)) {
                 return res;
             }
-            res.add("r",signedStr.substring(0,64));
-            res.add("s",signedStr.substring(64,128));
+            res.add("r", signedStr.substring(0, 64));
+            res.add("s", signedStr.substring(64, 128));
 
             int recId = 0;
             try {
