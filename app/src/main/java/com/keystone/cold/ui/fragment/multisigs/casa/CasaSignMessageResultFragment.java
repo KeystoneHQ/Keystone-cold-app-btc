@@ -10,7 +10,6 @@ import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.databinding.MultisigCasaSignMessageResultBinding;

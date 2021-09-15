@@ -1,5 +1,9 @@
 package com.keystone.cold.ui.fragment.multisigs.casa;
 
+import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
+import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -8,8 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.Util;
-import com.keystone.coinlib.accounts.ExtendedPublicKey;
-import com.keystone.coinlib.utils.B58;
 import com.keystone.cold.R;
 import com.keystone.cold.callables.FingerprintPolicyCallable;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
@@ -22,10 +24,6 @@ import com.keystone.cold.viewmodel.multisigs.SignViewModel;
 
 import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
-
-import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
-import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 
 public class CasaSignMessageFragment extends BaseFragment<MultisigCasaSignMessageBinding> {
     private SignViewModel signViewModel;

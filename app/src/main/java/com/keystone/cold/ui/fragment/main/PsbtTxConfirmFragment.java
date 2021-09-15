@@ -17,6 +17,13 @@
 
 package com.keystone.cold.ui.fragment.main;
 
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
+import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
+import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
+import static com.keystone.cold.viewmodel.GlobalViewModel.showExportResult;
+import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
+import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.db.entity.CasaSignature;
@@ -35,20 +41,11 @@ import com.keystone.cold.ui.fragment.main.electrum.UnsignedTxFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.update.utils.Storage;
-import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
+import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import org.spongycastle.util.encoders.Base64;
-
-import java.util.stream.Stream;
-
-import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
-import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
-import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
-import static com.keystone.cold.viewmodel.GlobalViewModel.showExportResult;
-import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
-import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
 
 public class PsbtTxConfirmFragment extends UnsignedTxFragment {
 

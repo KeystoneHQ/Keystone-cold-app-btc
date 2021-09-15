@@ -28,8 +28,6 @@ import com.sparrowwallet.hummingbird.ResultType;
 import com.sparrowwallet.hummingbird.UR;
 import com.sparrowwallet.hummingbird.URDecoder;
 
-import org.spongycastle.util.encoders.Hex;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

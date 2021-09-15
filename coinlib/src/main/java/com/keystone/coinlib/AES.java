@@ -1,11 +1,12 @@
 package com.keystone.coinlib;
 
+import android.util.Log;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
-
     private static final String ALGORITHM = "AES";
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
     public static byte[] encrypt(byte[] sSrc, byte[] keyBytes, byte[] ivBytes) throws Exception {
@@ -25,7 +26,7 @@ public class AES {
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
             return cipher.doFinal(sSrc);
         } catch (Exception ex) {
-            System.out.println(ex);
+            Log.i(ALGORITHM, "decrypt: " + ex.getMessage());
             return null;
         }
     }

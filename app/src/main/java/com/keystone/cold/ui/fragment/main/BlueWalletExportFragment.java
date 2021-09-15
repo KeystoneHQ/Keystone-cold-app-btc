@@ -36,13 +36,6 @@ import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.viewmodel.GlobalViewModel;
 import com.sparrowwallet.hummingbird.UR;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
-import com.sparrowwallet.hummingbird.registry.CryptoOutput;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import static com.keystone.coinlib.ExtendPubkeyFormat.convertExtendPubkey;
-import static com.keystone.coinlib.ExtendPubkeyFormat.zpub;
 
 public class BlueWalletExportFragment extends BaseFragment<BlueExportBinding> {
     @Override

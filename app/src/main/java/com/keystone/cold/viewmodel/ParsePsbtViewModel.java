@@ -14,10 +14,7 @@ import com.googlecode.protobuf.format.JsonFormat;
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.coins.BTC.UtxoTx;
-import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.exception.InvalidTransactionException;
-import com.keystone.coinlib.path.AddressIndex;
-import com.keystone.coinlib.path.CoinPath;
 import com.keystone.coinlib.utils.Account;
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.DataRepository;
@@ -202,9 +199,7 @@ public abstract class ParsePsbtViewModel extends AndroidViewModel {
             String[] pathArr = path.split("/");
             if (pathArr.length < 2) return false;
             String change = pathArr[pathArr.length - 2];
-            if (TextUtils.equals("1", change)) {
-                return true;
-            }
+            return TextUtils.equals("1", change);
         }
         return false;
     }

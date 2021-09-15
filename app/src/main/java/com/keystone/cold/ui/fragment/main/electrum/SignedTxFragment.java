@@ -17,6 +17,11 @@
 
 package com.keystone.cold.ui.fragment.main.electrum;
 
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
+import static com.keystone.cold.ui.fragment.main.electrum.ElectrumBroadcastTxFragment.showElectrumInfo;
+import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
+import static com.keystone.cold.viewmodel.WatchWallet.PSBT_MULTISIG_SIGN_ID;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -43,12 +48,6 @@ import org.spongycastle.util.encoders.Base64;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.KEY_DUPLICATE_TX;
-import static com.keystone.cold.ui.fragment.main.electrum.ElectrumBroadcastTxFragment.showElectrumInfo;
-import static com.keystone.cold.ui.modal.ExportPsbtDialog.showExportPsbtDialog;
-import static com.keystone.cold.viewmodel.WatchWallet.PSBT_MULTISIG_SIGN_ID;
 
 
 public class SignedTxFragment extends BaseFragment<SignedTxBinding> {

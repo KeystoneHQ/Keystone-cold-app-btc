@@ -1,10 +1,5 @@
 package com.keystone.coinlib.accounts;
 
-import org.bitcoinj.core.Base58;
-import org.bitcoinj.core.Sha256Hash;
-
-import static com.keystone.coinlib.Util.int2bytes;
-
 public enum ExtendedPublicKeyVersion {
 
     // https://github.com/satoshilabs/slips/blob/master/slip-0132.md
