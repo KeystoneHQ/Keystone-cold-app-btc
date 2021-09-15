@@ -19,7 +19,6 @@ package com.keystone.cold.ui;
 
 import static com.keystone.cold.update.utils.Storage.hasSdcard;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -200,10 +199,16 @@ public class MainActivity extends FullScreenActivity {
                 case R.id.drawer_multisig:
                     mNavController.navigate(R.id.action_to_home);
                     if (!Utilities.hasMultiSigMode(mActivity) && multiSigWalletEntity != null) {
-                        mNavController.navigate(R.id.action_to_legacyMultisigFragment);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("walletFingerPrint", multiSigWalletEntity.getWalletFingerPrint());
+                        mNavController.navigate(R.id.action_to_legacyMultisigFragment, bundle);
                     } else if (Utilities.hasMultiSigMode(mActivity)) {
                         if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.LEGACY.getModeId())) {
-                            mNavController.navigate(R.id.action_to_legacyMultisigFragment);
+                            Bundle bundle = new Bundle();
+                            if (multiSigWalletEntity != null) {
+                                bundle.putString("walletFingerPrint", multiSigWalletEntity.getWalletFingerPrint());
+                            }
+                            mNavController.navigate(R.id.action_to_legacyMultisigFragment, bundle);
                         } else {
                             mNavController.navigate(R.id.action_to_casaMultisigFragment);
                         }

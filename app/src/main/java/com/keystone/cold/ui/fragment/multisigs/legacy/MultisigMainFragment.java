@@ -55,7 +55,6 @@ import com.keystone.cold.databinding.MultisigAddressItemBinding;
 import com.keystone.cold.databinding.MultisigBottomSheetBinding;
 import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
-import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
@@ -77,7 +76,6 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     public static final String TAG = "MultisigEntry";
 
     private String[] title;
-    private MultiSigWalletEntity wallet;
     private boolean isEmpty;
     private Menu mMenu;
     private RecyclerView receiveAddressRecycerView;
@@ -101,6 +99,12 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         mBinding.toolbarModeSelection.setOnClickListener(l -> {
             showMultisigSelection();
         });
+        if (getArguments() != null && getArguments().containsKey("walletFingerPrint")) {
+            mBinding.empty.setVisibility(View.GONE);
+            mBinding.viewpager.setVisibility(View.VISIBLE);
+            mBinding.fab.show();
+            mBinding.walletLabelContainer.setVisibility(View.VISIBLE);
+        }
         legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
             if (w != null) {
                 isEmpty = false;

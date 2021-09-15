@@ -55,6 +55,9 @@ public class CasaMainFragment extends MultiSigEntryBaseFragment<MultisigCasaMain
         mBinding.toolbarModeSelection.setOnClickListener(l -> {
             showMultisigSelection();
         });
+        legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
+            wallet = w;
+        });
         mBinding.export.setOnClickListener(v -> navigate(R.id.action_to_casaExportXPubFragment));
         casaCallback = cx -> {
             Bundle bundle = new Bundle();

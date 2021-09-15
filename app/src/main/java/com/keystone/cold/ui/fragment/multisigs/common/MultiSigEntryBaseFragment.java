@@ -32,12 +32,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.MultisigModeBottomSheetBinding;
 import com.keystone.cold.databinding.SelectWalletModeBinding;
-import com.keystone.cold.db.entity.CasaSignature;
+import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment;
@@ -52,6 +51,7 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> implements MultiSigPreferenceFragment.MultiSigModeCallback {
     protected LegacyMultiSigViewModel legacyMultiSigViewModel;
     protected CasaMultiSigViewModel casaMultiSigViewModel;
+    protected MultiSigWalletEntity wallet;
     private BottomSheetDialog dialog;
     private Adapter adapter;
 
@@ -101,7 +101,11 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
     public void onSelect(String modeId) {
         if (modeId.equals(MultiSigMode.LEGACY.getModeId())) {
             dialog.dismiss();
-            navigate(R.id.action_to_legacyMultisigFragment);
+            Bundle bundle = new Bundle();
+            if (wallet != null) {
+                bundle.putString("walletFingerPrint", wallet.getWalletFingerPrint());
+            }
+            navigate(R.id.action_to_legacyMultisigFragment, bundle);
         } else {
             if (Utilities.getCasaSetUpVisitedTime(mActivity) < 1) {
                 Bundle bundle = new Bundle();
