@@ -5,7 +5,6 @@ import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_MULTISIG_MODE;
 import static com.keystone.cold.ui.fragment.main.PsbtBroadcastTxFragment.KEY_TXID;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,7 +33,7 @@ import com.keystone.cold.ui.modal.SigningDialog;
 import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
-import com.keystone.cold.viewmodel.TxConfirmViewModel;
+import com.keystone.cold.viewmodel.ParsePsbtViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
@@ -275,10 +274,10 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
 
     protected void subscribeSignState() {
         psbtCasaTxConfirmViewModel.getSignState().observe(this, s -> {
-            if (TxConfirmViewModel.STATE_SIGNING.equals(s)) {
+            if (ParsePsbtViewModel.STATE_SIGNING.equals(s)) {
                 signingDialog = SigningDialog.newInstance();
                 signingDialog.show(mActivity.getSupportFragmentManager(), "");
-            } else if (TxConfirmViewModel.STATE_SIGN_SUCCESS.equals(s)) {
+            } else if (ParsePsbtViewModel.STATE_SIGN_SUCCESS.equals(s)) {
                 if (signingDialog != null) {
                     signingDialog.setState(SigningDialog.STATE_SUCCESS);
                 }
@@ -289,9 +288,9 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
                     signingDialog = null;
                     onSignSuccess();
                     psbtCasaTxConfirmViewModel.getSignState().removeObservers(this);
-                    psbtCasaTxConfirmViewModel.getSignState().setValue(STATE_NONE);
+                    psbtCasaTxConfirmViewModel.getSignState().setValue(ParsePsbtViewModel.STATE_NONE);
                 }, 500);
-            } else if (TxConfirmViewModel.STATE_SIGN_FAIL.equals(s)) {
+            } else if (ParsePsbtViewModel.STATE_SIGN_FAIL.equals(s)) {
                 if (signingDialog == null) {
                     signingDialog = SigningDialog.newInstance();
                     signingDialog.show(mActivity.getSupportFragmentManager(), "");
@@ -303,7 +302,7 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
                     }
                     signingDialog = null;
                     psbtCasaTxConfirmViewModel.getSignState().removeObservers(this);
-                    psbtCasaTxConfirmViewModel.getSignState().setValue(STATE_NONE);
+                    psbtCasaTxConfirmViewModel.getSignState().setValue(ParsePsbtViewModel.STATE_NONE);
                 }, 2000);
             }
         });

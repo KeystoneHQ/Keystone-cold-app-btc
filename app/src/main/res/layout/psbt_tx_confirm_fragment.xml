@@ -29,10 +29,6 @@
         <variable
             name="tx"
             type="com.keystone.cold.model.Tx" />
-
-        <variable
-            name="viewModel"
-            type="com.keystone.cold.viewmodel.TxConfirmViewModel" />
     </data>
 
 

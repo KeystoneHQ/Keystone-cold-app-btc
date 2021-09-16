@@ -17,10 +17,12 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.removeAllFingerprint;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -40,9 +42,6 @@ import com.keystone.cold.util.DataCleaner;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.Executors;
-
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.removeAllFingerprint;
 
 public class WebAuthResultFragment extends SetupVaultBaseFragment<WebAuthResultBinding> {
 

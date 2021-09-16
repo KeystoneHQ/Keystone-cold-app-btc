@@ -45,7 +45,6 @@ import java.util.Objects;
 public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWalletInfoBinding> {
 
     private MultiSigWalletEntity wallet;
-    private boolean isEditing;
     private boolean isTestNet;
 
     @Override
@@ -81,26 +80,7 @@ public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWal
         mBinding.setAddressType(MultiSig.ofPath(w.getExPubPath()).get(0).getScript());
         mBinding.setXpubInfo(getXpub(w));
         mBinding.showAsXpub.setOnClickListener(v -> showAsXpub());
-//        mBinding.edit.setOnClickListener(v -> onEditClick());
     }
-
-//    private void onEditClick() {
-//        if (!isEditing) {
-//            isEditing = true;
-//            mBinding.walletName.setEnabled(true);
-//            mBinding.walletName.requestFocus();
-//            mBinding.edit.setAlpha(1f);
-//            mBinding.walletName.setSelection(mBinding.walletName.getText().length());
-//            Keyboard.show(mBinding.walletName.getContext(), mBinding.walletName);
-//        } else {
-//            isEditing = false;
-//            mBinding.walletName.clearFocus();
-//            mBinding.walletName.setEnabled(false);
-//            mBinding.edit.setAlpha(0.5f);
-//            viewModel.updateWallet(wallet);
-//            Keyboard.hide(mBinding.walletName.getContext(), mBinding.walletName);
-//        }
-//    }
 
     private void showAsXpub() {
         ModalDialog dialog = new ModalDialog();

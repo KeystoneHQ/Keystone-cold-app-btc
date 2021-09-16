@@ -18,7 +18,6 @@
 package com.keystone.coinlib;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.keystone.coinlib.exception.InvalidPathException;
 import com.keystone.coinlib.path.AddressIndex;
@@ -42,7 +41,6 @@ import org.bouncycastle.util.Properties;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.ECPoint;
 import java.util.Arrays;

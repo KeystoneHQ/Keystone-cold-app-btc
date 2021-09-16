@@ -17,6 +17,13 @@
 
 package com.keystone.cold.ui.fragment.main;
 
+import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
+import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
+import static com.keystone.cold.ui.fragment.main.BroadcastTxFragment.KEY_TXID;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
+import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,14 +63,6 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static com.keystone.cold.callables.FingerprintPolicyCallable.READ;
-import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX;
-import static com.keystone.cold.ui.fragment.main.BroadcastTxFragment.KEY_TXID;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
-import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 
 public class TxConfirmFragment extends BaseFragment<TxConfirmFragmentBinding> {
 
@@ -88,12 +87,11 @@ public class TxConfirmFragment extends BaseFragment<TxConfirmFragmentBinding> {
 
     @Override
     protected void init(View view) {
-        Bundle bundle = Objects.requireNonNull(getArguments());
+        Bundle bundle = requireArguments();
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.txDetail.txIdInfo.setVisibility(View.GONE);
         data = bundle.getString(KEY_TX_DATA);
         viewModel = ViewModelProviders.of(this).get(TxConfirmViewModel.class);
-        mBinding.setViewModel(viewModel);
         subscribeTxEntityState();
 
         mBinding.sign.setOnClickListener(new OnMultiClickListener() {

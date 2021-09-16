@@ -5,11 +5,11 @@ import static com.keystone.cold.callables.FingerprintPolicyCallable.TYPE_SIGN_TX
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.NORMAL;
 import static com.keystone.cold.ui.fragment.main.FeeAttackChecking.FeeAttackCheckingResult.SAME_OUTPUTS;
 import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-import static com.keystone.cold.viewmodel.TxConfirmViewModel.STATE_NONE;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -33,8 +33,8 @@ import com.keystone.cold.ui.views.AuthenticateModal;
 import com.keystone.cold.ui.views.OnMultiClickListener;
 import com.keystone.cold.util.KeyStoreUtil;
 import com.keystone.cold.viewmodel.GlobalViewModel;
+import com.keystone.cold.viewmodel.ParsePsbtViewModel;
 import com.keystone.cold.viewmodel.PsbtSingleConfirmViewModel;
-import com.keystone.cold.viewmodel.TxConfirmViewModel;
 import com.keystone.cold.viewmodel.WatchWallet;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 
@@ -170,6 +170,7 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
                         refreshReceiveList(address);
                     }
                 });
+        refreshSignStatus();
         checkBtcFee();
     }
 
@@ -227,6 +228,32 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
         adapter.setItems(items);
         mBinding.txDetail.toList.setVisibility(View.VISIBLE);
         mBinding.txDetail.toList.setAdapter(adapter);
+
+    }
+
+    private void refreshSignStatus() {
+        if (!TextUtils.isEmpty(txEntity.getSignStatus())) {
+            mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
+            String signStatus = txEntity.getSignStatus();
+
+            String[] splits = signStatus.split("-");
+            int sigNumber = Integer.parseInt(splits[0]);
+            int reqSigNumber = Integer.parseInt(splits[1]);
+
+            String text;
+            if (sigNumber == 0) {
+                text = getString(R.string.unsigned);
+            } else if (sigNumber < reqSigNumber) {
+                text = getString(R.string.partial_signed);
+            } else {
+                text = getString(R.string.signed);
+                signed = true;
+            }
+
+            mBinding.txDetail.signStatus.setText(text);
+        } else {
+            mBinding.txDetail.txSource.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -296,10 +323,10 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
 
     protected void subscribeSignState() {
         psbtSigleTxConfirmViewModel.getSignState().observe(this, s -> {
-            if (TxConfirmViewModel.STATE_SIGNING.equals(s)) {
+            if (ParsePsbtViewModel.STATE_SIGNING.equals(s)) {
                 signingDialog = SigningDialog.newInstance();
                 signingDialog.show(mActivity.getSupportFragmentManager(), "");
-            } else if (TxConfirmViewModel.STATE_SIGN_SUCCESS.equals(s)) {
+            } else if (ParsePsbtViewModel.STATE_SIGN_SUCCESS.equals(s)) {
                 if (signingDialog != null) {
                     signingDialog.setState(SigningDialog.STATE_SUCCESS);
                 }
@@ -310,9 +337,9 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
                     signingDialog = null;
                     onSignSuccess();
                     psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
-                    psbtSigleTxConfirmViewModel.getSignState().setValue(STATE_NONE);
+                    psbtSigleTxConfirmViewModel.getSignState().setValue(ParsePsbtViewModel.STATE_NONE);
                 }, 500);
-            } else if (TxConfirmViewModel.STATE_SIGN_FAIL.equals(s)) {
+            } else if (ParsePsbtViewModel.STATE_SIGN_FAIL.equals(s)) {
                 if (signingDialog == null) {
                     signingDialog = SigningDialog.newInstance();
                     signingDialog.show(mActivity.getSupportFragmentManager(), "");
@@ -324,7 +351,7 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
                     }
                     signingDialog = null;
                     psbtSigleTxConfirmViewModel.getSignState().removeObservers(this);
-                    psbtSigleTxConfirmViewModel.getSignState().setValue(STATE_NONE);
+                    psbtSigleTxConfirmViewModel.getSignState().setValue(ParsePsbtViewModel.STATE_NONE);
                 }, 2000);
             }
         });

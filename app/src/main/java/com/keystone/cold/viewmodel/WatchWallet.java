@@ -17,13 +17,12 @@
 
  package com.keystone.cold.viewmodel;
 
+ import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_CHOOSE_WATCH_WALLET;
+
  import android.content.Context;
 
  import com.keystone.cold.R;
  import com.keystone.cold.Utilities;
- import com.keystone.cold.scan.QREncoding;
-
- import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.SETTING_CHOOSE_WATCH_WALLET;
 
  public enum WatchWallet {
      KEYSTONE("0"),
@@ -98,24 +97,6 @@
              case KEYSTONE:
              case BTCPAY:
              case BLUE:
-                 return true;
-             default:
-                 return false;
-         }
-     }
-
-     public QREncoding getQrEncoding() {
-         return QREncoding.UR;
-     }
-
-     public boolean supportQrCode() {
-         switch (this) {
-             case ELECTRUM:
-             case KEYSTONE:
-             case GENERIC:
-             case BTCPAY:
-             case BLUE:
-             case SPARROW:
                  return true;
              default:
                  return false;
