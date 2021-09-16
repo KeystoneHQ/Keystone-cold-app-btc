@@ -176,6 +176,9 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
             NavHostFragment.findNavController(this).navigate(id, data);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+        } catch (IllegalStateException e) {
+            Log.i(TAG, "navigate: " + e.getMessage());
+            alert(mActivity.getString(R.string.hint), mActivity.getString(R.string.unknown_error));
         }
     }
 
@@ -193,7 +196,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     public void alert(String title, String message, Runnable run) {
         dismissLoading();
-        if (dialog != null){
+        if (dialog != null) {
             dialog.dismiss();
         }
         dialog = ModalDialog.newInstance();
