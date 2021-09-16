@@ -123,14 +123,14 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@id/action_to_preImportFragment"
+            android:id="@+id/action_to_preImportFragment"
             app:destination="@id/preImportFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@id/action_to_broadcastElectrumTxFragment"
+            android:id="@+id/action_to_broadcastElectrumTxFragment"
             app:destination="@id/broadcastElectrumTxFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -879,36 +879,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/psbtTxConfirmFragment"
-        android:name="com.keystone.cold.ui.fragment.main.PsbtTxConfirmFragment"
-        android:label="PsbtTxConfirmFragment">
-        <action
-            android:id="@id/action_to_psbtSignedTxFragment"
-            app:destination="@id/psbtSignedTxFragment" />
-        <action
-            android:id="@+id/action_to_psbt_broadcast"
-            app:destination="@id/psbtBroadcastTxFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@id/action_to_broadcastElectrumTxFragment"
-            app:destination="@id/broadcastElectrumTxFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@id/action_to_preImportFragment"
-            app:destination="@id/preImportFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-    </fragment>
-
-    <fragment
         android:id="@+id/walletInfoFragment"
         android:name="com.keystone.cold.ui.fragment.main.WalletInfoFragment"
         android:label="WalletInfoFragment"
@@ -1028,43 +998,6 @@
         <action
             android:id="@+id/action_to_broadcastTxFragment"
             app:destination="@id/broadcastTxFragment" />
-
-        <action
-            android:id="@id/action_to_home"
-            app:destination="@id/assetFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/assetFragment"
-            app:popUpToInclusive="false" />
-        <action
-            android:id="@id/action_to_preImportFragment"
-            app:destination="@id/preImportFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@id/action_to_txFragment"
-            app:destination="@id/txFragment" />
-        <action
-            android:id="@id/action_to_electrumTxFragment"
-            app:destination="@id/electrumTxFragment" />
-        <action
-            android:id="@id/action_to_psbtSignedTxFragment"
-            app:destination="@id/psbtSignedTxFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/electrumTxConfirmFragment"
-        android:name="com.keystone.cold.ui.fragment.main.electrum.UnsignedTxFragment"
-        android:label="TxConfirmFragment"
-        tools:layout="@layout/tx_confirm_fragment">
-        <action
-            android:id="@+id/action_to_broadcastElectrumTxFragment"
-            app:destination="@id/broadcastElectrumTxFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
             android:id="@id/action_to_home"

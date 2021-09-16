@@ -9,6 +9,7 @@ import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -169,6 +170,7 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
                         refreshReceiveList(address);
                     }
                 });
+        refreshSignStatus();
         checkBtcFee();
     }
 
@@ -226,6 +228,32 @@ public class PsbtSingleTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
         adapter.setItems(items);
         mBinding.txDetail.toList.setVisibility(View.VISIBLE);
         mBinding.txDetail.toList.setAdapter(adapter);
+
+    }
+
+    private void refreshSignStatus() {
+        if (!TextUtils.isEmpty(txEntity.getSignStatus())) {
+            mBinding.txDetail.txSignStatus.setVisibility(View.VISIBLE);
+            String signStatus = txEntity.getSignStatus();
+
+            String[] splits = signStatus.split("-");
+            int sigNumber = Integer.parseInt(splits[0]);
+            int reqSigNumber = Integer.parseInt(splits[1]);
+
+            String text;
+            if (sigNumber == 0) {
+                text = getString(R.string.unsigned);
+            } else if (sigNumber < reqSigNumber) {
+                text = getString(R.string.partial_signed);
+            } else {
+                text = getString(R.string.signed);
+                signed = true;
+            }
+
+            mBinding.txDetail.signStatus.setText(text);
+        } else {
+            mBinding.txDetail.txSource.setVisibility(View.VISIBLE);
+        }
 
     }
 
