@@ -42,8 +42,10 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
+import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.databinding.ActivityMainBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.fingerprint.FingerprintKit;
@@ -111,6 +113,11 @@ public class MainActivity extends FullScreenActivity {
             }
         }
         ViewModelProviders.of(this).get(GlobalViewModel.class);
+
+        AppExecutors.getInstance().diskIO().execute(()->{
+            String mfp = new GetMasterFingerprintCallable().call();
+            runOnUiThread(() -> mBinding.mfp.setText(String.format("Master Key Fingerprint：%s",mfp)));
+        });
     }
 
     private void initNavController() {
@@ -164,7 +171,7 @@ public class MainActivity extends FullScreenActivity {
         mBinding.drawer.addDrawerListener(new FullScreenDrawer.DrawerListenerAdapter() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-                mBinding.drawer.getChildAt(0).setX(mBinding.menu.getWidth() + mBinding.menu.getX());
+                mBinding.drawer.getChildAt(0).setX(mBinding.menuContainer.getWidth() + mBinding.menuContainer.getX());
             }
         });
     }
