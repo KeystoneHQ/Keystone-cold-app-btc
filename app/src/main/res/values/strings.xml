@@ -347,6 +347,7 @@
     <string name="incorrect_tx_data">Invalid Transaction Data</string>
     <string name="invalid_webauth_qrcode_hint">Invalid QR Code. Please follow the instruction to scan the correct QR Code to complete authentication.</string>
     <string name="hint">Tips</string>
+    <string name="unknown_error">Unknown_error,Please try again</string>
     <string name="enlarge_qrcode">Difficulty scanning? Tap the QR code to enlarge.</string>
     <string name="enroll_fingerprint">Fingerprint Registration</string>
     <string name="enroll_fingerprint_hint">Place your finger on the fingerprint sensing area and remove it when you feel a vibration. Repeat until enrolling process is fully complete.</string>

@@ -234,6 +234,7 @@
     <string name="incorrect_tx_data">非法交易数据</string>
     <string name="invalid_webauth_qrcode_hint">二维码非法，请按照指引扫码正确的二维码完成设备验证</string>
     <string name="hint">提示</string>
+    <string name="unknown_error">未知错误，请重试</string>
     <string name="enlarge_qrcode">扫码困难？点击放大</string>
     <string name="enroll_fingerprint">指纹录入</string>
     <string name="enroll_fingerprint_hint">将您的手指放在指纹传感器区，感受到震动后离开，重复此步骤直至指纹 100% 录入。</string>
