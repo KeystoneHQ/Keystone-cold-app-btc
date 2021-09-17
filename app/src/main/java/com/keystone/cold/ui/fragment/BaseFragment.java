@@ -32,7 +32,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
@@ -50,6 +51,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     protected T mBinding;
     protected AppCompatActivity mActivity;
+    private NavController mNavController;
 
     protected abstract int setView();
 
@@ -98,6 +100,11 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
         super.onActivityCreated(savedInstanceState);
         initData(savedInstanceState);
         log("onActivityCreated");
+        try {
+            mNavController = Navigation.findNavController(mActivity, getId());
+        } catch (IllegalStateException e) {
+            Log.i(TAG, "onViewCreated: " + e.getMessage());
+        }
     }
 
     @Override
@@ -143,41 +150,35 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     }
 
     public void navigateUp() {
-        NavHostFragment.findNavController(this).popBackStack();
-    }
-
-    public void navigate(@IdRes int id) {
-        try {
-            NavHostFragment.findNavController(this).navigate(id);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        mNavController.popBackStack();
     }
 
     public MutableLiveData<String> getScanResult() {
-        return Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().getLiveData("scan_result");
+        return Objects.requireNonNull(mNavController.getCurrentBackStackEntry()).getSavedStateHandle().getLiveData("scan_result");
     }
 
     public void setScanResult(String value) {
-        Objects.requireNonNull(NavHostFragment.findNavController(this).getCurrentBackStackEntry()).getSavedStateHandle().set("scan_result", value);
+        Objects.requireNonNull(mNavController.getCurrentBackStackEntry()).getSavedStateHandle().set("scan_result", value);
     }
 
     public void popBackStack(@IdRes int id, boolean inclusive) {
         try {
-            NavHostFragment.findNavController(this).popBackStack(id, inclusive);
+            mNavController.popBackStack(id, inclusive);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    public void navigate(@IdRes int id) {
+        navigate(id, null);
     }
 
     public void navigate(@IdRes int id, Bundle data) {
         try {
             dismissLoading();
-            NavHostFragment.findNavController(this).navigate(id, data);
-        } catch (IllegalArgumentException e) {
+            mNavController.navigate(id, data);
+        } catch (IllegalArgumentException | IllegalStateException e) {
             e.printStackTrace();
-        } catch (IllegalStateException e) {
-            Log.i(TAG, "navigate: " + e.getMessage());
             alert(mActivity.getString(R.string.hint), mActivity.getString(R.string.unknown_error));
         }
     }
