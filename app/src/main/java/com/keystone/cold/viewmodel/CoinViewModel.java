@@ -29,7 +29,10 @@ import com.keystone.coinlib.path.CoinPath;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
+import com.keystone.cold.Utilities;
+import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.db.entity.AddressEntity;
+import com.keystone.cold.db.entity.CoinEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +43,7 @@ public class CoinViewModel extends AndroidViewModel {
 
     public CoinViewModel(@NonNull Application application) {
         super(application);
-        mRepository = ((MainApplication)application).getRepository();
+        mRepository = ((MainApplication) application).getRepository();
     }
 
     public List<AddressEntity> filterChangeAddress(List<AddressEntity> addressEntities) {
@@ -78,5 +81,15 @@ public class CoinViewModel extends AndroidViewModel {
 
     public void updateAddress(AddressEntity addr) {
         AppExecutors.getInstance().diskIO().execute(() -> mRepository.updateAddress(addr));
+    }
+
+    public void initDefultAddress(boolean isChangeAddress, String accountHdPath) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            CoinEntity coinEntity = mRepository.loadCoinSync(Utilities.currentCoin(getApplication()).coinId());
+            String xPub = new GetExtendedPublicKeyCallable(accountHdPath).call();
+            new AddAddressViewModel.AddAddressTask(coinEntity, mRepository,
+                    null, xPub, isChangeAddress ? 1 : 0)
+                    .execute(1);
+        });
     }
 }

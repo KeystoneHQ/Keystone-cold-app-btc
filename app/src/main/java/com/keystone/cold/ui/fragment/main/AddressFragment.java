@@ -133,11 +133,17 @@ public class AddressFragment extends BaseFragment<AddressFragmentBinding> {
 
     private void updateAddressList(List<AddressEntity> entities) {
         List<AddressEntity> filteredEntity = viewModel.filterByAccountHdPath(entities, accountHdPath);
+        List<AddressEntity> addressEntities;
         if (isChangeAddress) {
-            mAddressAdapter.setItems(viewModel.filterChangeAddress(filteredEntity));
+            addressEntities = viewModel.filterChangeAddress(filteredEntity);
         } else {
-            mAddressAdapter.setItems(viewModel.filterReceiveAddress(filteredEntity));
+            addressEntities = viewModel.filterReceiveAddress(filteredEntity);
         }
+        if (addressEntities.isEmpty()) {
+            viewModel.initDefultAddress(isChangeAddress, accountHdPath);
+            return;
+        }
+        mAddressAdapter.setItems(addressEntities);
     }
 
     @Override
