@@ -37,20 +37,19 @@ import com.keystone.cold.databinding.ExportSuccessBinding;
 import com.keystone.cold.databinding.ImportWalletBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.modal.ModalDialog;
-import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBinding> {
-
+    private static final Pattern NAME_PATTERN = Pattern.compile(".*[\\u4E00-\\u9FA5A-Za-z0-9`~!@#$%^&*()_\\-+=<>?:\"{}|,.\\/;'\\[\\]·~！@#￥%……&*（）——\\-+={}|《》？：“”【】、；‘’，。、 ].*");
     private JSONObject walletInfo;
     private Account account;
     private int threshold;
@@ -128,16 +127,21 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             int total = Integer.parseInt(walletInfo.getString("Policy").split(" of ")[1]);
             account = MultiSig.ofPath(walletInfo.getString("Derivation"), Utilities.isMainNet(mActivity)).get(0);
             creator = walletInfo.optString("Creator");
-
             JSONArray array = walletInfo.getJSONArray("Xpubs");
 
+            List<String> xpubs = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 String xpub = array.getJSONObject(i).getString("xpub");
                 array.getJSONObject(i).put("xpub", ExtendedPublicKeyVersion.convertXPubVersion(xpub, account.getXPubVersion()));
+                xpubs.add(xpub);
+            }
+            String verifyCode = legacyMultiSigViewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath());
+            String walletName = walletInfo.optString("Name");
+            if (!NAME_PATTERN.matcher(walletName).matches()) {
+                walletName = "KT_" + verifyCode + "_" + threshold + "-" + total;
             }
 
-            return new MultiSigWalletEntity(walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(data.getString("wallet_info")))).substring(0, 6).toUpperCase()),
-                    threshold, total, account.getPath(), array.toString(), "", "", "", creator);
+            return new MultiSigWalletEntity(walletName, threshold, total, account.getPath(), array.toString(), "", "", "", creator);
         } catch (JSONException e) {
             e.printStackTrace();
         }
