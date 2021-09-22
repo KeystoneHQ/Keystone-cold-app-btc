@@ -174,6 +174,7 @@ public abstract class AppDatabase extends RoomDatabase {
             try {
                 String currentBelongTo = Utilities.getCurrentBelongTo(MainApplication.getApplication());
                 database.execSQL("ALTER TABLE casa_signature ADD COLUMN belongTo TEXT DEFAULT " + currentBelongTo);
+                database.execSQL("UPDATE coins SET show=" + 1);
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

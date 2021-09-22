@@ -128,7 +128,6 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             int total = Integer.parseInt(walletInfo.getString("Policy").split(" of ")[1]);
             account = MultiSig.ofPath(walletInfo.getString("Derivation"), Utilities.isMainNet(mActivity)).get(0);
             creator = walletInfo.optString("Creator");
-
             JSONArray array = walletInfo.getJSONArray("Xpubs");
 
             for (int i = 0; i < array.length(); i++) {
