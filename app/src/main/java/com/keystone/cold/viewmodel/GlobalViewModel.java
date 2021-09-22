@@ -297,6 +297,7 @@ public class GlobalViewModel extends AndroidViewModel {
     private void deriveChangeAddress() {
         AppExecutors.getInstance().networkIO().execute(() -> {
             ExpubInfo expubInfo = new ExpubInfo().getExPubInfo();
+            if (expubInfo == null) return;
             xpub = expubInfo.expub;
             String path = expubInfo.hdPath;
             List<String> changes = new ArrayList<>();
@@ -361,6 +362,7 @@ public class GlobalViewModel extends AndroidViewModel {
 
         public ExpubInfo getExPubInfo() {
             CoinEntity coinEntity = mRepo.loadCoinSync(Utilities.currentCoin(getApplication()).coinId());
+            if (coinEntity == null) return null;
             SharedPreferences sp = Utilities.getPrefs(getApplication());
             List<AccountEntity> accounts = mRepo.loadAccountsForCoin(coinEntity);
             String format = sp.getString(SETTING_ADDRESS_FORMAT, Account.P2SH_P2WPKH.getType());
