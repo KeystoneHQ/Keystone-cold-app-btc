@@ -85,11 +85,21 @@ public class CoinViewModel extends AndroidViewModel {
 
     public void initDefultAddress(boolean isChangeAddress, String accountHdPath) {
         AppExecutors.getInstance().diskIO().execute(() -> {
-            CoinEntity coinEntity = mRepository.loadCoinSync(Utilities.currentCoin(getApplication()).coinId());
-            String xPub = new GetExtendedPublicKeyCallable(accountHdPath).call();
-            new AddAddressViewModel.AddAddressTask(coinEntity, mRepository,
-                    null, xPub, isChangeAddress ? 1 : 0)
-                    .execute(1);
+            String coinId = Utilities.currentCoin(getApplication()).coinId();
+            List<AddressEntity> filteredEntity = filterByAccountHdPath(mRepository.loadAddressSync(coinId), accountHdPath);
+            List<AddressEntity> addressEntities;
+            if (isChangeAddress) {
+                addressEntities = filterChangeAddress(filteredEntity);
+            } else {
+                addressEntities = filterReceiveAddress(filteredEntity);
+            }
+            if (addressEntities.isEmpty()) {
+                CoinEntity coinEntity = mRepository.loadCoinSync(coinId);
+                String xPub = new GetExtendedPublicKeyCallable(accountHdPath).call();
+                new AddAddressViewModel.AddAddressTask(coinEntity, mRepository,
+                        null, xPub, isChangeAddress ? 1 : 0)
+                        .execute(1);
+            }
         });
     }
 }

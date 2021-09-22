@@ -118,13 +118,11 @@ public class AddressFragment extends BaseFragment<AddressFragmentBinding> {
         accountHdPath = Objects.requireNonNull(getAccount(mActivity)).getPath();
         Objects.requireNonNull(getParentFragment());
         viewModel = ViewModelProviders.of(getParentFragment()).get(CoinViewModel.class);
+        viewModel.initDefultAddress(isChangeAddress, accountHdPath);
         subscribeUi(viewModel.getAddress());
     }
 
     private void subscribeUi(LiveData<List<AddressEntity>> address) {
-        if (addressEntities != null) {
-            updateAddressList(addressEntities);
-        }
         address.observe(this, entities -> {
             addressEntities = entities;
             updateAddressList(entities);
@@ -138,10 +136,6 @@ public class AddressFragment extends BaseFragment<AddressFragmentBinding> {
             addressEntities = viewModel.filterChangeAddress(filteredEntity);
         } else {
             addressEntities = viewModel.filterReceiveAddress(filteredEntity);
-        }
-        if (addressEntities.isEmpty()) {
-            viewModel.initDefultAddress(isChangeAddress, accountHdPath);
-            return;
         }
         mAddressAdapter.setItems(addressEntities);
     }
