@@ -233,6 +233,13 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     }
 
     @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        menu.findItem(R.id.action_sdcard).setVisible(false);
+        menu.findItem(R.id.action_scan).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         mMenu = menu;
         inflater.inflate(R.menu.asset_hasmore, menu);

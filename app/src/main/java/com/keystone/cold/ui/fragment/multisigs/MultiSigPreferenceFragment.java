@@ -1,6 +1,7 @@
 package com.keystone.cold.ui.fragment.multisigs;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
@@ -97,6 +98,7 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             SelectWalletModeBinding binding = DataBindingUtil.getBinding(holder.itemView);
             binding.title.setText(displayItems.get(position).second);
+            binding.title.setTypeface(binding.title.getTypeface(), Typeface.BOLD);
             if (subTitles == null) {
                 binding.subTitle.setVisibility(View.GONE);
             } else {

@@ -34,76 +34,66 @@
             type="com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment.MultiSigModeCallback" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#181717"
-        android:orientation="vertical">
+        android:minHeight="45dp"
+        android:background="?attr/selectableItemBackground"
+        android:onClick="@{()->callback.onSelect(modeId)}">
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:text="title"/>
+
+        <com.keystone.cold.ui.views.SpanedTextView
+            android:id="@+id/sub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/white40"
+            android:textSize="12sp"
+            android:text="summary"
+            android:visibility="gone"
+            tools:text="summary" />
+
+        <ImageView
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_centerVertical="true"
+            app:visibleGone="@{checked}"
+            android:src="@drawable/checked"
+            tools:ignore="ContentDescription"
+            app:tint="@color/colorAccent" />
+
+        <ImageView
+            android:id="@+id/arrow_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/arrow_right"
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
+
+        <include
+            android:id="@+id/divider"
+            layout="@layout/divider"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
-            android:background="?attr/selectableItemBackground"
-            android:onClick="@{()->callback.onSelect(modeId)}">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_centerVertical="true">
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    tools:text="txid" />
-
-                <com.keystone.cold.ui.views.SpanedTextView
-                    android:id="@+id/sub_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/title"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:text="summary"
-                    android:textColor="@color/white40"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/checked"
-                app:tint="@color/colorAccent"
-                app:visibleGone="@{checked}"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/arrow_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/arrow_right"
-                android:visibility="gone"
-                tools:ignore="ContentDescription" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/divider" />
-        </RelativeLayout>
-    </LinearLayout>
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 </layout>
