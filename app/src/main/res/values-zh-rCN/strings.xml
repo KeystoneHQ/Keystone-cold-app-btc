@@ -485,33 +485,33 @@
     </string-array>
 
     <string-array name="multisig_mode_list">
-        <item>Casa</item>
-        <item>通用模式</item>
+        <item>Casa 钱包</item>
+        <item>通用钱包</item>
     </string-array>
 
-    <string name="multisig_legacy">通用模式</string>
+    <string name="multisig_legacy">通用钱包</string>
     <string name="multisig_casa">Casa</string>
     
-    <string name="casa_operation">OPTIONS</string>
-    <string name="casa_signatures">SIGNING HISTORY</string>
+    <string name="casa_operation">钱包操作</string>
+    <string name="casa_signatures">签名记录</string>
 
-    <string name="casa_operation_health_check">Perform Health Check</string>
-    <string name="casa_operation_export">Export XPUB</string>
+    <string name="casa_operation_health_check">钱包安全检查（Perform Health Check）</string>
+    <string name="casa_operation_export">导出扩展公钥</string>
 
     <string name="casa_sign_message">签名消息</string>
-    <string name="casa_sign_message_result">Export signature</string>
-    <string name="casa_sign_message_result_export">Scan QR Code with your Casa App</string>
+    <string name="casa_sign_message_result">导出签名</string>
+    <string name="casa_sign_message_result_export">使用 Casa 扫描二维码</string>
     <string name="casa_sign_message_message">消息：</string>
-    <string name="casa_sign_message_address">关联地址: </string>
-    <string name="casa_sign_message_path">Using the key associated with address: </string>
+    <string name="casa_sign_message_address">签名地址: </string>
+    <string name="casa_sign_message_path">签名地址Path: </string>
 
-    <string name="scan_qrcode_with_casa">使用Casa扫描二维码</string>
+    <string name="scan_qrcode_with_casa">使用 Casa 扫描二维码</string>
     <string name="scan_qrcode_with_casa_hint_title">Scan the QR code using Casa</string>
     <string name="scan_qrcode_with_casa_hint"><![CDATA[
         1. Open Casa;<br>
         2. Touch Hardware Key;<br>
         3. Select "Using QR Code(Keystone)"<br>
-        4. ouch "Scan QR Code of XPUB" and scan the QR Code displayed on Keystone.<br>
+        4. Touch "Scan QR Code of XPUB" and scan the QR Code displayed on Keystone.<br>
     ]]></string>
 
     <string-array name="address_format">
@@ -800,20 +800,20 @@
     <string name="export_failed">导出失败</string>
 
 
-    <string name="connect_casa">连接Casa</string>
-    <string name="casa_use">使用带有Casa的恺石钱包:</string>
-    <string name="casa_member">你需要成为Casa成员</string>
-    <string name="casa_app_phone">你的手机上装有Casa App</string>
-    <string name="casa_guide_one_tip"><![CDATA[关于如何设置你的Casa？请前往 <font color="#00cdc3">[keys.casa/keystone]<font>]]></string>
+    <string name="connect_casa">创建 Casa 多签</string>
+    <string name="casa_use">前期准备:</string>
+    <string name="casa_member">注册并成为 Casa 成员</string>
+    <string name="casa_app_phone">下载 Casa App 并进行相关设置</string>
+    <string name="casa_guide_one_tip"><![CDATA[了解Casa详情，请前往 <font color="#00cdc3">keys.casa/keystone<font>]]></string>
     <string name="casa_continue">继续</string>
-    <string name="casa_app_ready">准备Casa App</string>
-    <string name="casa_scan_device">接下来，让Casa App准备好扫描此设备上显示的二维码</string>
-    <string name="casa_open_app">打开Casa App</string>
-    <string name="casa_sec_tab">导航到您的 \'Security\' 选项卡</string>
-    <string name="casa_hardware">点击设置[硬件]钱包</string>
-    <string name="casa_sel_keystone">选择\'KeyStone\'</string>
-    <string name="casa_con_scan_qr_code">继续\'扫描二维码\'</string>
-    <string name="casa_guide_two_tip"><![CDATA[如果遇到问题，请参考我们的指南 <font color="#00cdc3">support.keyst.one<font>]]></string>
-    <string name="casa_continue_ready">继续，准备好了</string>
-    <string name="casa_guide">如何在Casa中扫描二维码</string>
+    <string name="casa_app_ready">创建 Casa 多签</string>
+    <string name="casa_scan_device">接下来，将铠石钱包导入给Casa：</string>
+    <string name="casa_open_app">打开 Casa App</string>
+    <string name="casa_sec_tab">前往 “Security”</string>
+    <string name="casa_hardware">点击 “Set Up [Hardware] Wallet”</string>
+    <string name="casa_sel_keystone">选择 “Keystone”'</string>
+    <string name="casa_con_scan_qr_code">点击 “Scan QR Code” 按钮</string>
+    <string name="casa_guide_two_tip"><![CDATA[创建Casa多签钱包图文教程，请访问 <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
+    <string name="casa_continue_ready">继续</string>
+    <string name="casa_guide">铠石钱包导入Casa指引</string>
 </resources>
