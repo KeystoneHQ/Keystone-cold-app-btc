@@ -866,7 +866,7 @@
     <string name="casa_sec_tab"><![CDATA[Navigate to your \'<b>Security</b>\' tab]]></string>
     <string name="casa_hardware"><![CDATA[Tap \'<b>Set Up [Hardware] Wallet</b>\']]></string>
     <string name="casa_sel_keystone"><![CDATA[Select \'<b>Keystone</b>\']]></string>
-    <string name="casa_con_scan_qr_code"><![CDATA[Continue to \'<b>Scan QR Code</b>\']]></string>
+    <string name="casa_con_scan_qr_code"><![CDATA[Continue to <b>Scan QR Code</b>]]></string>
     <string name="casa_guide_two_tip"><![CDATA[Questions? Follow our guide at <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
     <string name="casa_continue_ready">Continue, It\'s Ready</string>
     <string name="casa_guide">How to scan QR code in Casa</string>

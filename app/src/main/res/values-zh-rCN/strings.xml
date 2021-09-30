@@ -800,21 +800,21 @@
 
     <string name="connect_casa">创建 Casa 多签</string>
     <string name="casa_use">前期准备:</string>
-    <string name="casa_member">注册并成为 Casa 成员</string>
+    <string name="casa_member">注册成为 Casa 成员</string>
     <string name="casa_app_phone">下载 Casa App 并进行相关设置</string>
     <string name="casa_guide_one_tip"><![CDATA[
-        了解Casa详情，请前往<br>
+        了解 Casa 详情，请前往<br>
         <font color="#00cdc3">keys.casa/keystone<font>
     ]]></string>
     <string name="casa_continue">继续</string>
     <string name="casa_app_ready">创建 Casa 多签</string>
-    <string name="casa_scan_device">接下来，将铠石钱包导入给Casa：</string>
+    <string name="casa_scan_device">接下来，将铠石钱包导入给 Casa：</string>
     <string name="casa_open_app">打开 Casa App</string>
-    <string name="casa_sec_tab"><![CDATA[前往 \'<b>Security</b>\']]></string>
-    <string name="casa_hardware"><![CDATA[点击 \'<b>Set Up [Hardware] Wallet</b>\']]></string>
-    <string name="casa_sel_keystone"><![CDATA[选择 \'<b>Keystone</b>\']]></string>
-    <string name="casa_con_scan_qr_code"><![CDATA[点击 \'<b>Scan QR Code</b>\' 按钮]]></string>
-    <string name="casa_guide_two_tip"><![CDATA[创建Casa多签钱包图文教程，请访问 <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
-    <string name="casa_continue_ready">继续</string>
+    <string name="casa_sec_tab"><![CDATA[前往 \“<b>Security</b>\”]]></string>
+    <string name="casa_hardware"><![CDATA[点击 \“<b>Set Up [Hardware] Wallet</b>\”]]></string>
+    <string name="casa_sel_keystone"><![CDATA[选择 \“<b>Keystone</b>\”]]></string>
+    <string name="casa_con_scan_qr_code"><![CDATA[点击 \“<b>Continue</b>\” 按钮后扫描铠石钱包二维码]]></string>
+    <string name="casa_guide_two_tip"><![CDATA[更多图文教程，请访问 <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
+    <string name="casa_continue_ready">展示钱包二维码</string>
     <string name="casa_guide">铠石钱包导入Casa指引</string>
 </resources>
