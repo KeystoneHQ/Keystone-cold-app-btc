@@ -55,6 +55,7 @@ import com.keystone.cold.databinding.MultisigAddressItemBinding;
 import com.keystone.cold.databinding.MultisigBottomSheetBinding;
 import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
+import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
@@ -74,7 +75,7 @@ import java.util.stream.IntStream;
 public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMainBinding>
         implements NumberPickerCallback {
     public static final String TAG = "MultisigEntry";
-
+    protected MultiSigWalletEntity wallet;
     private String[] title;
     private boolean isEmpty;
     private Menu mMenu;
@@ -161,7 +162,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
 
     @SuppressLint("CutPasteId")
     private void refreshViewPager() {
-        legacyMultiSigViewModel.getMultiSigAddress(wallet.getWalletFingerPrint()).observe(mActivity, multiSigAddressEntities -> {
+        legacyMultiSigViewModel.getMultiSigAddress(mActivity, wallet.getWalletFingerPrint()).observe(mActivity, multiSigAddressEntities -> {
             if (receiveAdapter == null) {
                 receiveAddressRecycerView = new RecyclerView(mActivity);
                 changeAddressRecycerView = new RecyclerView(mActivity);

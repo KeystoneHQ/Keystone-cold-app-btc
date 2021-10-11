@@ -99,7 +99,7 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
             address.removeObservers(this);
             address = null;
         }
-        address = legacyMultiSigViewModel.getMultiSigAddress(walletFingerprint);
+        address = legacyMultiSigViewModel.getMultiSigAddress(mActivity, walletFingerprint);
         subscribeUi(address);
     }
 

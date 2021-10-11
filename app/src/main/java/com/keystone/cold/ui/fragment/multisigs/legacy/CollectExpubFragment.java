@@ -59,6 +59,7 @@ import com.keystone.cold.viewmodel.CollectXpubViewModel;
 import com.keystone.cold.viewmodel.SharedDataViewModel;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubWrongDataException;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubWrongTypeException;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
@@ -140,7 +141,7 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                             navigate(R.id.action_export_wallet_to_cosigner, data);
                         }
                     });
-        } catch (JSONException | XfpNotMatchException e) {
+        } catch (JSONException | XfpNotMatchException | InvalidMultisigPathException e) {
             e.printStackTrace();
         }
     }

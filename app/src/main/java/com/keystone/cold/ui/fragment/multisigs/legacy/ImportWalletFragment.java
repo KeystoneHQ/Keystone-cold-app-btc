@@ -38,7 +38,9 @@ import com.keystone.cold.databinding.ImportWalletBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.util.HashUtil;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,6 +160,12 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             ModalDialog.showCommonModal(mActivity, getString(R.string.not_valid_multisig_wallet),
                     getString(R.string.invalid_wallet_hint)
                     , getString(R.string.know), null);
+        } catch (InvalidMultisigPathException e) {
+            e.printStackTrace();
+            ModalDialog.showCommonModal(mActivity, getString(R.string.import_failed),
+                    getString(R.string.not_valid_multisig_path),
+                    getString(R.string.know),
+                    null);
         }
 
     }
@@ -174,7 +182,11 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             dialog.show(mActivity.getSupportFragmentManager(), "");
             handler.postDelayed(() -> {
                 dialog.dismiss();
-                popBackStack(R.id.legacyMultisigFragment, false);
+                if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CARAVAN.getModeId())) {
+                    popBackStack(R.id.caravanMultisigFragment, false);
+                } else {
+                    popBackStack(R.id.legacyMultisigFragment, false);
+                }
             }, 500);
         }
     }

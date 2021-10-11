@@ -25,8 +25,11 @@ import android.view.View;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.keystone.cold.Utilities;
 import com.keystone.cold.ui.fragment.BaseFragment;
+import com.keystone.cold.viewmodel.multisigs.CaravanMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> {
@@ -34,7 +37,11 @@ public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
 
     @Override
     protected void init(View view) {
-        legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+        if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CARAVAN.getModeId())) {
+            legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(CaravanMultiSigViewModel.class);
+        } else {
+            legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+        }
     }
 
     @Override
