@@ -115,21 +115,25 @@
 
     <string-array name="multisig_mode_list">
         <item>Casa Mode</item>
+        <item>Caravan Mode</item>
         <item>Generic Mode</item>
     </string-array>
 
     <string-array name="multisig_mode_list_values" translatable="false">
         <item>casa</item>
+        <item>caravan</item>
         <item>legacy</item>
     </string-array>
 
     <string-array name="multisig_mode_list_sub_titles" translatable="true">
         <item>Hardware Key, Mobile Key, Casa Recovery Key</item>
+        <item>Caravan Multisig</item>
         <item>BlueWallet, Specter, Sparrow Wallet…</item>
     </string-array>
 
     <string name="multisig_legacy">Generic</string>
     <string name="multisig_casa">Casa</string>
+    <string name="multisig_caravan">Caravan</string>
 
     <string name="casa_operation_health_check">Perform Health Check</string>
     <string name="casa_operation_export">Export XPUB</string>
@@ -724,6 +728,7 @@
     <string name="import_failed">Import Failed</string>
     <string name="not_include_current_vault">This multisig wallet doesn\'t contain the current wallet.</string>
     <string name="not_valid_multisig_wallet">Not Multisig Wallet</string>
+    <string name="not_valid_multisig_path">Keystone does not currently support importing this multisig wallet,please change path</string>
     <string name="invalid_wallet_hint">This File/QR Code is not multisig wallet, can\'t import.</string>
     <string name="check_verify_code_hint">Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of above, ensure that they are consistent before importing.</string>
     <string name="multisig_already_signed">This transaction has been signed, please broadcast it directly.</string>
@@ -870,4 +875,6 @@
     <string name="casa_guide_two_tip"><![CDATA[Questions? Follow our guide at <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
     <string name="casa_continue_ready">Continue, It\'s Ready</string>
     <string name="casa_guide">How to scan QR code in Casa</string>
+
+    <string name="caravan_hint"><![CDATA[铠石钱包支持与Caravan配合创建多签钱包，图文教程<br>请访问：https://keyst.one/caravan]]></string>
 </resources>

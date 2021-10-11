@@ -176,7 +176,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     public void navigate(@IdRes int id, Bundle data) {
         try {
             dismissLoading();
-            mNavController.navigate(id, data);
+            AppExecutors.getInstance().mainThread().execute(() -> mNavController.navigate(id, data));
         } catch (IllegalArgumentException | IllegalStateException e) {
             e.printStackTrace();
             alert(mActivity.getString(R.string.hint), mActivity.getString(R.string.unknown_error));

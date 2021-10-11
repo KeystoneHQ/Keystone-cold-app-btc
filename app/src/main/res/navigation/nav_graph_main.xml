@@ -393,6 +393,9 @@
             android:id="@+id/action_to_casaMultisigFragment"
             app:destination="@id/casaMultisigFragment" />
         <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment" />
+        <action
             android:id="@+id/action_to_casaGuidePageOneFragment"
             app:destination="@id/casaGuidePageOneFragment" />
         <action
@@ -454,6 +457,11 @@
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment"
+            app:popUpTo="@+id/multisigSelectionFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment"
             app:popUpTo="@+id/multisigSelectionFragment"
             app:popUpToInclusive="true"/>
         <action
@@ -532,6 +540,90 @@
     </fragment>
 
     <fragment
+        android:id="@+id/caravanMultisigFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.CaravanMainFragment"
+        android:label="MultisigEntry">
+        <action
+            android:id="@id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_to_legacyMultisigFragment"
+            app:destination="@id/legacyMultisigFragment"
+            app:popUpTo="@id/caravanMultisigFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_casaMultisigFragment"
+            app:destination="@id/casaMultisigFragment"
+            app:popUpTo="@id/caravanMultisigFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_casaGuidePageOneFragment"
+            app:destination="@id/casaGuidePageOneFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/import_multisig_file_list"
+            app:destination="@id/importMultisigFileList"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_receiveCoinFragment"
+            app:destination="@id/receiveCoinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/manage_multisig_wallet"
+            app:destination="@id/manageWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/create_multisig_wallet"
+            app:destination="@id/PreCreateMultiSigWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/export_export_multisig_expub"
+            app:destination="@id/exportMultisigExpubFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtListFragment"
+            app:destination="@id/psbtListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_multisig_wallet"
+            app:destination="@id/walletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
         android:id="@+id/casaMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaMainFragment"
         android:label="MultisigEntry">
@@ -542,6 +634,11 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment"
+            app:popUpTo="@id/casaMultisigFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment"
@@ -603,6 +700,11 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment"
+            app:popUpTo="@id/legacyMultisigFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_to_casaMultisigFragment"
             app:destination="@id/casaMultisigFragment"
