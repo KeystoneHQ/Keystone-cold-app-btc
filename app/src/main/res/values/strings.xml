@@ -693,7 +693,7 @@
     <string name="mainnet">Main Net</string>
     <string name="testnet">Test Net</string>
     <string name="export_multisig_xpub">Export XPUB</string>
-    <string name="export_multisig_to_cosigner">Export wallet to cosigners</string>
+    <string name="export_multisig_to_cosigner">Export Wallet to Cosigners</string>
     <string name="please_check_multisig_wallet_info">Check the Wallet Info</string>
     <string name="check_multisig_wallet_hint">Please carefully check the wallet info to ensure that it is completely consistent with the created wallet information before importing.</string>
     <string name="verify_multisig_wallet">Wallet Verify</string>
@@ -723,6 +723,7 @@
     <string name="p2sh">Legacy (P2SH)</string>
     <string name="select_xpub_file">Select XPUB File</string>
     <string name="delete_wallet_title">Delete Wallet？</string>
+    <string name="delete_wallet">Delete Wallet</string>
     <string name="delete_wallet_hint">Confirm to delete the wallet？ The wallet transaction can\'t be signed after deleting.</string>
     <string name="no_multisig_Wallet">No Multisig Wallet</string>
     <string name="import_failed">Import Failed</string>
@@ -825,14 +826,15 @@
     <string name="create_23_word">Create your own 24 words Recovery Phrase</string>
     <string name="create_23_word_title">Create your Recovery Phrase</string>
     <string name="mnemonic_backuped">I have my Recovery phrase</string>
-    <string name="export_wallet_to_caravan">Export to Caravan</string>
-    <string name="caravan_import_guide_title">How to import watch-only wallet to Caravan</string>
+    <string name="export_wallet_to_caravan">Export Wallet to Caravan</string>
+    <string name="export_to_caravan">Export to Caravan</string>
+    <string name="caravan_import_guide_title">Caravan Import Tutorials:</string>
     <string name="caravan_import_guide"><![CDATA[
-        1. Open Caravan<br>
-        2. Click SCAN KEYSTONE button<br>
-        3. Scan QR Code of watch-only that displays on Keystone<br>
-        4. After importing wallet, click CONFIRM button<br>
-        5. Enter the watch-only wallet<br>
+        1. Open Caravan wallet and select \'<b>WALLET</b>\'<br>
+        2. Click \'<b>IMPORT WALLET CONFIGURATION</b>\'<br>
+        3. Select \'<b>Scan QR Code</b>\'<br>
+        4. Scan the QR Code of multisig wallet<br>
+        5. Enter watch-only wallet<br>
     ]]></string>
     <string name="scan_with_caravan">Scan with Caravan</string>
     <string name="text_with_info_icon" translatable="false"><![CDATA[

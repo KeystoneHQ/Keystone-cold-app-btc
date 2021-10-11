@@ -68,7 +68,7 @@ public class ExportMultiSigWalletToWatchWallet extends MultiSigBaseFragment<Expo
 
         mBinding.exportToSdcard.setOnClickListener(v -> exportToSdcard());
         mBinding.info.setOnClickListener(v -> showCaravanImportGuide(mActivity));
-        mBinding.done.setOnClickListener(v -> popBackStack(R.id.legacyMultisigFragment, false));
+        mBinding.done.setOnClickListener(v -> popBackStack(R.id.caravanMultisigFragment, false));
     }
 
     private void showCaravanImportGuide(AppCompatActivity activity) {

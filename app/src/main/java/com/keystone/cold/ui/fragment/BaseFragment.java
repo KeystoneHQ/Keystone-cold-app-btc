@@ -163,7 +163,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     public void popBackStack(@IdRes int id, boolean inclusive) {
         try {
-            mNavController.popBackStack(id, inclusive);
+            AppExecutors.getInstance().mainThread().execute(() -> mNavController.popBackStack(id, inclusive));
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

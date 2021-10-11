@@ -165,7 +165,6 @@ public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultis
     private void navigateToManageWallet() {
         Bundle data = new Bundle();
         data.putString("wallet_fingerprint", caravanWallet.getWalletFingerPrint());
-        data.putString("creator", caravanWallet.getCreator());
         navigate(R.id.action_to_multisig_wallet, data);
     }
 

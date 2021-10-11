@@ -665,6 +665,7 @@
     <string name="p2sh">传统（P2SH）</string>
     <string name="select_xpub_file">选择公钥文件</string>
     <string name="delete_wallet_title">删除钱包？</string>
+    <string name="delete_wallet">删除钱包</string>
     <string name="delete_wallet_hint">确认是否删除该钱包，删除后，将不能对该钱包的交易签名。</string>
     <string name="no_multisig_Wallet">暂无多签钱包</string>
     <string name="import_failed">导入失败</string>
@@ -771,13 +772,14 @@
     <string name="create_23_word">创建自己的助记词</string>
     <string name="create_23_word_title">创建自己的助记词</string>
     <string name="mnemonic_backuped">我已备份好助记词</string>
-    <string name="export_wallet_to_caravan">导出观察钱包(Caravan)</string>
-    <string name="caravan_import_guide_title">Caravan 导入观察钱包指引</string>
+    <string name="export_wallet_to_caravan">导出钱包给Caravan</string>
+    <string name="export_to_caravan">导出到Caravan</string>
+    <string name="caravan_import_guide_title">Caravan 导入指引:</string>
     <string name="caravan_import_guide"><![CDATA[
-        1. 打开 Caravan<br>
-        2. 点击“SCAN KEYSTONE”按钮<br>
-        3. 扫描观察钱包二维码（点击下方按钮查看）<br>
-        4. 导入钱包信息后点击“CONFIRM”按钮<br>
+        1. 打开 Caravan，选择\“<b>WALLET</b>\”<br>
+        2. 点击\“<b>IMPORT WALLET CONFIGURATION</b>\”按钮<br>
+        3. 选择\“<b>Scan QR Code</b>\”<br>
+        4. 扫描展示钱包二维码（点击下方按钮）<br>
         5. 进入观察钱包<br>
     ]]></string>
     <string name="scan_with_caravan">请用 Caravan 扫描钱包二维码</string>
