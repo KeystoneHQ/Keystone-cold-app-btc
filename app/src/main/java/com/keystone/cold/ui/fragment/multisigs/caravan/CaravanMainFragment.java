@@ -83,7 +83,7 @@ public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultis
         if (getArguments() != null && getArguments().containsKey("walletFingerPrint")) {
             mBinding.hint.setVisibility(View.GONE);
         }
-        mBinding.empty.exportXpub.setOnClickListener(null);
+        mBinding.empty.exportXpub.setOnClickListener(v -> navigate(R.id.export_export_caravan_expub));
         mBinding.empty.importMultisigWallet.setOnClickListener(v -> navigate(R.id.import_multisig_file_list));
         mBinding.empty.createMultisig.setOnClickListener(v -> navigate(R.id.create_multisig_wallet));
         mBinding.walletInfo.fab.setOnClickListener(v -> addAddress());

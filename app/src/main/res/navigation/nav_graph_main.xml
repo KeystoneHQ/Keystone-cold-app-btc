@@ -595,8 +595,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/export_export_multisig_expub"
-            app:destination="@id/exportMultisigExpubFragment"
+            android:id="@+id/export_export_caravan_expub"
+            app:destination="@id/exportCaravanExpubFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -785,6 +785,10 @@
         android:id="@+id/exportMultisigExpubFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.common.ExportMultisigExpubFragment"
         android:label="ExportMultisigExpubFragment" />
+    <fragment
+        android:id="@+id/exportCaravanExpubFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.ExportCaravanExpubFragment"
+        android:label="ExportCaravanExpubFragment" />
 
     <fragment
         android:id="@+id/walletFragment"

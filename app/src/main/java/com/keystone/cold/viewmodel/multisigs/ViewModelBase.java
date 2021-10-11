@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class ViewModelBase extends AndroidViewModel {
-    private final Map<Account, String> xPubMap = new HashMap<>();
+    protected final Map<Account, String> xPubMap = new HashMap<>();
     private final String xfp;
 
     public ViewModelBase(@NonNull Application application) {
@@ -32,9 +32,5 @@ class ViewModelBase extends AndroidViewModel {
             xPubMap.put(account, ExtendedPublicKeyVersion.convertXPubVersion(xPub, account.getXPubVersion()));
         }
         return xPubMap.get(account);
-    }
-
-    public String getXPub(String path) {
-        return new GetExtendedPublicKeyCallable(path).call();
     }
 }

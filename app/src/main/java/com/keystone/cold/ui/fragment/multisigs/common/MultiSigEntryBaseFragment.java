@@ -116,9 +116,9 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
             } else if (modeId.equals(MultiSigMode.CARAVAN.getModeId())) {
                 dialog.dismiss();
                 Bundle bundle = new Bundle();
-                CaravanMultiSigWalletEntity caravanCurrentWallet = caravanMultiSigViewModel.getCurrentWalletSync().toCaravanWallet();
+                MultiSigWalletEntity caravanCurrentWallet = caravanMultiSigViewModel.getCurrentWalletSync();
                 if (caravanCurrentWallet != null) {
-                    bundle.putString("walletFingerPrint", caravanCurrentWallet.getWalletFingerPrint());
+                    bundle.putString("walletFingerPrint", caravanCurrentWallet.toCaravanWallet().getWalletFingerPrint());
                 }
                 navigate(R.id.action_to_caravanMultisigFragment, bundle);
             } else if (modeId.equals(MultiSigMode.LEGACY.getModeId())) {

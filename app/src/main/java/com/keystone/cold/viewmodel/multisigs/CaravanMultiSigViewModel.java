@@ -14,6 +14,7 @@ import com.keystone.coinlib.accounts.Account;
 import com.keystone.coinlib.accounts.ExtendedPublicKeyVersion;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.Utilities;
+import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
@@ -119,5 +120,21 @@ public class CaravanMultiSigViewModel extends LegacyMultiSigViewModel {
             throw new XfpNotMatchException("xfp not match");
         }
         return xpubs;
+    }
+
+    @Override
+    public String getXPub(Account account) {
+        if (!xPubMap.containsKey(account)) {
+            boolean isMainnet = Utilities.isMainNet(getApplication());
+            String xPub = new GetExtendedPublicKeyCallable(account.getPath()).call();
+            xPubMap.put(account, ExtendPubkeyFormat.convertExtendPubkey(xPub, isMainnet ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub));
+        }
+        return xPubMap.get(account);
+    }
+
+    public String getXPub(String path) {
+        boolean isMainnet = Utilities.isMainNet(getApplication());
+        String xPub = new GetExtendedPublicKeyCallable(path).call();
+        return ExtendPubkeyFormat.convertExtendPubkey(xPub, isMainnet ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub);
     }
 }

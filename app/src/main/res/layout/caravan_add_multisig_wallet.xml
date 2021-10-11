@@ -26,21 +26,21 @@
                 android:id="@+id/export_xpub"
                 style="@style/AcceptButton"
                 android:layout_width="match_parent"
-                android:layout_margin="10dp"
+                android:layout_margin="16dp"
                 android:text="@string/casa_operation_export" />
 
             <Button
                 android:id="@+id/import_multisig_wallet"
                 style="@style/AcceptButton"
                 android:layout_width="match_parent"
-                android:layout_margin="10dp"
+                android:layout_margin="16dp"
                 android:text="@string/import_multisig_wallet" />
 
             <Button
                 android:id="@+id/create_multisig"
                 style="@style/AcceptButton"
                 android:layout_width="match_parent"
-                android:layout_margin="10dp"
+                android:layout_margin="16dp"
                 android:text="@string/create_multisig_wallet" />
 
         </LinearLayout>
