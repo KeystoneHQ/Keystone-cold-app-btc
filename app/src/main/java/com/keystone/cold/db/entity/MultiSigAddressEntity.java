@@ -38,16 +38,16 @@ public class MultiSigAddressEntity {
     @NonNull
     public long id;
     @NonNull
-    private String address; // address
+    protected String address; // address
     @NonNull
-    private int index; // address index
+    protected int index; // address index
     @NonNull
-    private String walletFingerPrint; // belong to which multisig wallet
+    protected String walletFingerPrint; // belong to which multisig wallet
     @NonNull
-    private String path; // address path
+    protected String path; // address path
     @NonNull
-    private int changeIndex;
-    private String name;
+    protected int changeIndex;
+    protected String name;
 
     public long getId() {
         return id;
@@ -103,6 +103,18 @@ public class MultiSigAddressEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CaravanMultiSigAddressEntity toCaravanAddress(){
+        CaravanMultiSigAddressEntity caravanMultiSigAddressEntity = new CaravanMultiSigAddressEntity();
+        caravanMultiSigAddressEntity.setAddress(address);
+        caravanMultiSigAddressEntity.setChangeIndex(changeIndex);
+        caravanMultiSigAddressEntity.setIndex(index);
+        caravanMultiSigAddressEntity.setName(name);
+        caravanMultiSigAddressEntity.setWalletFingerPrint(walletFingerPrint);
+        caravanMultiSigAddressEntity.setPath(path);
+        caravanMultiSigAddressEntity.setId(id);
+        return caravanMultiSigAddressEntity;
     }
 
     @Override

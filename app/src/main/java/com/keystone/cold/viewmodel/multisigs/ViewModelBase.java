@@ -33,4 +33,8 @@ class ViewModelBase extends AndroidViewModel {
         }
         return xPubMap.get(account);
     }
+
+    public String getXPub(String path) {
+        return new GetExtendedPublicKeyCallable(path).call();
+    }
 }

@@ -38,24 +38,24 @@ import java.util.List;
 public class MultiSigWalletEntity {
     @PrimaryKey
     @NonNull
-    private String walletFingerPrint;
-    private String walletName;
+    protected String walletFingerPrint;
+    protected String walletName;
     @NonNull
-    private int threshold;
+    protected int threshold;
     @NonNull
-    private int total;
+    protected int total;
     @NonNull
-    private String exPubPath;
+    protected String exPubPath;
     @NonNull
-    private String exPubs;
+    protected String exPubs;
     @NonNull
-    private String belongTo;
+    protected String belongTo;
     @NonNull
-    private String verifyCode;
+    protected String verifyCode;
     @NonNull
-    private String network;
+    protected String network;
     @NonNull
-    private String creator;
+    protected String creator;
     public MultiSigWalletEntity(String walletName, int threshold, int total,
                                 String exPubPath, String exPubs, String belongTo,
                                 String network, String verifyCode, String creator) {
@@ -166,6 +166,12 @@ public class MultiSigWalletEntity {
         return deriver.deriveMultiSigAddress(getThreshold(),
                 xpubList, new int[] {index[0], index[1]},
                 MultiSig.ofPath(getExPubPath()).get(0));
+    }
+
+    public CaravanMultiSigWalletEntity toCaravanWallet() {
+        CaravanMultiSigWalletEntity caravanMultiSigWalletEntity = new CaravanMultiSigWalletEntity(walletName, threshold, total, exPubPath, exPubs, belongTo, network, verifyCode, creator);
+        caravanMultiSigWalletEntity.setWalletFingerPrint(walletFingerPrint);
+        return caravanMultiSigWalletEntity;
     }
 
     @Override

@@ -21,7 +21,7 @@
     <item
         android:id="@+id/action_scan"
         android:orderInCategory="100"
-        android:title="Search"
+        android:title="@string/action_scan_qr_code"
         android:icon="@drawable/scan_qr_code"
         android:iconTint="@color/white"
         app:showAsAction="always" />
