@@ -825,5 +825,8 @@
     <string name="casa_guide">铠石钱包导入Casa指引</string>
 
     <string name="caravan_hint"><![CDATA[铠石钱包支持与Caravan配合创建多签钱包，图文教程<br>请访问：https://keyst.one/caravan]]></string>
+    <string name="switch_wallet">切换首页钱包</string>
+    <string name="add_caravan_wallet">添加多签钱包</string>
+
 
 </resources>

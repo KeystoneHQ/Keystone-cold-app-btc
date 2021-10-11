@@ -595,7 +595,7 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/export_export_caravan_expub"
+            android:id="@+id/export_caravan_expub"
             app:destination="@id/exportCaravanExpubFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -618,6 +618,40 @@
         <action
             android:id="@+id/action_to_multisig_wallet"
             app:destination="@id/walletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_add_multisig_wallet"
+            app:destination="@id/caravanAddWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/caravanAddWalletFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.CaravanAddWalletFragment"
+        android:label="CaravanAddWalletFragment">
+        <action
+            android:id="@+id/export_caravan_expub"
+            app:destination="@id/exportCaravanExpubFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/import_multisig_file_list"
+            app:destination="@id/importMultisigFileList"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/create_multisig_wallet"
+            app:destination="@id/PreCreateMultiSigWalletFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"

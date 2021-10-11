@@ -31,9 +31,9 @@ import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.AddAddressBottomSheetBinding;
+import com.keystone.cold.databinding.CaravanBottomSheetBinding;
 import com.keystone.cold.databinding.CaravanMultisgMainBinding;
 import com.keystone.cold.databinding.MultisigAddressItemBinding;
-import com.keystone.cold.databinding.MultisigBottomSheetBinding;
 import com.keystone.cold.db.entity.CaravanMultiSigWalletEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.ui.MainActivity;
@@ -83,7 +83,7 @@ public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultis
         if (getArguments() != null && getArguments().containsKey("walletFingerPrint")) {
             mBinding.hint.setVisibility(View.GONE);
         }
-        mBinding.empty.exportXpub.setOnClickListener(v -> navigate(R.id.export_export_caravan_expub));
+        mBinding.empty.exportXpub.setOnClickListener(v -> navigate(R.id.export_caravan_expub));
         mBinding.empty.importMultisigWallet.setOnClickListener(v -> navigate(R.id.import_multisig_file_list));
         mBinding.empty.createMultisig.setOnClickListener(v -> navigate(R.id.create_multisig_wallet));
         mBinding.walletInfo.fab.setOnClickListener(v -> addAddress());
@@ -258,24 +258,14 @@ public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultis
 
     private void showBottomSheetMenu() {
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
-        MultisigBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.multisig_bottom_sheet, null, false);
-        binding.exportXpub.setOnClickListener(v -> {
+        CaravanBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
+                R.layout.caravan_bottom_sheet, null, false);
+        binding.switchWallet.setOnClickListener(v -> {
             dialog.dismiss();
-            navigate(R.id.export_export_multisig_expub);
-        });
-        binding.createMultisig.setOnClickListener(v -> {
-            navigate(R.id.create_multisig_wallet);
-            dialog.dismiss();
-        });
-
-        binding.importMultisig.setOnClickListener(v -> {
-            navigate(R.id.import_multisig_file_list);
-            dialog.dismiss();
-        });
-
-        binding.manageMultisig.setOnClickListener(v -> {
             navigate(R.id.manage_multisig_wallet);
+        });
+        binding.addCaravan.setOnClickListener(v -> {
+            navigate(R.id.action_to_add_multisig_wallet);
             dialog.dismiss();
         });
 

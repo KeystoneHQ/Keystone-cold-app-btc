@@ -33,29 +33,17 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:contentInsetStartWithNavigation="0dp"
-            app:navigationIcon="@drawable/menu"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextAppearance="@style/Toolbar.TitleText"
-            app:titleTextColor="@color/white">
+            app:navigationIcon="@drawable/arrow_left"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <FrameLayout
-                android:id="@+id/toolbar_mode_selection"
+            <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:text="@string/multisig_caravan"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:drawableEndCompat="@drawable/arrow_right"
-                    app:drawableTint="@color/colorAccent" />
-            </FrameLayout>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/add_caravan_wallet"
+                android:textColor="@android:color/white"
+                android:textSize="15sp" />
         </androidx.appcompat.widget.Toolbar>
 
         <include
@@ -73,17 +61,6 @@
             <include
                 android:id="@+id/empty"
                 layout="@layout/caravan_empty_multisig_wallet"/>
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/wallet"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            android:visibility="gone">
-            <include
-                android:id="@+id/wallet_info"
-                layout="@layout/caravan_wallet"/>
         </FrameLayout>
     </RelativeLayout>
 </layout>
