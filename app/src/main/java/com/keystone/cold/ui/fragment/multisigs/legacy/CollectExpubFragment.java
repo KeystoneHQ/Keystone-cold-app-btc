@@ -132,7 +132,7 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     array.put(xpub);
                 }
             }
-            legacyMultiSigViewModel.createMultisigWallet(threshold, account, null, array, "Keystone")
+            multiSigViewModel.createMultisigWallet(threshold, account, null, array, "Keystone")
                     .observe(this, walletEntity -> {
                         if (walletEntity != null) {
                             Bundle data = new Bundle();

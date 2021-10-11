@@ -33,14 +33,14 @@ import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 public abstract class MultiSigBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> {
-    protected LegacyMultiSigViewModel legacyMultiSigViewModel;
+    protected LegacyMultiSigViewModel multiSigViewModel;
 
     @Override
     protected void init(View view) {
         if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CARAVAN.getModeId())) {
-            legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(CaravanMultiSigViewModel.class);
+            multiSigViewModel = ViewModelProviders.of(mActivity).get(CaravanMultiSigViewModel.class);
         } else {
-            legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+            multiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
         }
     }
 

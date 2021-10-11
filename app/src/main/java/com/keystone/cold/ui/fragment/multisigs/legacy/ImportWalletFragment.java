@@ -103,7 +103,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
                         R.layout.common_modal, null, false);
                 binding.title.setText(R.string.verify_multisig_wallet);
                 binding.subTitle.setText(getString(R.string.verify_wallet_hint,
-                        legacyMultiSigViewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath())));
+                        multiSigViewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath())));
                 binding.close.setVisibility(View.GONE);
                 binding.confirm.setText(R.string.verify_code_ok);
                 binding.confirm.setOnClickListener(v -> {
@@ -148,7 +148,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
     private void importWallet() {
         try {
-            legacyMultiSigViewModel.createMultisigWallet(threshold, account, dummyWallet.getWalletName(), walletInfo.getJSONArray("Xpubs"), creator)
+            multiSigViewModel.createMultisigWallet(threshold, account, dummyWallet.getWalletName(), walletInfo.getJSONArray("Xpubs"), creator)
                     .observe(this, this::onImportWalletSuccess);
         } catch (XfpNotMatchException e) {
             e.printStackTrace();

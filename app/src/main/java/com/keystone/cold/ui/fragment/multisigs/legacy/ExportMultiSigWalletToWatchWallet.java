@@ -59,7 +59,7 @@ public class ExportMultiSigWalletToWatchWallet extends MultiSigBaseFragment<Expo
         Bundle data = getArguments();
         Objects.requireNonNull(data);
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
-        legacyMultiSigViewModel.exportWalletToCaravan(data.getString("wallet_fingerprint")).observe(this, jsonObject -> {
+        multiSigViewModel.exportWalletToCaravan(data.getString("wallet_fingerprint")).observe(this, jsonObject -> {
             caravanWalletJson = jsonObject;
             walletName = caravanWalletJson.optString("name");
             mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
