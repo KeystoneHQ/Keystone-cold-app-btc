@@ -827,6 +827,11 @@
     <string name="caravan_hint"><![CDATA[铠石钱包支持与Caravan配合创建多签钱包，图文教程<br>请访问：https://keyst.one/caravan]]></string>
     <string name="switch_wallet">切换首页钱包</string>
     <string name="add_caravan_wallet">添加多签钱包</string>
+    <string name="create_successful">创建成功</string>
+    <string name="caravan_export_wallet_hint"><![CDATA[
+        1. 您可将该钱包导出给参与方（参与方需创建/导入该钱包，否则无法对该钱包的交易签名）。<br>
+        2. <font color="#00cdc3">参与方导入时，需检查要导入钱包的验证码是否和上方钱包验证码一致</font>，确保一致后再进行导入。<br>
+    ]]></string>
 
 
 </resources>

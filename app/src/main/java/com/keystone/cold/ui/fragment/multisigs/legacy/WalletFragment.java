@@ -55,6 +55,9 @@ public class WalletFragment extends MultiSigBaseFragment<MultisigWalletBinding>
             mBinding.exportWalletToCaravan.setVisibility(View.VISIBLE);
             mBinding.deleteWallet.setVisibility(View.VISIBLE);
             mBinding.deleteWallet.setOnClickListener(v -> showAlert());
+            mBinding.exportWalletToCosigner.setOnClickListener(v -> onClick(R.id.action_export_caravan_wallet_to_cosigner));
+        } else {
+            mBinding.exportWalletToCosigner.setOnClickListener(v -> onClick(R.id.action_export_wallet_to_cosigner));
         }
     }
 

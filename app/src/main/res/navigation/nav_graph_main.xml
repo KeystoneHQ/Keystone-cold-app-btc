@@ -845,6 +845,14 @@
             app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
+            android:id="@+id/action_export_caravan_wallet_to_cosigner"
+            app:destination="@id/exportCaravanWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
             android:id="@+id/action_export_wallet_to_caravan"
             app:destination="@id/exportWalletToCosignerFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -924,6 +932,12 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exportCaravanWalletToCosignerFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.ExportCaravanWalletToCosignerFragment"
+        android:label="ExportCaravanWalletToCosignerFragment">
         <action
             android:id="@+id/action_export_caravan_watch_only_guide"
             app:destination="@id/exportCaravanWatchWalletGuide"
@@ -1021,6 +1035,20 @@
         <action
             android:id="@+id/action_export_wallet_to_cosigner"
             app:destination="@id/exportWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_export_caravan_wallet_to_cosigner"
+            app:destination="@id/exportCaravanWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_export_caravan_watch_only_guide"
+            app:destination="@id/exportCaravanWatchWalletGuide"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
