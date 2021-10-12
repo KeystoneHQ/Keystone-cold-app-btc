@@ -35,6 +35,7 @@ import com.keystone.cold.db.dao.AccountDao;
 import com.keystone.cold.db.dao.AddressDao;
 import com.keystone.cold.db.dao.CaravanMultiSigAddressDao;
 import com.keystone.cold.db.dao.CaravanMultiSigWalletDao;
+import com.keystone.cold.db.dao.CaravanTxDao;
 import com.keystone.cold.db.dao.CasaDao;
 import com.keystone.cold.db.dao.CoinDao;
 import com.keystone.cold.db.dao.MultiSigAddressDao;
@@ -45,6 +46,7 @@ import com.keystone.cold.db.entity.AccountEntity;
 import com.keystone.cold.db.entity.AddressEntity;
 import com.keystone.cold.db.entity.CaravanMultiSigAddressEntity;
 import com.keystone.cold.db.entity.CaravanMultiSigWalletEntity;
+import com.keystone.cold.db.entity.CaravanTxEntity;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
@@ -56,7 +58,7 @@ import com.keystone.cold.db.entity.WhiteListEntity;
         TxEntity.class, WhiteListEntity.class,
         AccountEntity.class, MultiSigWalletEntity.class,
         MultiSigAddressEntity.class, CasaSignature.class, CaravanMultiSigWalletEntity.class,
-        CaravanMultiSigAddressEntity.class}, version = 8)
+        CaravanMultiSigAddressEntity.class, CaravanTxEntity.class}, version = 8)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "keystone-db";
     private static AppDatabase sInstance;
@@ -80,6 +82,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CaravanMultiSigWalletDao caravanMultiSigWalletDao();
 
     public abstract CaravanMultiSigAddressDao caravanMultiSigAddressDao();
+
+    public abstract CaravanTxDao caravanTxDao();
 
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
 
@@ -208,6 +212,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         "`creator` TEXT NOT NULL default '' , " +
                         "`network` TEXT NOT NULL)");
                 database.execSQL("CREATE INDEX index_caravan_multi_sig_wallet_walletFingerPrint ON caravan_multi_sig_wallet (walletFingerPrint)");
+
                 database.execSQL("CREATE TABLE IF NOT EXISTS `caravan_multi_sig_address` " +
                         "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                         "`address` TEXT NOT NULL, " +
@@ -219,6 +224,23 @@ public abstract class AppDatabase extends RoomDatabase {
                         "FOREIGN KEY(`walletFingerPrint`) REFERENCES `caravan_multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
                 database.execSQL("CREATE UNIQUE INDEX index_caravan_multi_sig_address_id ON caravan_multi_sig_address (id)");
                 database.execSQL("CREATE INDEX index_caravan_multi_sig_address_walletFingerPrint ON caravan_multi_sig_address (walletFingerPrint)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS `caravan_txs` " +
+                        "(`txId` TEXT NOT NULL, " +
+                        "`coinId` TEXT, " +
+                        "`coinCode` TEXT, " +
+                        "`amount` TEXT, " +
+                        "`from` TEXT, " +
+                        "`to` TEXT, " +
+                        "`fee` TEXT, " +
+                        "`signedHex` TEXT, " +
+                        "`timeStamp` INTEGER NOT NULL, " +
+                        "`memo` TEXT, " +
+                        "`signId` TEXT, " +
+                        "`belongTo` TEXT, " +
+                        "`signStatus` TEXT," +
+                        " PRIMARY KEY(`txId`))");
+                database.execSQL("CREATE INDEX index_caravan_txs_txId ON caravan_txs (txId)");
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
