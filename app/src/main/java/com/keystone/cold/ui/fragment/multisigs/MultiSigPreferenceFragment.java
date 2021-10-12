@@ -42,12 +42,14 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
         adapter = new Adapter(mActivity);
         mBinding.list.setAdapter(adapter);
         mBinding.confirm.setOnClickListener(v -> {
-            if (value.equals(MultiSigMode.LEGACY.getModeId())) {
-                navigate(R.id.action_to_legacyMultisigFragment);
-            } else {
+            if (value.equals(MultiSigMode.CASA.getModeId())){
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("isGuide", true);
                 navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
+            } else if (value.equals(MultiSigMode.CARAVAN.getModeId())) {
+                navigate(R.id.action_to_caravanMultisigFragment);
+            } else if (value.equals(MultiSigMode.LEGACY.getModeId())) {
+                navigate(R.id.action_to_legacyMultisigFragment);
             }
         });
         entries = getResources().getStringArray(getEntries());
@@ -71,10 +73,6 @@ public class MultiSigPreferenceFragment extends BaseFragment<MultisigModePrefere
 
     protected int getSubTitles() {
         return R.array.multisig_mode_list_sub_titles;
-    }
-
-    protected String defaultValue() {
-        return MultiSigMode.LEGACY.getModeId();
     }
 
     @Override

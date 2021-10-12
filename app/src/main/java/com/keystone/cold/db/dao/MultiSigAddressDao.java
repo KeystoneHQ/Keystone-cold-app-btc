@@ -42,7 +42,4 @@ public interface MultiSigAddressDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<MultiSigAddressEntity> addressEntities);
-
-    @Query("SELECT * FROM multi_sig_address")
-    LiveData<List<MultiSigAddressEntity>> loadAll();
 }

@@ -115,21 +115,25 @@
 
     <string-array name="multisig_mode_list">
         <item>Casa Mode</item>
+        <item>Caravan Mode</item>
         <item>Generic Mode</item>
     </string-array>
 
     <string-array name="multisig_mode_list_values" translatable="false">
         <item>casa</item>
+        <item>caravan</item>
         <item>legacy</item>
     </string-array>
 
     <string-array name="multisig_mode_list_sub_titles" translatable="true">
         <item>Hardware Key, Mobile Key, Casa Recovery Key</item>
+        <item>Caravan Multisig</item>
         <item>BlueWallet, Specter, Sparrow Wallet…</item>
     </string-array>
 
     <string name="multisig_legacy">Generic</string>
     <string name="multisig_casa">Casa</string>
+    <string name="multisig_caravan">Caravan</string>
 
     <string name="casa_operation_health_check">Perform Health Check</string>
     <string name="casa_operation_export">Export XPUB</string>
@@ -689,7 +693,7 @@
     <string name="mainnet">Main Net</string>
     <string name="testnet">Test Net</string>
     <string name="export_multisig_xpub">Export XPUB</string>
-    <string name="export_multisig_to_cosigner">Export wallet to cosigners</string>
+    <string name="export_multisig_to_cosigner">Export Wallet to Cosigners</string>
     <string name="please_check_multisig_wallet_info">Check the Wallet Info</string>
     <string name="check_multisig_wallet_hint">Please carefully check the wallet info to ensure that it is completely consistent with the created wallet information before importing.</string>
     <string name="verify_multisig_wallet">Wallet Verify</string>
@@ -719,11 +723,13 @@
     <string name="p2sh">Legacy (P2SH)</string>
     <string name="select_xpub_file">Select XPUB File</string>
     <string name="delete_wallet_title">Delete Wallet？</string>
+    <string name="delete_wallet">Delete Wallet</string>
     <string name="delete_wallet_hint">Confirm to delete the wallet？ The wallet transaction can\'t be signed after deleting.</string>
     <string name="no_multisig_Wallet">No Multisig Wallet</string>
     <string name="import_failed">Import Failed</string>
     <string name="not_include_current_vault">This multisig wallet doesn\'t contain the current wallet.</string>
     <string name="not_valid_multisig_wallet">Not Multisig Wallet</string>
+    <string name="not_valid_multisig_path">Keystone does not currently support importing this multisig wallet,please change path</string>
     <string name="invalid_wallet_hint">This File/QR Code is not multisig wallet, can\'t import.</string>
     <string name="check_verify_code_hint">Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of above, ensure that they are consistent before importing.</string>
     <string name="multisig_already_signed">This transaction has been signed, please broadcast it directly.</string>
@@ -820,14 +826,15 @@
     <string name="create_23_word">Create your own 24 words Recovery Phrase</string>
     <string name="create_23_word_title">Create your Recovery Phrase</string>
     <string name="mnemonic_backuped">I have my Recovery phrase</string>
-    <string name="export_wallet_to_caravan">Export to Caravan</string>
-    <string name="caravan_import_guide_title">How to import watch-only wallet to Caravan</string>
+    <string name="export_wallet_to_caravan">Export Wallet to Caravan</string>
+    <string name="export_to_caravan">Export to Caravan</string>
+    <string name="caravan_import_guide_title">Caravan Import Tutorials:</string>
     <string name="caravan_import_guide"><![CDATA[
-        1. Open Caravan<br>
-        2. Click SCAN KEYSTONE button<br>
-        3. Scan QR Code of watch-only that displays on Keystone<br>
-        4. After importing wallet, click CONFIRM button<br>
-        5. Enter the watch-only wallet<br>
+        1. Open Caravan wallet and select \'<b>WALLET</b>\'<br>
+        2. Click \'<b>IMPORT WALLET CONFIGURATION</b>\'<br>
+        3. Select \'<b>Scan QR Code</b>\'<br>
+        4. Scan the QR Code of multisig wallet<br>
+        5. Enter watch-only wallet<br>
     ]]></string>
     <string name="scan_with_caravan">Scan with Caravan</string>
     <string name="text_with_info_icon" translatable="false"><![CDATA[
@@ -870,4 +877,13 @@
     <string name="casa_guide_two_tip"><![CDATA[Questions? Follow our guide at <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
     <string name="casa_continue_ready">Continue, It\'s Ready</string>
     <string name="casa_guide">How to scan QR code in Casa</string>
+
+    <string name="caravan_hint"><![CDATA[Keystone supports the creation of a multi-signature wallet with Caravan, with graphic tutorials<br>please visit www.：https://keyst.one/caravan]]></string>
+    <string name="switch_wallet">Switch Wallet</string>
+    <string name="add_caravan_wallet">Add Multisig Wallet</string>
+    <string name="create_successful">Create Successful</string>
+    <string name="caravan_export_wallet_hint"><![CDATA[
+        1.  You can export this wallet to the cosigners for import (Cosigners need to import the wallet, otherwise they will not be able to sign the transactions of the wallet)<br>
+        2. <font color="#00cdc3"> Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of the wallet above</font>,and ensure that they are consistent before importing.<br>
+    ]]></string>
 </resources>

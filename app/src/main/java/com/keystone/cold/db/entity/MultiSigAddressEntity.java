@@ -105,6 +105,18 @@ public class MultiSigAddressEntity {
         this.name = name;
     }
 
+    public CaravanMultiSigAddressEntity toCaravanAddress(){
+        CaravanMultiSigAddressEntity caravanMultiSigAddressEntity = new CaravanMultiSigAddressEntity();
+        caravanMultiSigAddressEntity.setAddress(address);
+        caravanMultiSigAddressEntity.setChangeIndex(changeIndex);
+        caravanMultiSigAddressEntity.setIndex(index);
+        caravanMultiSigAddressEntity.setName(name);
+        caravanMultiSigAddressEntity.setWalletFingerPrint(walletFingerPrint);
+        caravanMultiSigAddressEntity.setPath(path);
+        caravanMultiSigAddressEntity.setId(id);
+        return caravanMultiSigAddressEntity;
+    }
+
     @Override
     public String toString() {
         return "MultiSigAddressEntity{" +

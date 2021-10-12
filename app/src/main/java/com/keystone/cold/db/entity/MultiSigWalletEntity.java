@@ -168,6 +168,12 @@ public class MultiSigWalletEntity {
                 MultiSig.ofPath(getExPubPath()).get(0));
     }
 
+    public CaravanMultiSigWalletEntity toCaravanWallet() {
+        CaravanMultiSigWalletEntity caravanMultiSigWalletEntity = new CaravanMultiSigWalletEntity(walletName, threshold, total, exPubPath, exPubs, belongTo, network, verifyCode, creator);
+        caravanMultiSigWalletEntity.setWalletFingerPrint(walletFingerPrint);
+        return caravanMultiSigWalletEntity;
+    }
+
     @Override
     public String toString() {
         return "MultiSigWalletEntity{" +
