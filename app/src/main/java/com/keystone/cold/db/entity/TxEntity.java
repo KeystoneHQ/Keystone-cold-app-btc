@@ -34,19 +34,19 @@ public class TxEntity implements Tx, FilterableItem {
 
     @PrimaryKey
     @NonNull
-    private String txId;
-    private String coinId;
-    private String coinCode;
-    private String amount;
-    private String from;
-    private String to;
-    private String fee;
-    private String signedHex;
-    private long timeStamp;
-    private String memo;
-    private String signId;
-    private String belongTo;
-    private String signStatus;
+    protected String txId;
+    protected String coinId;
+    protected String coinCode;
+    protected String amount;
+    protected String from;
+    protected String to;
+    protected String fee;
+    protected String signedHex;
+    protected long timeStamp;
+    protected String memo;
+    protected String signId;
+    protected String belongTo;
+    protected String signStatus;
 
     @Override
     public String getBelongTo() {

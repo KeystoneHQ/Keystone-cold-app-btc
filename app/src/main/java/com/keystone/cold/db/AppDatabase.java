@@ -33,6 +33,9 @@ import com.keystone.cold.MainApplication;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.db.dao.AccountDao;
 import com.keystone.cold.db.dao.AddressDao;
+import com.keystone.cold.db.dao.CaravanMultiSigAddressDao;
+import com.keystone.cold.db.dao.CaravanMultiSigWalletDao;
+import com.keystone.cold.db.dao.CaravanTxDao;
 import com.keystone.cold.db.dao.CasaDao;
 import com.keystone.cold.db.dao.CoinDao;
 import com.keystone.cold.db.dao.MultiSigAddressDao;
@@ -41,6 +44,9 @@ import com.keystone.cold.db.dao.TxDao;
 import com.keystone.cold.db.dao.WhiteListDao;
 import com.keystone.cold.db.entity.AccountEntity;
 import com.keystone.cold.db.entity.AddressEntity;
+import com.keystone.cold.db.entity.CaravanMultiSigAddressEntity;
+import com.keystone.cold.db.entity.CaravanMultiSigWalletEntity;
+import com.keystone.cold.db.entity.CaravanTxEntity;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
@@ -51,7 +57,8 @@ import com.keystone.cold.db.entity.WhiteListEntity;
 @Database(entities = {CoinEntity.class, AddressEntity.class,
         TxEntity.class, WhiteListEntity.class,
         AccountEntity.class, MultiSigWalletEntity.class,
-        MultiSigAddressEntity.class, CasaSignature.class}, version = 7)
+        MultiSigAddressEntity.class, CasaSignature.class, CaravanMultiSigWalletEntity.class,
+        CaravanMultiSigAddressEntity.class, CaravanTxEntity.class}, version = 8)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "keystone-db";
     private static AppDatabase sInstance;
@@ -71,6 +78,12 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MultiSigAddressDao multiSigAddressDao();
 
     public abstract MultiSigWalletDao multiSigWalletDao();
+
+    public abstract CaravanMultiSigWalletDao caravanMultiSigWalletDao();
+
+    public abstract CaravanMultiSigAddressDao caravanMultiSigAddressDao();
+
+    public abstract CaravanTxDao caravanTxDao();
 
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
 
@@ -105,6 +118,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 .addMigrations(MIGRATION_1_5)
                 .addMigrations(MIGRATION_5_6)
                 .addMigrations(MIGRATION_6_7)
+                .addMigrations(MIGRATION_7_8)
                 .fallbackToDestructiveMigration()
                 .build();
     }
@@ -175,6 +189,58 @@ public abstract class AppDatabase extends RoomDatabase {
                 String currentBelongTo = Utilities.getCurrentBelongTo(MainApplication.getApplication());
                 database.execSQL("ALTER TABLE casa_signature ADD COLUMN belongTo TEXT DEFAULT " + currentBelongTo);
                 database.execSQL("UPDATE coins SET show=" + 1);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+    private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `caravan_multi_sig_wallet` " +
+                        "(`walletFingerPrint` TEXT PRIMARY KEY NOT NULL, " +
+                        "`walletName` TEXT, " +
+                        "`threshold` INTEGER NOT NULL, " +
+                        "`total` INTEGER NOT NULL, " +
+                        "`exPubPath` TEXT NOT NULL, " +
+                        "`exPubs` TEXT NOT NULL , " +
+                        "`belongTo` TEXT NOT NULL , " +
+                        "`verifyCode` TEXT NOT NULL , " +
+                        "`creator` TEXT NOT NULL default '' , " +
+                        "`network` TEXT NOT NULL)");
+                database.execSQL("CREATE INDEX index_caravan_multi_sig_wallet_walletFingerPrint ON caravan_multi_sig_wallet (walletFingerPrint)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS `caravan_multi_sig_address` " +
+                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`address` TEXT NOT NULL, " +
+                        "`index` INTEGER NOT NULL, " +
+                        "`walletFingerPrint` TEXT NOT NULL, " +
+                        "`path` TEXT NOT NULL, " +
+                        "`changeIndex` INTEGER NOT NULL, " +
+                        "`name` TEXT, " +
+                        "FOREIGN KEY(`walletFingerPrint`) REFERENCES `caravan_multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+                database.execSQL("CREATE UNIQUE INDEX index_caravan_multi_sig_address_id ON caravan_multi_sig_address (id)");
+                database.execSQL("CREATE INDEX index_caravan_multi_sig_address_walletFingerPrint ON caravan_multi_sig_address (walletFingerPrint)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS `caravan_txs` " +
+                        "(`txId` TEXT NOT NULL, " +
+                        "`coinId` TEXT, " +
+                        "`coinCode` TEXT, " +
+                        "`amount` TEXT, " +
+                        "`from` TEXT, " +
+                        "`to` TEXT, " +
+                        "`fee` TEXT, " +
+                        "`signedHex` TEXT, " +
+                        "`timeStamp` INTEGER NOT NULL, " +
+                        "`memo` TEXT, " +
+                        "`signId` TEXT, " +
+                        "`belongTo` TEXT, " +
+                        "`signStatus` TEXT," +
+                        " PRIMARY KEY(`txId`))");
+                database.execSQL("CREATE INDEX index_caravan_txs_txId ON caravan_txs (txId)");
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

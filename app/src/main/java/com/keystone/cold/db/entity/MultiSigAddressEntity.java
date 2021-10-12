@@ -20,13 +20,13 @@
 package com.keystone.cold.db.entity;
 
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "multi_sig_address",
         foreignKeys = @ForeignKey(entity = MultiSigWalletEntity.class,
@@ -38,16 +38,16 @@ public class MultiSigAddressEntity {
     @NonNull
     public long id;
     @NonNull
-    private String address; // address
+    protected String address; // address
     @NonNull
-    private int index; // address index
+    protected int index; // address index
     @NonNull
-    private String walletFingerPrint; // belong to which multisig wallet
+    protected String walletFingerPrint; // belong to which multisig wallet
     @NonNull
-    private String path; // address path
+    protected String path; // address path
     @NonNull
-    private int changeIndex;
-    private String name;
+    protected int changeIndex;
+    protected String name;
 
     public long getId() {
         return id;
