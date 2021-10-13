@@ -255,15 +255,15 @@ public class DataRepository {
         return mDb.multiSigWalletDao().add(entity);
     }
 
-    public LiveData<List<MultiSigWalletEntity>> loadAllMultiSigWallet() {
+    public LiveData<List<MultiSigWalletEntity>> loadAllMultiSigWallet(String mode) {
         String xfp = new GetMasterFingerprintCallable().call();
-        return mDb.multiSigWalletDao().loadAll(xfp);
+        return mDb.multiSigWalletDao().loadAll(xfp, mode);
     }
 
-    public List<MultiSigWalletEntity> loadAllMultiSigWalletSync() {
+    public List<MultiSigWalletEntity> loadAllMultiSigWalletSync(String mode) {
         String netmode = Utilities.isMainNet(context) ? "main" : "testnet";
         String xfp = new GetMasterFingerprintCallable().call();
-        return mDb.multiSigWalletDao().loadAllSync(xfp)
+        return mDb.multiSigWalletDao().loadAllSync(xfp, mode)
                 .stream().filter(w -> w.getNetwork().equals(netmode))
                 .collect(Collectors.toList());
     }

@@ -1,30 +1,10 @@
-/*
- *
- * Copyright (c) 2021 Keystone
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * in the file COPYING.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
-package com.keystone.cold.ui.fragment.multisigs.legacy;
+package com.keystone.cold.ui.fragment.multisigs.caravan;
 
 import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS;
 import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_NAME;
 import static com.keystone.cold.ui.fragment.Constants.KEY_ADDRESS_PATH;
 import static com.keystone.cold.ui.fragment.Constants.KEY_COIN_CODE;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,9 +31,9 @@ import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.AddAddressBottomSheetBinding;
+import com.keystone.cold.databinding.CaravanBottomSheetBinding;
+import com.keystone.cold.databinding.CaravanMultisgMainBinding;
 import com.keystone.cold.databinding.MultisigAddressItemBinding;
-import com.keystone.cold.databinding.MultisigBottomSheetBinding;
-import com.keystone.cold.databinding.MultisigMainBinding;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.MainActivity;
@@ -61,8 +41,9 @@ import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.NumberPickerCallback;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
-import com.keystone.cold.ui.fragment.main.scan.scanner.scanstate.LegacyScannerState;
+import com.keystone.cold.ui.fragment.main.scan.scanner.scanstate.CaravanScannerState;
 import com.keystone.cold.ui.fragment.multisigs.common.MultiSigEntryBaseFragment;
+import com.keystone.cold.ui.fragment.multisigs.legacy.AddressClickCallback;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
@@ -72,47 +53,52 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMainBinding>
+public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultisgMainBinding>
         implements NumberPickerCallback {
-    public static final String TAG = "MultisigEntry";
-    protected MultiSigWalletEntity wallet;
-    private String[] title;
-    private boolean isEmpty;
     private Menu mMenu;
+    private boolean isEmpty;
+    private int position;
+    private String[] title;
     private RecyclerView receiveAddressRecycerView;
     private RecyclerView changeAddressRecycerView;
     private AddressAdapter receiveAdapter;
     private AddressAdapter changeAdapter;
     private ViewPagerAdapter viewPagerAdapter;
-    private int position = 0;
+    protected MultiSigWalletEntity caravanWallet;
 
     @Override
     protected int setView() {
-        return R.layout.multisig_main;
+        return R.layout.caravan_multisg_main;
     }
 
     @Override
     protected void init(View view) {
         super.init(view);
-        Utilities.setMultiSigMode(mActivity, MultiSigMode.LEGACY.getModeId());
+        Utilities.setMultiSigMode(mActivity, MultiSigMode.CARAVAN.getModeId());
         mActivity.setSupportActionBar(mBinding.toolbar);
         mBinding.toolbar.setNavigationOnClickListener(((MainActivity) mActivity)::toggleDrawer);
         mBinding.toolbarModeSelection.setOnClickListener(l -> {
             showMultisigSelection();
         });
         if (getArguments() != null && getArguments().containsKey("walletFingerPrint")) {
-            mBinding.empty.setVisibility(View.GONE);
-            mBinding.viewpager.setVisibility(View.VISIBLE);
-            mBinding.fab.show();
-            mBinding.walletLabelContainer.setVisibility(View.VISIBLE);
+            mBinding.hint.setVisibility(View.GONE);
         }
-        legacyMultiSigViewModel.getCurrentWallet().observe(this, w -> {
-            if (w != null) {
+        mBinding.empty.exportXpub.setOnClickListener(v -> navigate(R.id.export_caravan_expub));
+        mBinding.empty.importMultisigWallet.setOnClickListener(v -> navigate(R.id.import_multisig_file_list));
+        mBinding.empty.createMultisig.setOnClickListener(v -> navigate(R.id.create_multisig_wallet));
+        mBinding.walletInfo.fab.setOnClickListener(v -> addAddress());
+    }
+
+    @Override
+    protected void initData(Bundle savedInstanceState) {
+        super.initData(savedInstanceState);
+        caravanMultiSigViewModel.getCurrentWallet().observe(this, walletEntity -> {
+            if (walletEntity != null) {
                 isEmpty = false;
-                if (wallet != null && !TextUtils.equals(wallet.getWalletFingerPrint(), w.getWalletFingerPrint())) {
+                if (caravanWallet != null && !TextUtils.equals(caravanWallet.getWalletFingerPrint(), walletEntity.getWalletFingerPrint())) {
                     position = 0;
                 }
-                wallet = w;
+                caravanWallet = walletEntity;
             } else {
                 isEmpty = true;
             }
@@ -123,46 +109,42 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     @Override
     public void onPause() {
         super.onPause();
-        position = mBinding.tab.getSelectedTabPosition() == -1 ? 0 : mBinding.tab.getSelectedTabPosition();
+        position = mBinding.walletInfo.tab.getSelectedTabPosition() == -1 ? 0 : mBinding.walletInfo.tab.getSelectedTabPosition();
     }
 
     private void refreshUI() {
         if (isEmpty) {
-            mBinding.empty.setVisibility(View.VISIBLE);
-            mBinding.viewpager.setVisibility(View.GONE);
-            mBinding.fab.hide();
-            mBinding.createMultisig.setOnClickListener(v -> navigate(R.id.create_multisig_wallet));
-            mBinding.importMultisig.setOnClickListener(v -> navigate(R.id.import_multisig_file_list));
+            mBinding.hint.setVisibility(View.VISIBLE);
+            mBinding.wallet.setVisibility(View.GONE);
             if (mMenu != null) {
                 MenuItem sdcard = mMenu.findItem(R.id.action_sdcard);
                 if (sdcard != null) sdcard.setVisible(false);
                 MenuItem scan = mMenu.findItem(R.id.action_scan);
                 if (scan != null) scan.setVisible(false);
+                MenuItem more = mMenu.findItem(R.id.action_more);
+                if (more != null) more.setVisible(false);
             }
-            mBinding.walletLabelContainer.setVisibility(View.GONE);
             position = 0;
         } else {
-            mBinding.empty.setVisibility(View.GONE);
-            mBinding.viewpager.setVisibility(View.VISIBLE);
-            mBinding.fab.show();
-            mBinding.fab.setOnClickListener(v -> addAddress());
-            mBinding.walletLabelContainer.setVisibility(View.VISIBLE);
-            mBinding.walletLabel.setText(wallet.getWalletName());
-            mBinding.walletLabelContainer.setOnClickListener(v -> navigateToManageWallet());
+            mBinding.hint.setVisibility(View.GONE);
+            mBinding.wallet.setVisibility(View.VISIBLE);
+            mBinding.walletInfo.walletLabel.setText(caravanWallet.getWalletName());
+            mBinding.walletInfo.walletLabelContainer.setOnClickListener(v -> navigateToManageWallet());
             title = new String[]{getString(R.string.tab_my_address), getString(R.string.tab_my_change_address)};
             if (mMenu != null) {
                 MenuItem sdcard = mMenu.findItem(R.id.action_sdcard);
                 if (sdcard != null) sdcard.setVisible(true);
                 MenuItem scan = mMenu.findItem(R.id.action_scan);
                 if (scan != null) scan.setVisible(true);
+                MenuItem more = mMenu.findItem(R.id.action_more);
+                if (more != null) more.setVisible(true);
             }
             refreshViewPager();
         }
     }
 
-    @SuppressLint("CutPasteId")
     private void refreshViewPager() {
-        legacyMultiSigViewModel.getMultiSigAddress(wallet.getWalletFingerPrint()).observe(mActivity, multiSigAddressEntities -> {
+        legacyMultiSigViewModel.getMultiSigAddress(caravanWallet.getWalletFingerPrint()).observe(mActivity, multiSigAddressEntities -> {
             if (receiveAdapter == null) {
                 receiveAddressRecycerView = new RecyclerView(mActivity);
                 changeAddressRecycerView = new RecyclerView(mActivity);
@@ -177,9 +159,9 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
             receiveAdapter.setItems(legacyMultiSigViewModel.filterReceiveAddress(multiSigAddressEntities));
             changeAdapter.setItems(legacyMultiSigViewModel.filterChangeAddress(multiSigAddressEntities));
             viewPagerAdapter.setItems(Arrays.asList(receiveAddressRecycerView, changeAddressRecycerView));
-            mBinding.viewpager.setAdapter(viewPagerAdapter);
-            mBinding.tab.setupWithViewPager(mBinding.viewpager);
-            TabLayout.Tab tabAt = mBinding.tab.getTabAt(position);
+            mBinding.walletInfo.viewpager.setAdapter(viewPagerAdapter);
+            mBinding.walletInfo.tab.setupWithViewPager(mBinding.walletInfo.viewpager);
+            TabLayout.Tab tabAt = mBinding.walletInfo.tab.getTabAt(position);
             if (tabAt != null) {
                 tabAt.select();
             }
@@ -188,13 +170,12 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
 
     private void navigateToManageWallet() {
         Bundle data = new Bundle();
-        data.putString("wallet_fingerprint", wallet.getWalletFingerPrint());
-        data.putString("creator", wallet.getCreator());
+        data.putString("wallet_fingerprint", caravanWallet.getWalletFingerPrint());
         navigate(R.id.action_to_multisig_wallet, data);
     }
 
     private void addAddress() {
-        position = mBinding.tab.getSelectedTabPosition();
+        position = mBinding.walletInfo.tab.getSelectedTabPosition();
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
         AddAddressBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                 R.layout.add_address_bottom_sheet, null, false);
@@ -224,7 +205,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         dialog.show(Objects.requireNonNull(mActivity.getSupportFragmentManager()), "");
         Handler handler = new Handler();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            legacyMultiSigViewModel.addAddress(wallet.getWalletFingerPrint(), value, position);
+            legacyMultiSigViewModel.addAddress(caravanWallet.getWalletFingerPrint(), value, position);
             handler.post(() -> legacyMultiSigViewModel.getObservableAddState().observe(this, complete -> {
                 if (complete) {
                     handler.postDelayed(dialog::dismiss, 500);
@@ -237,6 +218,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         menu.findItem(R.id.action_sdcard).setVisible(false);
         menu.findItem(R.id.action_scan).setVisible(false);
+        menu.findItem(R.id.action_more).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -247,6 +229,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         if (isEmpty) {
             menu.findItem(R.id.action_sdcard).setVisible(false);
             menu.findItem(R.id.action_scan).setVisible(false);
+            menu.findItem(R.id.action_more).setVisible(false);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -261,7 +244,7 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
             case R.id.action_sdcard:
                 Bundle data = new Bundle();
                 data.putBoolean("multisig", true);
-                data.putString("multisig_mode", MultiSigMode.LEGACY.name());
+                data.putString("multisig_mode", MultiSigMode.CARAVAN.name());
                 navigate(R.id.action_to_psbtListFragment, data);
                 break;
             case R.id.action_more:
@@ -275,30 +258,20 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
 
     private void scanQrCode() {
         ViewModelProviders.of(mActivity).get(ScannerViewModel.class).setState(
-                new LegacyScannerState(Arrays.asList(ScanResultTypes.UR_BYTES, ScanResultTypes.UR_CRYPTO_PSBT)));
+                new CaravanScannerState(Arrays.asList(ScanResultTypes.UR_BYTES, ScanResultTypes.UR_CRYPTO_PSBT)));
         navigate(R.id.action_to_scanner);
     }
 
     private void showBottomSheetMenu() {
         BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
-        MultisigBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                R.layout.multisig_bottom_sheet, null, false);
-        binding.exportXpub.setOnClickListener(v -> {
+        CaravanBottomSheetBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
+                R.layout.caravan_bottom_sheet, null, false);
+        binding.switchWallet.setOnClickListener(v -> {
             dialog.dismiss();
-            navigate(R.id.export_export_multisig_expub);
-        });
-        binding.createMultisig.setOnClickListener(v -> {
-            navigate(R.id.create_multisig_wallet);
-            dialog.dismiss();
-        });
-
-        binding.importMultisig.setOnClickListener(v -> {
-            navigate(R.id.import_multisig_file_list);
-            dialog.dismiss();
-        });
-
-        binding.manageMultisig.setOnClickListener(v -> {
             navigate(R.id.manage_multisig_wallet);
+        });
+        binding.addCaravan.setOnClickListener(v -> {
+            navigate(R.id.action_to_add_multisig_wallet);
             dialog.dismiss();
         });
 

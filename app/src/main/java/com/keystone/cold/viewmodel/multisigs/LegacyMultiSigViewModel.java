@@ -17,6 +17,14 @@
 
 package com.keystone.cold.viewmodel.multisigs;
 
+import static com.keystone.coinlib.Util.getExpubFingerprint;
+import static com.keystone.coinlib.accounts.Account.MULTI_P2SH;
+import static com.keystone.coinlib.accounts.Account.MULTI_P2SH_P2WSH;
+import static com.keystone.coinlib.accounts.Account.MULTI_P2SH_P2WSH_TEST;
+import static com.keystone.coinlib.accounts.Account.MULTI_P2SH_TEST;
+import static com.keystone.coinlib.accounts.Account.MULTI_P2WSH;
+import static com.keystone.coinlib.accounts.Account.MULTI_P2WSH_TEST;
+
 import android.app.Application;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -43,6 +51,7 @@ import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.update.utils.FileUtils;
 import com.keystone.cold.update.utils.Storage;
 import com.keystone.cold.util.HashUtil;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoCoinInfo;
@@ -73,19 +82,15 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.keystone.coinlib.Util.getExpubFingerprint;
-import static com.keystone.coinlib.accounts.Account.*;
-
 public class LegacyMultiSigViewModel extends ViewModelBase {
-
-    private final LiveData<List<MultiSigWalletEntity>> mObservableWallets;
     private final MutableLiveData<Boolean> addComplete = new MutableLiveData<>();
-    private final DataRepository repo;
+    protected final DataRepository repo;
+    protected String mode;
 
     public LegacyMultiSigViewModel(@NonNull Application application) {
         super(application);
+        mode = "generic";
         repo = ((MainApplication) application).getRepository();
-        mObservableWallets = repo.loadAllMultiSigWallet();
     }
 
     public static JSONObject decodeColdCardWalletFile(String content) {
@@ -186,7 +191,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
     }
 
     public LiveData<List<MultiSigWalletEntity>> getAllMultiSigWallet() {
-        return mObservableWallets;
+        return repo.loadAllMultiSigWallet(mode);
     }
 
     public LiveData<List<MultiSigAddressEntity>> getMultiSigAddress(String walletFingerprint) {
@@ -197,29 +202,33 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
         return repo.loadMultisigTxs(walletFingerprint);
     }
 
+    public MultiSigWalletEntity getCurrentWalletSync() {
+        return repo.loadMultisigWallet(getDefaultMultisigWallet());
+    }
+
     public LiveData<MultiSigWalletEntity> getCurrentWallet() {
         String netmode = Utilities.isMainNet(getApplication()) ? "main" : "testnet";
         MutableLiveData<MultiSigWalletEntity> result = new MutableLiveData<>();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            String defaultMultisgWalletFp = Utilities.getDefaultMultisigWallet(getApplication(), getXfp());
+            String defaultMultisgWalletFp = getDefaultMultisigWallet();
             if (!TextUtils.isEmpty(defaultMultisgWalletFp)) {
                 MultiSigWalletEntity wallet = repo.loadMultisigWallet(defaultMultisgWalletFp);
                 if (wallet != null && wallet.getNetwork().equals(netmode)) {
                     result.postValue(wallet);
                 } else {
-                    List<MultiSigWalletEntity> list = repo.loadAllMultiSigWalletSync();
+                    List<MultiSigWalletEntity> list = repo.loadAllMultiSigWalletSync(mode);
                     if (!list.isEmpty()) {
                         result.postValue(list.get(0));
-                        Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), list.get(0).getWalletFingerPrint());
+                        setDefaultMultisigWallet(list.get(0).getWalletFingerPrint());
                     } else {
                         result.postValue(null);
                     }
                 }
             } else {
-                List<MultiSigWalletEntity> list = repo.loadAllMultiSigWalletSync();
+                List<MultiSigWalletEntity> list = repo.loadAllMultiSigWalletSync(mode);
                 if (!list.isEmpty()) {
                     result.postValue(list.get(0));
-                    Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), list.get(0).getWalletFingerPrint());
+                    setDefaultMultisigWallet(list.get(0).getWalletFingerPrint());
                 } else {
                     result.postValue(null);
                 }
@@ -448,9 +457,46 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
     public LiveData<MultiSigWalletEntity> createMultisigWallet(int threshold,
                                                                Account account,
                                                                String name,
-                                                               JSONArray xpubsInfo, String creator) throws XfpNotMatchException {
+                                                               JSONArray xpubsInfo, String creator)
+            throws XfpNotMatchException, InvalidMultisigPathException {
         MutableLiveData<MultiSigWalletEntity> result = new MutableLiveData<>();
         int total = xpubsInfo.length();
+        List<String> xpubs = getXpubs(account, xpubsInfo);
+        MultiSigWalletEntity wallet = createMultiSigWalletEntity(threshold, account, name, xpubsInfo, creator, total, xpubs);
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            boolean exist = repo.loadMultisigWallet(wallet.getWalletFingerPrint()) != null;
+            if (!exist) {
+                repo.addMultisigWallet(wallet);
+                new AddAddressTask(wallet.getWalletFingerPrint(), repo, null, 0).execute(1);
+                new AddAddressTask(wallet.getWalletFingerPrint(), repo, () -> result.postValue(wallet), 1).execute(1);
+            } else {
+                repo.updateWallet(wallet);
+                result.postValue(wallet);
+            }
+            setDefaultMultisigWallet(wallet.getWalletFingerPrint());
+        });
+        return result;
+    }
+
+    @NonNull
+    protected MultiSigWalletEntity createMultiSigWalletEntity(int threshold, Account account, String name, JSONArray xpubsInfo, String creator, int total, List<String> xpubs) {
+        String verifyCode = calculateWalletVerifyCode(threshold, xpubs, account.getPath());
+        String walletFingerprint = verifyCode + getXfp();
+        String walletName = !TextUtils.isEmpty(name) ? name : "KT_" + verifyCode + "_" + threshold + "-" + total;
+        MultiSigWalletEntity wallet = new MultiSigWalletEntity(
+                walletName,
+                threshold,
+                total,
+                account.getPath(),
+                xpubsInfo.toString(),
+                getXfp(),
+                Utilities.isMainNet(getApplication()) ? "main" : "testnet", verifyCode, creator, mode);
+        wallet.setWalletFingerPrint(walletFingerprint);
+        return wallet;
+    }
+
+    @NonNull
+    protected List<String> getXpubs(Account account, JSONArray xpubsInfo) throws XfpNotMatchException, InvalidMultisigPathException {
         boolean xfpMatch = false;
         List<String> xpubs = new ArrayList<>();
         for (int i = 0; i < xpubsInfo.length(); i++) {
@@ -472,9 +518,11 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
         if (!xfpMatch) {
             throw new XfpNotMatchException("xfp not match");
         }
-        String verifyCode = calculateWalletVerifyCode(threshold, xpubs, account.getPath());
-        String walletFingerprint = verifyCode + getXfp();
-        String walletName = !TextUtils.isEmpty(name) ? name : "KT_" + verifyCode + "_" + threshold + "-" + total;
+        return xpubs;
+    }
+
+    @NonNull
+    protected MultiSigWalletEntity createMultiSigWalletEntity(int threshold, Account account, JSONArray xpubsInfo, String creator, int total, String verifyCode, String walletFingerprint, String walletName) {
         MultiSigWalletEntity wallet = new MultiSigWalletEntity(
                 walletName,
                 threshold,
@@ -482,21 +530,17 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 account.getPath(),
                 xpubsInfo.toString(),
                 getXfp(),
-                Utilities.isMainNet(getApplication()) ? "main" : "testnet", verifyCode, creator);
+                Utilities.isMainNet(getApplication()) ? "main" : "testnet", verifyCode, creator, mode);
         wallet.setWalletFingerPrint(walletFingerprint);
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            boolean exist = repo.loadMultisigWallet(walletFingerprint) != null;
-            if (!exist) {
-                repo.addMultisigWallet(wallet);
-                new AddAddressTask(walletFingerprint, repo, null, 0).execute(1);
-                new AddAddressTask(walletFingerprint, repo, () -> result.postValue(wallet), 1).execute(1);
-            } else {
-                repo.updateWallet(wallet);
-                result.postValue(wallet);
-            }
-            Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), walletFingerprint);
-        });
-        return result;
+        return wallet;
+    }
+
+    public void setDefaultMultisigWallet(String walletFingerprint) {
+        Utilities.setDefaultMultisigWallet(getApplication(), getXfp(), walletFingerprint);
+    }
+
+    protected String getDefaultMultisigWallet() {
+        return Utilities.getDefaultMultisigWallet(getApplication(), getXfp());
     }
 
     public void addAddress(String walletFingerprint, int number, int changeIndex) {

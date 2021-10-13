@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class ViewModelBase extends AndroidViewModel {
-    private final Map<Account, String> xPubMap = new HashMap<>();
+    protected final Map<Account, String> xPubMap = new HashMap<>();
     private final String xfp;
 
     public ViewModelBase(@NonNull Application application) {
