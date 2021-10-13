@@ -37,6 +37,7 @@ import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryption.ChipSigner;
 import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.ParsePsbtViewModel;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 
 import org.json.JSONArray;
@@ -56,10 +57,12 @@ import java.util.stream.Stream;
 public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     private static final String TAG = "PsbtLegacyConfirmViewModel";
     protected final MutableLiveData<TxEntity> observableTx = new MutableLiveData<>();
-    private MultiSigWalletEntity wallet;
+    protected MultiSigWalletEntity wallet;
+    protected String mode;
 
     public PsbtLegacyConfirmViewModel(@NonNull Application application) {
         super(application);
+        mode = "generic";
         observableTx.setValue(null);
     }
 
@@ -187,7 +190,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         });
     }
 
-    private Signer[] initSigners() {
+    protected Signer[] initSigners() {
         String[] paths = transaction.getHdPath().split(AbsTx.SEPARATOR);
         String[] distinctPaths = Stream.of(paths).distinct().toArray(String[]::new);
         Signer[] signer = new Signer[distinctPaths.length];
@@ -449,7 +452,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
 
                 //find the exists multisig wallet match the xpub info
                 if (wallet == null) {
-                    List<MultiSigWalletEntity> wallets = mRepository.loadAllMultiSigWalletSync()
+                    List<MultiSigWalletEntity> wallets = mRepository.loadAllMultiSigWalletSync(mode)
                             .stream()
                             .filter(w -> w.getTotal() == total && w.getThreshold() == threshold)
                             .collect(Collectors.toList());

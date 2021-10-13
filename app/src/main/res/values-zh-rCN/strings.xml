@@ -671,7 +671,7 @@
     <string name="import_failed">导入失败</string>
     <string name="not_include_current_vault">该多签钱包不包含当前钱包。</string>
     <string name="not_valid_multisig_wallet">非多签钱包</string>
-    <string name="not_valid_multisig_path">铠石钱包暂不支持参与方的path，无法导入</string>
+    <string name="not_valid_path">铠石钱包暂不支持参与方的path，无法导入</string>
     <string name="invalid_wallet_hint">该文件/二维码不是多签钱包，无法导入。</string>
     <string name="check_verify_code_hint">参与方导入时，检查要导入钱包的验证码是否和该验证码一致，一致后再导入</string>
     <string name="multisig_already_signed">该交易已被签名，您可直接广播。</string>
@@ -832,6 +832,8 @@
         1. 您可将该钱包导出给参与方（参与方需创建/导入该钱包，否则无法对该钱包的交易签名）。<br>
         2. <font color="#00cdc3">参与方导入时，需检查要导入钱包的验证码是否和上方钱包验证码一致</font>，确保一致后再进行导入。<br>
     ]]></string>
+    <string name="caravan_sign_fail">签名失败</string>
+    <string name="invalid_path">铠石钱包暂不支持交易中的path派生，无法签名</string>
 
 
 </resources>

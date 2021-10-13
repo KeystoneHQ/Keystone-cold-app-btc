@@ -53,13 +53,13 @@ import java.util.List;
 
 public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmentBinding> {
 
-    private PsbtLegacyConfirmViewModel psbtLegacyConfirmViewModel;
+    protected PsbtLegacyConfirmViewModel psbtLegacyConfirmViewModel;
     private SigningDialog signingDialog;
-    private TxEntity txEntity;
+    protected TxEntity txEntity;
     private int feeAttackCheckingState;
     private FeeAttackChecking feeAttackChecking;
     private boolean signed;
-    private ProgressModalDialog progressModalDialog;
+    protected ProgressModalDialog progressModalDialog;
     private final Runnable forgetPassword = () -> {
         Bundle bundle = new Bundle();
         bundle.putString(ACTION, PreImportFragment.ACTION_RESET_PWD);
@@ -93,7 +93,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        psbtLegacyConfirmViewModel = ViewModelProviders.of(this).get(PsbtLegacyConfirmViewModel.class);
+        initViewModel();
         progressModalDialog = new ProgressModalDialog();
         progressModalDialog.show(mActivity.getSupportFragmentManager(), "");
         subscribeTx();
@@ -109,6 +109,10 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
             String psbtBase64 = bundle.getString("psbt_base64");
             psbtLegacyConfirmViewModel.handleTx(psbtBase64);
         }
+    }
+
+    protected void initViewModel() {
+        psbtLegacyConfirmViewModel = ViewModelProviders.of(this).get(PsbtLegacyConfirmViewModel.class);
     }
 
     private void subscribeTx() {
@@ -128,7 +132,7 @@ public class PsbtLegacyTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragm
         });
     }
 
-    private void observeException() {
+    protected void observeException() {
         psbtLegacyConfirmViewModel.getParseTxException().observe(this, ex -> {
             if (ex != null) {
                 ex.printStackTrace();

@@ -729,7 +729,7 @@
     <string name="import_failed">Import Failed</string>
     <string name="not_include_current_vault">This multisig wallet doesn\'t contain the current wallet.</string>
     <string name="not_valid_multisig_wallet">Not Multisig Wallet</string>
-    <string name="not_valid_multisig_path">Keystone does not currently support importing this multisig wallet,please change path</string>
+    <string name="not_valid_path">Keystone does not currently support importing this multisig wallet,please change the path to 10 grades</string>
     <string name="invalid_wallet_hint">This File/QR Code is not multisig wallet, can\'t import.</string>
     <string name="check_verify_code_hint">Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of above, ensure that they are consistent before importing.</string>
     <string name="multisig_already_signed">This transaction has been signed, please broadcast it directly.</string>
@@ -878,7 +878,7 @@
     <string name="casa_continue_ready">Continue, It\'s Ready</string>
     <string name="casa_guide">How to scan QR code in Casa</string>
 
-    <string name="caravan_hint"><![CDATA[Keystone supports the creation of a multi-signature wallet with Caravan, with graphic tutorials<br>please visit www.：https://keyst.one/caravan]]></string>
+    <string name="caravan_hint"><![CDATA[Keystone supports the creation of a multi-signature wallet with Caravan, with graphic tutorials<br>please visit www.https://keyst.one/caravan]]></string>
     <string name="switch_wallet">Switch Wallet</string>
     <string name="add_caravan_wallet">Add Multisig Wallet</string>
     <string name="create_successful">Create Successful</string>
@@ -886,4 +886,7 @@
         1.  You can export this wallet to the cosigners for import (Cosigners need to import the wallet, otherwise they will not be able to sign the transactions of the wallet)<br>
         2. <font color="#00cdc3"> Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of the wallet above</font>,and ensure that they are consistent before importing.<br>
     ]]></string>
+    <string name="caravan_sign_fail">Signing Failed</string>
+    <string name="invalid_path">Keystone currently does not support signing this transaction, please change the path to 10 grades</string>
+
 </resources>
