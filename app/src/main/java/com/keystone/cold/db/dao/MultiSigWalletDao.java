@@ -34,11 +34,11 @@ public interface MultiSigWalletDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long add(MultiSigWalletEntity wallet);
 
-    @Query("SELECT * FROM multi_sig_wallet WHERE belongTo=:xfp")
-    LiveData<List<MultiSigWalletEntity>> loadAll(String xfp);
+    @Query("SELECT * FROM multi_sig_wallet WHERE belongTo=:xfp AND mode=:mode")
+    LiveData<List<MultiSigWalletEntity>> loadAll(String xfp, String mode);
 
-    @Query("SELECT * FROM multi_sig_wallet WHERE belongTo=:xfp")
-    List<MultiSigWalletEntity> loadAllSync(String xfp);
+    @Query("SELECT * FROM multi_sig_wallet WHERE belongTo=:xfp AND mode=:mode")
+    List<MultiSigWalletEntity> loadAllSync(String xfp, String mode);
 
     @Update
     int update(MultiSigWalletEntity walletEntity);
