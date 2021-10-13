@@ -393,6 +393,9 @@
             android:id="@+id/action_to_casaMultisigFragment"
             app:destination="@id/casaMultisigFragment" />
         <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment" />
+        <action
             android:id="@+id/action_to_casaGuidePageOneFragment"
             app:destination="@id/casaGuidePageOneFragment" />
         <action
@@ -454,6 +457,11 @@
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment"
+            app:popUpTo="@+id/multisigSelectionFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment"
             app:popUpTo="@+id/multisigSelectionFragment"
             app:popUpToInclusive="true"/>
         <action
@@ -532,6 +540,124 @@
     </fragment>
 
     <fragment
+        android:id="@+id/caravanMultisigFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.CaravanMainFragment"
+        android:label="MultisigEntry">
+        <action
+            android:id="@id/action_to_home"
+            app:destination="@id/assetFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/assetFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_to_legacyMultisigFragment"
+            app:destination="@id/legacyMultisigFragment"
+            app:popUpTo="@id/caravanMultisigFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_casaMultisigFragment"
+            app:destination="@id/casaMultisigFragment"
+            app:popUpTo="@id/caravanMultisigFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_to_casaGuidePageOneFragment"
+            app:destination="@id/casaGuidePageOneFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/import_multisig_file_list"
+            app:destination="@id/importMultisigFileList"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_receiveCoinFragment"
+            app:destination="@id/receiveCoinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/manage_multisig_wallet"
+            app:destination="@id/manageWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/create_multisig_wallet"
+            app:destination="@id/PreCreateMultiSigWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/export_caravan_expub"
+            app:destination="@id/exportCaravanExpubFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_psbtListFragment"
+            app:destination="@id/psbtListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_scanner"
+            app:destination="@id/ScannerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_multisig_wallet"
+            app:destination="@id/walletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_to_add_multisig_wallet"
+            app:destination="@id/caravanAddWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/caravanAddWalletFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.CaravanAddWalletFragment"
+        android:label="CaravanAddWalletFragment">
+        <action
+            android:id="@+id/export_caravan_expub"
+            app:destination="@id/exportCaravanExpubFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/import_multisig_file_list"
+            app:destination="@id/importMultisigFileList"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/create_multisig_wallet"
+            app:destination="@id/PreCreateMultiSigWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
         android:id="@+id/casaMultisigFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.casa.CasaMainFragment"
         android:label="MultisigEntry">
@@ -542,6 +668,11 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment"
+            app:popUpTo="@id/casaMultisigFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_to_legacyMultisigFragment"
             app:destination="@id/legacyMultisigFragment"
@@ -603,6 +734,11 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/assetFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_to_caravanMultisigFragment"
+            app:destination="@id/caravanMultisigFragment"
+            app:popUpTo="@id/legacyMultisigFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_to_casaMultisigFragment"
             app:destination="@id/casaMultisigFragment"
@@ -683,6 +819,10 @@
         android:id="@+id/exportMultisigExpubFragment"
         android:name="com.keystone.cold.ui.fragment.multisigs.common.ExportMultisigExpubFragment"
         android:label="ExportMultisigExpubFragment" />
+    <fragment
+        android:id="@+id/exportCaravanExpubFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.ExportCaravanExpubFragment"
+        android:label="ExportCaravanExpubFragment" />
 
     <fragment
         android:id="@+id/walletFragment"
@@ -705,6 +845,22 @@
             app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
+            android:id="@+id/action_export_caravan_wallet_to_cosigner"
+            app:destination="@id/exportCaravanWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_export_wallet_to_caravan"
+            app:destination="@id/exportWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
             android:id="@+id/action_export_multisig_wallet_watch_only_guide"
             app:destination="@id/exportMultiSigWalletToWatchWalletGuide"
             app:enterAnim="@anim/slide_in_right"
@@ -719,6 +875,22 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_export_multisig_wallet_to_watch_only_wallet"
+            app:destination="@id/exportMultiSigWalletToWatchWallet"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_preImportFragment"
+            app:destination="@id/preImportFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -728,14 +900,6 @@
         <action
             android:id="@+id/action_to_export_multisig_xpub_to_el"
             app:destination="@id/exportXpubToElectrumFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_to_export_multisig_wallet_to_watch_only_wallet"
-            app:destination="@id/exportMultiSigWalletToWatchWallet"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -764,6 +928,32 @@
         <action
             android:id="@id/action_export_multisig_wallet_watch_only_guide"
             app:destination="@id/exportMultiSigWalletToWatchWalletGuide"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exportCaravanWalletToCosignerFragment"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.ExportCaravanWalletToCosignerFragment"
+        android:label="ExportCaravanWalletToCosignerFragment">
+        <action
+            android:id="@+id/action_export_caravan_watch_only_guide"
+            app:destination="@id/exportCaravanWatchWalletGuide"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exportCaravanWatchWalletGuide"
+        android:name="com.keystone.cold.ui.fragment.multisigs.caravan.ExportCaravanWatchWalletGuide"
+        android:label="ExportCaravanWatchWalletGuide">
+        <action
+            android:id="@+id/action_to_export_multisig_wallet_to_watch_only_wallet"
+            app:destination="@id/exportMultiSigWalletToWatchWallet"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -845,6 +1035,20 @@
         <action
             android:id="@+id/action_export_wallet_to_cosigner"
             app:destination="@id/exportWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_export_caravan_wallet_to_cosigner"
+            app:destination="@id/exportCaravanWalletToCosignerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_export_caravan_watch_only_guide"
+            app:destination="@id/exportCaravanWatchWalletGuide"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"

@@ -210,14 +210,16 @@ public class MainActivity extends FullScreenActivity {
                         bundle.putString("walletFingerPrint", multiSigWalletEntity.getWalletFingerPrint());
                         mNavController.navigate(R.id.action_to_legacyMultisigFragment, bundle);
                     } else if (Utilities.hasMultiSigMode(mActivity)) {
-                        if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.LEGACY.getModeId())) {
+                        if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CASA.getModeId())){
+                            mNavController.navigate(R.id.action_to_casaMultisigFragment);
+                        } else if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CARAVAN.getModeId())){
+                            mNavController.navigate(R.id.action_to_caravanMultisigFragment);
+                        } else if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.LEGACY.getModeId())) {
                             Bundle bundle = new Bundle();
                             if (multiSigWalletEntity != null) {
                                 bundle.putString("walletFingerPrint", multiSigWalletEntity.getWalletFingerPrint());
                             }
                             mNavController.navigate(R.id.action_to_legacyMultisigFragment, bundle);
-                        } else {
-                            mNavController.navigate(R.id.action_to_casaMultisigFragment);
                         }
                     } else {
                         mNavController.navigate(R.id.action_to_multisigSelectionFragment);

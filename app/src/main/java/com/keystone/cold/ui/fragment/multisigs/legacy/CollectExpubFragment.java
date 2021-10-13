@@ -19,6 +19,9 @@
 
 package com.keystone.cold.ui.fragment.multisigs.legacy;
 
+import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
+import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -42,11 +45,13 @@ import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
+import com.keystone.cold.databinding.CaravanCreateWalletSuccessfulBinding;
 import com.keystone.cold.databinding.CollectExpubBinding;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.XpubFileItemBinding;
 import com.keystone.cold.databinding.XpubInputBinding;
 import com.keystone.cold.databinding.XpubListBinding;
+import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
@@ -59,8 +64,10 @@ import com.keystone.cold.viewmodel.CollectXpubViewModel;
 import com.keystone.cold.viewmodel.SharedDataViewModel;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubWrongDataException;
 import com.keystone.cold.viewmodel.exceptions.CollectExPubWrongTypeException;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 import com.sparrowwallet.hummingbird.registry.CryptoAccount;
 import com.sparrowwallet.hummingbird.registry.CryptoOutput;
 
@@ -73,9 +80,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
-import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
 
 public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBinding>
         implements CollectXpubClickHandler {
@@ -131,18 +135,47 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     array.put(xpub);
                 }
             }
-            legacyMultiSigViewModel.createMultisigWallet(threshold, account, null, array, "Keystone")
+            multiSigViewModel.createMultisigWallet(threshold, account, null, array, "Keystone")
                     .observe(this, walletEntity -> {
                         if (walletEntity != null) {
-                            Bundle data = new Bundle();
-                            data.putString("wallet_fingerprint", walletEntity.getWalletFingerPrint());
-                            data.putBoolean("setup", true);
-                            navigate(R.id.action_export_wallet_to_cosigner, data);
+                            if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CARAVAN.getModeId())) {
+                                showCreateSuccessDialog(walletEntity);
+                            } else {
+                                navigate(walletEntity, R.id.action_export_wallet_to_cosigner);
+                            }
                         }
                     });
-        } catch (JSONException | XfpNotMatchException e) {
+        } catch (JSONException | XfpNotMatchException | InvalidMultisigPathException e) {
             e.printStackTrace();
         }
+    }
+
+    private void navigate(MultiSigWalletEntity walletEntity, int id) {
+        Bundle data = new Bundle();
+        data.putString("wallet_fingerprint", walletEntity.getWalletFingerPrint());
+        data.putBoolean("setup", true);
+        navigate(id, data);
+    }
+
+    private void showCreateSuccessDialog(MultiSigWalletEntity walletEntity) {
+        ModalDialog modalDialog = ModalDialog.newInstance();
+        CaravanCreateWalletSuccessfulBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mActivity), R.layout.caravan_create_wallet_successful,
+                null, false);
+        binding.walletName.setText(getString(R.string.wallet_name) + "：");
+        binding.name.setText(walletEntity.getWalletName());
+        binding.walletVerifyCode.setText(getString(R.string.wallet_verify_code) + "：");
+        binding.verifyCode.setText(walletEntity.getVerifyCode());
+        binding.exportNow.setOnClickListener(v -> {
+            modalDialog.dismiss();
+            navigate(walletEntity, R.id.action_export_caravan_wallet_to_cosigner);
+        });
+        binding.exportLater.setOnClickListener(v -> {
+            modalDialog.dismiss();
+            navigate(walletEntity, R.id.action_export_caravan_watch_only_guide);
+        });
+        modalDialog.setBinding(binding);
+        modalDialog.show(mActivity.getSupportFragmentManager(), "");
     }
 
     private void extractArguments() {

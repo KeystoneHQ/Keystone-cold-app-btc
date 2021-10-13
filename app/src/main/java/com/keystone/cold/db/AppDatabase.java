@@ -51,7 +51,7 @@ import com.keystone.cold.db.entity.WhiteListEntity;
 @Database(entities = {CoinEntity.class, AddressEntity.class,
         TxEntity.class, WhiteListEntity.class,
         AccountEntity.class, MultiSigWalletEntity.class,
-        MultiSigAddressEntity.class, CasaSignature.class}, version = 7)
+        MultiSigAddressEntity.class, CasaSignature.class}, version = 8)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "keystone-db";
     private static AppDatabase sInstance;
@@ -105,6 +105,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 .addMigrations(MIGRATION_1_5)
                 .addMigrations(MIGRATION_5_6)
                 .addMigrations(MIGRATION_6_7)
+                .addMigrations(MIGRATION_7_8)
                 .fallbackToDestructiveMigration()
                 .build();
     }
@@ -175,6 +176,18 @@ public abstract class AppDatabase extends RoomDatabase {
                 String currentBelongTo = Utilities.getCurrentBelongTo(MainApplication.getApplication());
                 database.execSQL("ALTER TABLE casa_signature ADD COLUMN belongTo TEXT DEFAULT " + currentBelongTo);
                 database.execSQL("UPDATE coins SET show=" + 1);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+    private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                database.execSQL("ALTER TABLE multi_sig_wallet ADD COLUMN mode TEXT DEFAULT 'generic'" );
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

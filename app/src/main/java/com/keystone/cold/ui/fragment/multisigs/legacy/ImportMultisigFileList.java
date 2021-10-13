@@ -95,7 +95,7 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
             mBinding.emptyMessage.setText(R.string.no_sdcard_hint);
         } else {
             mBinding.list.setAdapter(adapter);
-            legacyMultiSigViewModel.loadWalletFile().observe(this, files -> {
+            multiSigViewModel.loadWalletFile().observe(this, files -> {
                 walletFiles = files;
                 if (files.size() > 0) {
                     List<String> fileNames = new ArrayList<>(files.keySet());

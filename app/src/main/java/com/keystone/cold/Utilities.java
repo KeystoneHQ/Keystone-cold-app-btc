@@ -216,6 +216,14 @@ public class Utilities {
         return getPrefs(context).getString(xfp + "_default", "");
     }
 
+    public static void setDefaultCaravanMultisigWallet(Context context, String xfp, String walletFingerprint) {
+        getPrefs(context).edit().putString(xfp + "_caravan", walletFingerprint).apply();
+    }
+
+    public static String getDefaultCaravanMultisigWallet(Context context, String xfp) {
+        return getPrefs(context).getString(xfp + "_caravan", "");
+    }
+
     public static boolean hasMultiSigMode(Context context) {
         return getPrefs(context).contains(SETTING_MULTI_SIG_MODE);
     }

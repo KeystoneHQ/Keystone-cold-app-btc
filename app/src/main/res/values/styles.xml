@@ -70,6 +70,14 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="RefuseButton">
+        <item name="android:textColor">@color/preview_mask</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/refuse_button_bg</item>a
+        <item name="android:layout_height">48dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
     <style name="dialog" parent="Theme.AppCompat.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
