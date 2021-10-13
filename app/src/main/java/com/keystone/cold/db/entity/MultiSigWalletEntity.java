@@ -38,7 +38,7 @@ import java.util.List;
 public class MultiSigWalletEntity {
     @PrimaryKey
     @NonNull
-    private String walletFingerPrint;
+    private String walletFingerPrint; // generic mode： verifyCode + xfp，other modes： verifyCode + xfp + _ + mode name
     private String walletName;
     @NonNull
     private int threshold;

@@ -6,13 +6,10 @@ import android.app.Application;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.accounts.Account;
 import com.keystone.coinlib.accounts.ExtendedPublicKeyVersion;
-import com.keystone.cold.AppExecutors;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
@@ -78,9 +75,10 @@ public class CaravanMultiSigViewModel extends LegacyMultiSigViewModel {
                     if (strings.length == 1) {
                         throw new InvalidMultisigPathException("bip32Path not exist");
                     } else if (strings.length > 11) {
-                        throw new InvalidMultisigPathException("maximum support depth of 8 layers");
+                        throw new InvalidMultisigPathException("maximum support depth of 11 layers");
                     }
-                    if (xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(path))) && ExtendPubkeyFormat.isEqualIgnorePrefix(getXPub(path), xpub)) {
+                    if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(path))))
+                            && ExtendPubkeyFormat.isEqualIgnorePrefix(getXPub(path), xpub)) {
                         xfpMatch = true;
                     }
                 } else {
