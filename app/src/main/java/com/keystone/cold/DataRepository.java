@@ -20,14 +20,18 @@ package com.keystone.cold;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import androidx.activity.ComponentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.keystone.coinlib.utils.Coins;
 import com.keystone.cold.callables.GetMasterFingerprintCallable;
 import com.keystone.cold.db.AppDatabase;
 import com.keystone.cold.db.entity.AccountEntity;
 import com.keystone.cold.db.entity.AddressEntity;
+import com.keystone.cold.db.entity.CaravanMultiSigAddressEntity;
+import com.keystone.cold.db.entity.CaravanMultiSigWalletEntity;
 import com.keystone.cold.db.entity.CasaSignature;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
@@ -35,7 +39,10 @@ import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.db.entity.WhiteListEntity;
 import com.keystone.cold.model.Coin;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -251,49 +258,44 @@ public class DataRepository {
         mDb.casaDao().deleteHidden();
     }
 
-    public long addMultisigWallet(MultiSigWalletEntity entity) {
-        return mDb.multiSigWalletDao().add(entity);
-    }
-
-    public LiveData<List<MultiSigWalletEntity>> loadAllMultiSigWallet() {
-        String xfp = new GetMasterFingerprintCallable().call();
-        return mDb.multiSigWalletDao().loadAll(xfp);
-    }
-
-    public List<MultiSigWalletEntity> loadAllMultiSigWalletSync() {
-        String netmode = Utilities.isMainNet(context) ? "main" : "testnet";
-        String xfp = new GetMasterFingerprintCallable().call();
-        return mDb.multiSigWalletDao().loadAllSync(xfp)
-                .stream().filter(w -> w.getNetwork().equals(netmode))
-                .collect(Collectors.toList());
-    }
-
-    public LiveData<List<MultiSigAddressEntity>> loadAllMultiSigAddress() {
-        return mDb.multiSigAddressDao().loadAll();
-    }
-
     public MultiSigAddressEntity loadAllMultiSigAddress(String walletfp, String path) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            return mDb.caravanMultiSigAddressDao().loadCaravanAddressByPath(walletfp, path);
+        }
         return mDb.multiSigAddressDao().loadAddressByPath(walletfp, path);
     }
 
     public List<MultiSigAddressEntity> loadAllMultiSigAddressSync(String xfp) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            List<CaravanMultiSigAddressEntity> list = mDb.caravanMultiSigAddressDao().loadAllCaravanMultiSigAddressSync(xfp);
+            List<MultiSigAddressEntity> multiSigAddressEntities = new ArrayList<>();
+            if (list != null) {
+                multiSigAddressEntities = Arrays.asList(list.toArray(new MultiSigAddressEntity[0]));
+            }
+            return multiSigAddressEntities;
+        }
         return mDb.multiSigAddressDao().loadAllMultiSigAddressSync(xfp);
     }
 
-    public MultiSigWalletEntity loadMultisigWallet(String fingerprint) {
-        return mDb.multiSigWalletDao().loadWallet(fingerprint);
+    public LiveData<List<MultiSigAddressEntity>> loadAddressForWallet(ComponentActivity activity, String xfp) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            MutableLiveData<List<MultiSigAddressEntity>> listLiveData = new MutableLiveData<>();
+            mDb.caravanMultiSigAddressDao().loadAllCaravanMultiSigAddress(xfp).observe(activity, caravanMultiSigAddressEntities ->
+                    listLiveData.postValue(Arrays.asList(caravanMultiSigAddressEntities.toArray(new MultiSigAddressEntity[0]))));
+            return listLiveData;
+        }
+        return mDb.multiSigAddressDao().loadAllMultiSigAddress(xfp);
     }
-
-    public List<MultiSigAddressEntity> loadAddressForWalletSync(String walletId) {
-        return mDb.multiSigAddressDao().loadAllMultiSigAddressSync(walletId);
-    }
-
-    public LiveData<List<MultiSigAddressEntity>> loadAddressForWallet(String walletId) {
-        return mDb.multiSigAddressDao().loadAllMultiSigAddress(walletId);
-    }
-
 
     public void insertMultisigAddress(List<MultiSigAddressEntity> entities) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            List<CaravanMultiSigAddressEntity> caravanAddressEntities = new ArrayList<>();
+            for (MultiSigAddressEntity multiSigAddressEntity : entities) {
+                caravanAddressEntities.add(multiSigAddressEntity.toCaravanAddress());
+            }
+            mDb.caravanMultiSigAddressDao().insert(caravanAddressEntities);
+            return;
+        }
         mDb.multiSigAddressDao().insert(entities);
     }
 
@@ -301,11 +303,67 @@ public class DataRepository {
         return mDb.txDao().loadMultisigTxs(walletFingerprint);
     }
 
+    public long addMultisigWallet(MultiSigWalletEntity entity) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            return mDb.caravanMultiSigWalletDao().add(entity.toCaravanWallet());
+        }
+        return mDb.multiSigWalletDao().add(entity);
+    }
+
+    public LiveData<List<MultiSigWalletEntity>> loadAllMultiSigWallet(ComponentActivity activity) {
+        String xfp = new GetMasterFingerprintCallable().call();
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            MutableLiveData<List<MultiSigWalletEntity>> listLiveData = new MutableLiveData<>();
+            mDb.caravanMultiSigWalletDao().loadAll(xfp).observe(activity, caravanMultiSigWalletEntities ->
+                    listLiveData.postValue(Arrays.asList(caravanMultiSigWalletEntities.toArray(new MultiSigWalletEntity[0]))));
+            return listLiveData;
+        }
+        return mDb.multiSigWalletDao().loadAll(xfp);
+    }
+
+    public List<MultiSigWalletEntity> loadAllMultiSigWalletSync() {
+        String netmode = Utilities.isMainNet(context) ? "main" : "testnet";
+        String xfp = new GetMasterFingerprintCallable().call();
+        List<MultiSigWalletEntity> result = new ArrayList<>();
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            List<CaravanMultiSigWalletEntity> list = mDb.caravanMultiSigWalletDao().loadAllSync(xfp);
+            if (list != null) {
+                result = Arrays.asList(list.toArray(new MultiSigWalletEntity[0]));
+            }
+        } else {
+            result = mDb.multiSigWalletDao().loadAllSync(xfp);
+        }
+        return result.stream().filter(w -> w.getNetwork().equals(netmode)).collect(Collectors.toList());
+    }
+
+    public MultiSigWalletEntity loadMultisigWallet(String fingerprint) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            return mDb.caravanMultiSigWalletDao().loadWallet(fingerprint);
+        }
+        return mDb.multiSigWalletDao().loadWallet(fingerprint);
+    }
+
+    public MultiSigWalletEntity loadLegacyMultisigWallet(String fingerprint) {
+        return mDb.multiSigWalletDao().loadWallet(fingerprint);
+    }
+
+    public CaravanMultiSigWalletEntity loadCaravanMultisigWallet(String fingerprint) {
+        return mDb.caravanMultiSigWalletDao().loadWallet(fingerprint);
+    }
+
     public void updateWallet(MultiSigWalletEntity entity) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            mDb.caravanMultiSigWalletDao().update(entity.toCaravanWallet());
+            return;
+        }
         mDb.multiSigWalletDao().update(entity);
     }
 
     public void deleteMultisigWallet(String walletFingerPrint) {
+        if (Utilities.getMultiSigMode(context).equals(MultiSigMode.CARAVAN.getModeId())) {
+            mDb.caravanMultiSigWalletDao().delete(walletFingerPrint);
+            return;
+        }
         mDb.multiSigWalletDao().delete(walletFingerPrint);
     }
 

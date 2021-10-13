@@ -25,21 +25,21 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.keystone.cold.db.entity.MultiSigAddressEntity;
+import com.keystone.cold.db.entity.CaravanMultiSigAddressEntity;
 
 import java.util.List;
 
 @Dao
-public interface MultiSigAddressDao {
-    @Query("SELECT * FROM multi_sig_address where walletFingerPrint=:walletFingerPrint")
-    List<MultiSigAddressEntity> loadAllMultiSigAddressSync(String walletFingerPrint);
+public interface CaravanMultiSigAddressDao {
+    @Query("SELECT * FROM caravan_multi_sig_address where walletFingerPrint=:walletFingerPrint")
+    List<CaravanMultiSigAddressEntity> loadAllCaravanMultiSigAddressSync(String walletFingerPrint);
 
-    @Query("SELECT * FROM multi_sig_address where walletFingerPrint=:walletFingerPrint")
-    LiveData<List<MultiSigAddressEntity>> loadAllMultiSigAddress(String walletFingerPrint);
+    @Query("SELECT * FROM caravan_multi_sig_address where walletFingerPrint=:walletFingerPrint")
+    LiveData<List<CaravanMultiSigAddressEntity>> loadAllCaravanMultiSigAddress(String walletFingerPrint);
 
-    @Query("SELECT * FROM multi_sig_address where walletFingerPrint=:walletFingerPrint AND path=:path")
-    MultiSigAddressEntity loadAddressByPath(String walletFingerPrint, String path);
+    @Query("SELECT * FROM caravan_multi_sig_address where walletFingerPrint=:walletFingerPrint AND path=:path")
+    CaravanMultiSigAddressEntity loadCaravanAddressByPath(String walletFingerPrint, String path);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<MultiSigAddressEntity> addressEntities);
+    void insert(List<CaravanMultiSigAddressEntity> caravanAddressEntities);
 }

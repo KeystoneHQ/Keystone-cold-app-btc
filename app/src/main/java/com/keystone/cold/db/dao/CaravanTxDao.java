@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2021 Keystone
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,10 +13,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * in the file COPYING.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package com.keystone.cold.db.dao;
+
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -25,21 +24,30 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.keystone.cold.db.entity.MultiSigAddressEntity;
+import com.keystone.cold.db.entity.CaravanTxEntity;
 
 import java.util.List;
 
 @Dao
-public interface MultiSigAddressDao {
-    @Query("SELECT * FROM multi_sig_address where walletFingerPrint=:walletFingerPrint")
-    List<MultiSigAddressEntity> loadAllMultiSigAddressSync(String walletFingerPrint);
+public interface CaravanTxDao {
+    @Query("SELECT * FROM txs where coinId = :coinId ORDER BY timeStamp DESC")
+    LiveData<List<CaravanTxEntity>> loadTxs(String coinId);
 
-    @Query("SELECT * FROM multi_sig_address where walletFingerPrint=:walletFingerPrint")
-    LiveData<List<MultiSigAddressEntity>> loadAllMultiSigAddress(String walletFingerPrint);
-
-    @Query("SELECT * FROM multi_sig_address where walletFingerPrint=:walletFingerPrint AND path=:path")
-    MultiSigAddressEntity loadAddressByPath(String walletFingerPrint, String path);
+    @Query("SELECT * FROM txs where coinId = :coinId")
+    List<CaravanTxEntity> loadTxsSync(String coinId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<MultiSigAddressEntity> addressEntities);
+    void insert(CaravanTxEntity tx);
+
+    @Query("SELECT * FROM txs WHERE txId = :id")
+    LiveData<CaravanTxEntity> load(String id);
+
+    @Query("SELECT * FROM txs WHERE txId = :id")
+    CaravanTxEntity loadSync(String id);
+
+    @Query("SELECT * FROM txs WHERE belongTo =:walletFingerprint")
+    LiveData<List<CaravanTxEntity>> loadMultisigTxs(String walletFingerprint);
+
+    @Query("DELETE FROM txs WHERE belongTo =:walletFingerPrint ")
+    void deleteTxs(String walletFingerPrint);
 }
