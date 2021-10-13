@@ -73,12 +73,12 @@ public class ExportWalletToCosignerFragment extends MultiSigBaseFragment<ExportW
         }
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
-        legacyMultiSigViewModel.exportWalletToCosigner(walletFingerprint).observe(this, s -> {
+        multiSigViewModel.exportWalletToCosigner(walletFingerprint).observe(this, s -> {
             walletFileContent = s;
             mBinding.qrcodeLayout.qrcode.setData(Hex.toHexString(s.getBytes(StandardCharsets.UTF_8)));
         });
 
-        legacyMultiSigViewModel.getWalletEntity(walletFingerprint).observe(this,
+        multiSigViewModel.getWalletEntity(walletFingerprint).observe(this,
                 w -> {
                     walletEntity = w;
                     mBinding.verifyCode.setText(getString(R.string.wallet_verification_code, w.getVerifyCode()));

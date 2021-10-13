@@ -64,7 +64,7 @@ public class ExportXpubToElectrumFragment extends MultiSigBaseFragment<ExportXpu
         Bundle data = getArguments();
         Objects.requireNonNull(data);
         mBinding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
-        legacyMultiSigViewModel.getWalletEntity(data.getString("wallet_fingerprint"))
+        multiSigViewModel.getWalletEntity(data.getString("wallet_fingerprint"))
                 .observe(this, walletEntity -> {
                     this.walletEntity = walletEntity;
                     try {
