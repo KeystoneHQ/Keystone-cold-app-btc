@@ -163,7 +163,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
         } catch (InvalidMultisigPathException e) {
             e.printStackTrace();
             ModalDialog.showCommonModal(mActivity, getString(R.string.import_failed),
-                    getString(R.string.not_valid_multisig_path),
+                    getString(R.string.not_valid_path),
                     getString(R.string.know),
                     null);
         }

@@ -832,8 +832,6 @@
         1. 您可将该钱包导出给参与方（参与方需创建/导入该钱包，否则无法对该钱包的交易签名）。<br>
         2. <font color="#00cdc3">参与方导入时，需检查要导入钱包的验证码是否和上方钱包验证码一致</font>，确保一致后再进行导入。<br>
     ]]></string>
-    <string name="caravan_sign_fail">签名失败</string>
-    <string name="invalid_path">铠石钱包暂不支持交易中的path派生，无法签名</string>
 
 
 </resources>

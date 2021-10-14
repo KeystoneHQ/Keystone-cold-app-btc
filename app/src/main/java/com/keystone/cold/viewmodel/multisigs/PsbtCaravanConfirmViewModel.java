@@ -10,9 +10,12 @@ import com.keystone.coinlib.ExtendPubkeyFormat;
 import com.keystone.coinlib.Util;
 import com.keystone.coinlib.coins.AbsTx;
 import com.keystone.coinlib.interfaces.Signer;
+import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.encryption.ChipSigner;
-import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.stream.Stream;
 
@@ -34,19 +37,45 @@ public class PsbtCaravanConfirmViewModel extends PsbtLegacyConfirmViewModel{
             Log.w(TAG, "authToken null");
             return null;
         }
+        String expubPath = getExPubPath();
         for (int i = 0; i < distinctPaths.length; i++) {
-            String path = distinctPaths[i].replace(wallet.getExPubPath() + "/", "");
+            String path = distinctPaths[i].replace(expubPath + "/", "");
             String[] index = path.split("/");
             if (index.length != 2) {
-                parseTxException.postValue(new InvalidMultisigPathException("maximum support depth of 11 layers"));
                 return null;
             }
-            String expub = new GetExtendedPublicKeyCallable(wallet.getExPubPath()).call();
+            String expub = new GetExtendedPublicKeyCallable(expubPath).call();
             String pubKey = Util.getPublicKeyHex(
                     ExtendPubkeyFormat.convertExtendPubkey(expub, ExtendPubkeyFormat.xpub),
                     Integer.parseInt(index[0]), Integer.parseInt(index[1]));
             signer[i] = new ChipSigner(distinctPaths[i].toLowerCase(), authToken, pubKey);
         }
         return signer;
+    }
+
+    private String getExPubPath() {
+        String expubPath = wallet.getExPubPath();
+        try {
+            JSONArray jsonArray = new JSONArray(wallet.getExPubs());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String path = jsonArray.getJSONObject(i).optString("path");
+                if (path.isEmpty()) break;
+                String xpub = jsonArray.getJSONObject(i).getString("xpub");
+                String xpubMatch = new GetExtendedPublicKeyCallable(path).call();
+                if (ExtendPubkeyFormat.isEqualIgnorePrefix(xpub, xpubMatch)) {
+                    expubPath = path;
+                    break;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return expubPath;
+    }
+
+    public String getXPub(String path) {
+        boolean isMainnet = Utilities.isMainNet(getApplication());
+        String xPub = new GetExtendedPublicKeyCallable(path).call();
+        return ExtendPubkeyFormat.convertExtendPubkey(xPub, isMainnet ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub);
     }
 }

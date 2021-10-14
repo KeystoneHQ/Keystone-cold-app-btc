@@ -11,7 +11,6 @@ import com.keystone.coinlib.exception.InvalidTransactionException;
 import com.keystone.cold.R;
 import com.keystone.cold.ui.fragment.multisigs.legacy.PsbtLegacyTxConfirmFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
-import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 import com.keystone.cold.viewmodel.exceptions.WatchWalletNotMatchException;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
@@ -57,13 +56,6 @@ public class PsbtCaravanTxConfirmFragment extends PsbtLegacyTxConfirmFragment {
                     errorMessage = getString(R.string.no_matched_wallet_hint);
                     buttonText = getString(R.string.know);
 
-                }
-                if (ex instanceof InvalidMultisigPathException) {
-                    ModalDialog.showCommonModal(mActivity, getString(R.string.caravan_sign_fail),
-                            getString(R.string.invalid_path),
-                            getString(R.string.know),
-                            null);
-                    return;
                 }
                 ModalDialog.showCommonModal(mActivity,
                         title,

@@ -886,7 +886,5 @@
         1.  You can export this wallet to the cosigners for import (Cosigners need to import the wallet, otherwise they will not be able to sign the transactions of the wallet)<br>
         2. <font color="#00cdc3"> Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of the wallet above</font>,and ensure that they are consistent before importing.<br>
     ]]></string>
-    <string name="caravan_sign_fail">Signing Failed</string>
-    <string name="invalid_path">Keystone currently does not support signing this transaction, please change the path to 10 grades</string>
 
 </resources>
