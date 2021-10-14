@@ -2,6 +2,7 @@ package com.keystone.cold.ui.fragment.main.scan.scanner.scanstate;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.coinlib.exception.FingerPrintNotMatchException;
@@ -93,7 +94,7 @@ public class LegacyScannerState extends ScannerState {
         AppExecutors.getInstance().mainThread().execute(() -> {
             mFragment.showLoading("");
             if (psbtLegacyConfirmViewModell == null) {
-                psbtLegacyConfirmViewModell = ViewModelProviders.of(mActivity).get(PsbtLegacyConfirmViewModel.class);
+                psbtLegacyConfirmViewModell = initPsbtLegacyConfirmViewModell();
             }
             psbtLegacyConfirmViewModell.handleTx(psbtB64);
             psbtLegacyConfirmViewModell.getObservableSignTx().observe(mActivity, jsonObject -> {
@@ -119,6 +120,11 @@ public class LegacyScannerState extends ScannerState {
                 }
             });
         });
+    }
+
+    @NonNull
+    protected PsbtLegacyConfirmViewModel initPsbtLegacyConfirmViewModell() {
+        return ViewModelProviders.of(mActivity).get(PsbtLegacyConfirmViewModel.class);
     }
 
     protected void navigateTo(Bundle bundle) {
