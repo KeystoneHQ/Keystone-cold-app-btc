@@ -642,7 +642,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             result.put("isTest", isTest);
 
             //Derivation
-            Account account = MultiSig.ofScript(format, isTest).get(0);
+            Account account = MultiSig.ofScript(format, !isTest).get(0);
             if (account == null) {
                 Log.w("Multisig", "invalid format");
                 return null;

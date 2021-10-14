@@ -134,7 +134,7 @@
                 tools:text="（m/48'/0'/0'/2')" />
 
             <Button
-                android:id="@+id/export_xpub"
+                android:id="@+id/confirm"
                 style="@style/AcceptButton"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="16dp"
