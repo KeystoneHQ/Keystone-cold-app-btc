@@ -2,7 +2,8 @@ package com.keystone.cold.viewmodel.multisigs;
 
 public enum MultiSigMode {
     LEGACY("legacy"),
-    CASA("casa");
+    CASA("casa"),
+    CARAVAN("caravan");
 
     private final String modeId;
 

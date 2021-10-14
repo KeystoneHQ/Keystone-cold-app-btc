@@ -138,6 +138,8 @@ public class PsbtListFragment extends BaseFragment<FileListBinding>
                         navigate(R.id.action_to_psbtLegacyTxConfirmFragment, bundle);
                     } else if (MultiSigMode.CASA == mode) {
                         navigate(R.id.action_to_psbtCasaTxConfirmFragment, bundle);
+                    } else if (MultiSigMode.CARAVAN == mode) {
+                        navigate(R.id.action_to_psbtCaravanTxConfirmFragment, bundle);
                     }
                 } else {
                     navigate(R.id.action_to_psbtSigleTxConfirmFragment, bundle);

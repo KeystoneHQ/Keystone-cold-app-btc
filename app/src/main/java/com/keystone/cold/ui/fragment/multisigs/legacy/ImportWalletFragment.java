@@ -38,7 +38,9 @@ import com.keystone.cold.databinding.ImportWalletBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.util.HashUtil;
+import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.XfpNotMatchException;
+import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,7 +103,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
                         R.layout.common_modal, null, false);
                 binding.title.setText(R.string.verify_multisig_wallet);
                 binding.subTitle.setText(getString(R.string.verify_wallet_hint,
-                        legacyMultiSigViewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath())));
+                        multiSigViewModel.calculateWalletVerifyCode(threshold, xpubs, account.getPath())));
                 binding.close.setVisibility(View.GONE);
                 binding.confirm.setText(R.string.verify_code_ok);
                 binding.confirm.setOnClickListener(v -> {
@@ -136,7 +138,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             }
 
             return new MultiSigWalletEntity(walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(data.getString("wallet_info")))).substring(0, 6).toUpperCase()),
-                    threshold, total, account.getPath(), array.toString(), "", "", "", creator);
+                    threshold, total, account.getPath(), array.toString(), "", "", "", creator, mode);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -146,7 +148,7 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
     private void importWallet() {
         try {
-            legacyMultiSigViewModel.createMultisigWallet(threshold, account, dummyWallet.getWalletName(), walletInfo.getJSONArray("Xpubs"), creator)
+            multiSigViewModel.createMultisigWallet(threshold, account, dummyWallet.getWalletName(), walletInfo.getJSONArray("Xpubs"), creator)
                     .observe(this, this::onImportWalletSuccess);
         } catch (XfpNotMatchException e) {
             e.printStackTrace();
@@ -158,6 +160,12 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             ModalDialog.showCommonModal(mActivity, getString(R.string.not_valid_multisig_wallet),
                     getString(R.string.invalid_wallet_hint)
                     , getString(R.string.know), null);
+        } catch (InvalidMultisigPathException e) {
+            e.printStackTrace();
+            ModalDialog.showCommonModal(mActivity, getString(R.string.import_failed),
+                    getString(R.string.not_valid_path),
+                    getString(R.string.know),
+                    null);
         }
 
     }
@@ -174,7 +182,11 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             dialog.show(mActivity.getSupportFragmentManager(), "");
             handler.postDelayed(() -> {
                 dialog.dismiss();
-                popBackStack(R.id.legacyMultisigFragment, false);
+                if (Utilities.getMultiSigMode(mActivity).equals(MultiSigMode.CARAVAN.getModeId())) {
+                    popBackStack(R.id.caravanMultisigFragment, false);
+                } else {
+                    popBackStack(R.id.legacyMultisigFragment, false);
+                }
             }, 500);
         }
     }

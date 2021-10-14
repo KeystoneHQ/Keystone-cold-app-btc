@@ -17,7 +17,11 @@
  *
  */
 
-package com.keystone.cold.ui.fragment.multisigs.legacy;
+package com.keystone.cold.ui.fragment.multisigs.caravan;
+
+import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
+import static com.keystone.cold.viewmodel.GlobalViewModel.showExportResult;
+import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -30,6 +34,7 @@ import com.keystone.cold.R;
 import com.keystone.cold.databinding.ExportWalletToCosignerBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
+import com.keystone.cold.ui.fragment.multisigs.legacy.MultiSigBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;
 
@@ -38,11 +43,7 @@ import org.spongycastle.util.encoders.Hex;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import static com.keystone.cold.viewmodel.GlobalViewModel.hasSdcard;
-import static com.keystone.cold.viewmodel.GlobalViewModel.showExportResult;
-import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
-
-public class ExportWalletToCosignerFragment extends MultiSigBaseFragment<ExportWalletToCosignerBinding> {
+public class ExportCaravanWalletToCosignerFragment extends MultiSigBaseFragment<ExportWalletToCosignerBinding> {
     private MultiSigWalletEntity walletEntity;
     private String walletFileContent;
 
@@ -57,19 +58,14 @@ public class ExportWalletToCosignerFragment extends MultiSigBaseFragment<ExportW
         Bundle data = getArguments();
         Objects.requireNonNull(data);
         String walletFingerprint = data.getString("wallet_fingerprint");
-        boolean isSetup = data.getBoolean("setup");
-        if (!isSetup) {
-            mBinding.skip.setVisibility(View.GONE);
-            mBinding.exportToElectrum.setVisibility(View.GONE);
+        boolean isSetup = data.getBoolean("setup", false);
+        mBinding.skip.setVisibility(View.GONE);
+        if (isSetup) {
+            mBinding.exportToElectrum.setText(R.string.next);
+            mBinding.exportToElectrum.setOnClickListener(v -> navigate(R.id.action_export_caravan_watch_only_guide,getArguments() ));
         } else {
-            mBinding.skip.setVisibility(View.VISIBLE);
-            mBinding.exportToElectrum.setVisibility(View.VISIBLE);
-            Bundle bundle = getArguments();
-            bundle.putBoolean("isImportMultisig", true);
-            //View.OnClickListener onClickListener = v -> navigate(R.id.action_export_wallet_to_electrum, bundle);
-            View.OnClickListener onClickListener = v -> popBackStack(R.id.legacyMultisigFragment, false);
-            mBinding.skip.setOnClickListener(onClickListener);
-            mBinding.exportToElectrum.setOnClickListener(onClickListener);
+            mBinding.exportToElectrum.setText(R.string.confirm);
+            mBinding.exportToElectrum.setOnClickListener(v -> navigateUp());
         }
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.qrcodeLayout.hint.setVisibility(View.GONE);

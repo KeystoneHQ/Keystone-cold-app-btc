@@ -99,7 +99,7 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
             address.removeObservers(this);
             address = null;
         }
-        address = legacyMultiSigViewModel.getMultiSigAddress(walletFingerprint);
+        address = multiSigViewModel.getMultiSigAddress(walletFingerprint);
         subscribeUi(address);
     }
 
@@ -116,9 +116,9 @@ public class MultiSigAddressFragment extends MultiSigBaseFragment<AddressFragmen
     private void updateAddressList(List<MultiSigAddressEntity> entities) {
 
         if (isChangeAddress) {
-            mAddressAdapter.setItems(legacyMultiSigViewModel.filterChangeAddress(entities));
+            mAddressAdapter.setItems(multiSigViewModel.filterChangeAddress(entities));
         } else {
-            mAddressAdapter.setItems(legacyMultiSigViewModel.filterReceiveAddress(entities));
+            mAddressAdapter.setItems(multiSigViewModel.filterReceiveAddress(entities));
         }
     }
 

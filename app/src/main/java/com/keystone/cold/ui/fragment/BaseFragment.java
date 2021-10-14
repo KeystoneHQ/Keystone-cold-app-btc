@@ -150,7 +150,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     }
 
     public void navigateUp() {
-        mNavController.popBackStack();
+        AppExecutors.getInstance().mainThread().execute(() -> mNavController.popBackStack());
     }
 
     public MutableLiveData<String> getScanResult() {
@@ -163,7 +163,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     public void popBackStack(@IdRes int id, boolean inclusive) {
         try {
-            mNavController.popBackStack(id, inclusive);
+            AppExecutors.getInstance().mainThread().execute(() -> mNavController.popBackStack(id, inclusive));
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -176,7 +176,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     public void navigate(@IdRes int id, Bundle data) {
         try {
             dismissLoading();
-            mNavController.navigate(id, data);
+            AppExecutors.getInstance().mainThread().execute(() -> mNavController.navigate(id, data));
         } catch (IllegalArgumentException | IllegalStateException e) {
             e.printStackTrace();
             alert(mActivity.getString(R.string.hint), mActivity.getString(R.string.unknown_error));

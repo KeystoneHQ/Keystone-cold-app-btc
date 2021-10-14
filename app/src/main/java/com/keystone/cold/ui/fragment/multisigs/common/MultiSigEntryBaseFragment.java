@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.keystone.cold.AppExecutors;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
 import com.keystone.cold.databinding.MultisigModeBottomSheetBinding;
@@ -40,6 +41,7 @@ import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.ui.common.BaseBindingAdapter;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.multisigs.MultiSigPreferenceFragment;
+import com.keystone.cold.viewmodel.multisigs.CaravanMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.CasaMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
@@ -50,14 +52,15 @@ import java.util.List;
 public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         extends BaseFragment<T> implements MultiSigPreferenceFragment.MultiSigModeCallback {
     protected LegacyMultiSigViewModel legacyMultiSigViewModel;
+    protected CaravanMultiSigViewModel caravanMultiSigViewModel;
     protected CasaMultiSigViewModel casaMultiSigViewModel;
-    protected MultiSigWalletEntity wallet;
     private BottomSheetDialog dialog;
     private Adapter adapter;
 
     @Override
     protected void init(View view) {
         legacyMultiSigViewModel = ViewModelProviders.of(mActivity).get(LegacyMultiSigViewModel.class);
+        caravanMultiSigViewModel = ViewModelProviders.of(mActivity).get(CaravanMultiSigViewModel.class);
         casaMultiSigViewModel = ViewModelProviders.of(mActivity).get(CasaMultiSigViewModel.class);
         dialog = new BottomSheetDialog(mActivity);
         adapter = new Adapter(mActivity);
@@ -99,23 +102,34 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
 
     @Override
     public void onSelect(String modeId) {
-        if (modeId.equals(MultiSigMode.LEGACY.getModeId())) {
-            dialog.dismiss();
-            Bundle bundle = new Bundle();
-            if (wallet != null) {
-                bundle.putString("walletFingerPrint", wallet.getWalletFingerPrint());
-            }
-            navigate(R.id.action_to_legacyMultisigFragment, bundle);
-        } else {
-            if (Utilities.getCasaSetUpVisitedTime(mActivity) < 1) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            if (modeId.equals(MultiSigMode.CASA.getModeId())) {
+                dialog.dismiss();
+                if (Utilities.getCasaSetUpVisitedTime(mActivity) < 1) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isGuide", true);
+                    navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
+                } else {
+                    navigate(R.id.action_to_casaMultisigFragment);
+                }
+            } else if (modeId.equals(MultiSigMode.CARAVAN.getModeId())) {
+                dialog.dismiss();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("isGuide", true);
-                navigate(R.id.action_to_casaGuidePageOneFragment, bundle);
-            } else {
-                navigate(R.id.action_to_casaMultisigFragment);
+                MultiSigWalletEntity caravanCurrentWallet = caravanMultiSigViewModel.getCurrentWalletSync();
+                if (caravanCurrentWallet != null) {
+                    bundle.putString("walletFingerPrint", caravanCurrentWallet.getWalletFingerPrint());
+                }
+                navigate(R.id.action_to_caravanMultisigFragment, bundle);
+            } else if (modeId.equals(MultiSigMode.LEGACY.getModeId())) {
+                dialog.dismiss();
+                Bundle bundle = new Bundle();
+                MultiSigWalletEntity legacyCurrentWallet = legacyMultiSigViewModel.getCurrentWalletSync();
+                if (legacyCurrentWallet != null) {
+                    bundle.putString("walletFingerPrint", legacyCurrentWallet.getWalletFingerPrint());
+                }
+                navigate(R.id.action_to_legacyMultisigFragment, bundle);
             }
-            dialog.dismiss();
-        }
+        });
     }
 
     protected class Adapter extends BaseBindingAdapter<Pair<String, String>, SelectWalletModeBinding> {

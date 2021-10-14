@@ -70,7 +70,7 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
         if (mode != null) {
             isMultisig = true;
             multiSigMode = MultiSigMode.valueOf(mode);
-            if (multiSigMode.equals(MultiSigMode.LEGACY)) {
+            if (multiSigMode.equals(MultiSigMode.LEGACY) || multiSigMode.equals(MultiSigMode.CARAVAN)) {
                 isLegacyMultisig = true;
             } else {
                 isCasaMultisig = true;
@@ -118,6 +118,11 @@ public class PsbtBroadcastTxFragment extends BaseFragment<BroadcastPsbtTxFragmen
         if (isMultisig) {
             if (multiSigMode.equals(MultiSigMode.LEGACY)) {
                 goHome = v -> popBackStack(R.id.legacyMultisigFragment, false);
+                mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
+                mBinding.exportToSdcard.setOnClickListener(v ->
+                        showExportPsbtDialog(mActivity, txEntity, null));
+            } else if (multiSigMode.equals(MultiSigMode.CARAVAN)) {
+                goHome = v -> popBackStack(R.id.caravanMultisigFragment, false);
                 mBinding.signStatus.setText(getString(R.string.sign_status) + ":" + getSignStatus(txEntity));
                 mBinding.exportToSdcard.setOnClickListener(v ->
                         showExportPsbtDialog(mActivity, txEntity, null));

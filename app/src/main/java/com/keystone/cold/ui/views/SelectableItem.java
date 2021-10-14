@@ -21,6 +21,7 @@ package com.keystone.cold.ui.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -34,6 +35,7 @@ public class SelectableItem extends RelativeLayout {
 
     String title;
     String remindText;
+    int color;
     private SelectableItemBinding binding;
     public SelectableItem(Context context) {
         this(context,null);
@@ -47,6 +49,7 @@ public class SelectableItem extends RelativeLayout {
         super(context, attributeSet, i);
         TypedArray mTypedArray=context.obtainStyledAttributes(attributeSet, R.styleable.SelectableItem);
         title = mTypedArray.getString(R.styleable.SelectableItem_title);
+        color = mTypedArray.getColor(R.styleable.SelectableItem_title_color, Color.WHITE);
         remindText = mTypedArray.getString(R.styleable.SelectableItem_remind_text);
         mTypedArray.recycle();
         initView(context);
@@ -56,6 +59,7 @@ public class SelectableItem extends RelativeLayout {
         binding = DataBindingUtil.inflate(LayoutInflater.from(context),
                 R.layout.selectable_item,this,true);
         binding.title.setText(title);
+        binding.title.setTextColor(color);
         binding.remind.setText(remindText);
         binding.executePendingBindings();
     }

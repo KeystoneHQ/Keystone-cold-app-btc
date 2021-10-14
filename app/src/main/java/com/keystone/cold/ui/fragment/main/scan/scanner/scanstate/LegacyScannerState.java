@@ -108,7 +108,7 @@ public class LegacyScannerState extends ScannerState {
                     bundle.putString("signTx", jsonObject.toString());
                     Integer value = psbtLegacyConfirmViewModell.getFeeAttachCheckingResult().getValue();
                     bundle.putInt("feeAttach", value != null ? value : 0);
-                    mFragment.navigate(R.id.action_to_psbtLegacyTxConfirmFragment, bundle);
+                    navigateTo(bundle);
                 }
             });
             psbtLegacyConfirmViewModell.getParseTxException().observe(mActivity, e -> {
@@ -119,5 +119,9 @@ public class LegacyScannerState extends ScannerState {
                 }
             });
         });
+    }
+
+    protected void navigateTo(Bundle bundle) {
+        mFragment.navigate(R.id.action_to_psbtLegacyTxConfirmFragment, bundle);
     }
 }
