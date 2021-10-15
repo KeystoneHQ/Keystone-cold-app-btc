@@ -19,10 +19,6 @@
 
 package com.keystone.cold.ui.fragment.multisigs.caravan;
 
-import static com.keystone.coinlib.accounts.Account.MULTI_P2SH;
-import static com.keystone.coinlib.accounts.Account.MULTI_P2SH_P2WSH;
-import static com.keystone.coinlib.accounts.Account.MULTI_P2SH_P2WSH_TEST;
-import static com.keystone.coinlib.accounts.Account.MULTI_P2SH_TEST;
 import static com.keystone.coinlib.accounts.Account.MULTI_P2WSH;
 import static com.keystone.coinlib.accounts.Account.MULTI_P2WSH_TEST;
 import static com.keystone.cold.viewmodel.GlobalViewModel.showExportResult;
@@ -30,13 +26,9 @@ import static com.keystone.cold.viewmodel.GlobalViewModel.showNoSdcardModal;
 import static com.keystone.cold.viewmodel.GlobalViewModel.writeToSdcard;
 
 import android.graphics.Typeface;
-import android.os.Handler;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -44,17 +36,14 @@ import com.keystone.coinlib.accounts.Account;
 import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
-import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ExportCaravanExpubBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.databinding.SwitchXpubBottomSheetBinding;
 import com.keystone.cold.ui.fragment.multisigs.legacy.MultiSigBaseFragment;
-import com.keystone.cold.ui.modal.ExportToSdcardDialog;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.utils.Storage;
 
-public class ExportCaravanExpubFragment extends MultiSigBaseFragment<ExportCaravanExpubBinding>
-        implements Toolbar.OnMenuItemClickListener {
+public class ExportCaravanExpubFragment extends MultiSigBaseFragment<ExportCaravanExpubBinding> {
     public static final String TAG = "ExportCaravanExpubFragment";
     private Account account;
 
@@ -67,12 +56,11 @@ public class ExportCaravanExpubFragment extends MultiSigBaseFragment<ExportCarav
     protected void init(View view) {
         super.init(view);
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
-        mBinding.toolbar.inflateMenu(R.menu.export_all);
-        mBinding.toolbar.setOnMenuItemClickListener(this);
         account = Utilities.isMainNet(mActivity) ? MULTI_P2WSH : MULTI_P2WSH_TEST;
         updateUI();
         mBinding.addressType.setOnClickListener(v -> showBottomSheetMenu());
         mBinding.exportToSdcard.setOnClickListener(v -> exportToSdcard());
+        mBinding.confirm.setOnClickListener(v -> navigateUp());
     }
 
     private void exportToSdcard() {
@@ -101,19 +89,6 @@ public class ExportCaravanExpubFragment extends MultiSigBaseFragment<ExportCarav
         }
     }
 
-    private void exportAllToSdcard() {
-        Storage storage = Storage.createByEnvironment();
-        if (storage == null || storage.getExternalDir() == null) {
-            showNoSdcardModal(mActivity);
-        } else {
-            String fileName = multiSigViewModel.getExportAllXpubFileName();
-            boolean success = writeToSdcard(storage, multiSigViewModel.getExportAllXpubInfo(), fileName);
-            ExportToSdcardDialog dialog = ExportToSdcardDialog.newInstance(fileName, success);
-            dialog.show(mActivity.getSupportFragmentManager(), "");
-            new Handler().postDelayed(dialog::dismiss, 1000);
-        }
-    }
-
 
     private void updateUI() {
         String accountType = multiSigViewModel.getAddressTypeString(account);
@@ -122,44 +97,6 @@ public class ExportCaravanExpubFragment extends MultiSigBaseFragment<ExportCarav
         mBinding.expub.setText(xpub);
         mBinding.path.setText(String.format("(%s)", account.getPath()));
         mBinding.qrcode.setData(multiSigViewModel.getCryptoAccount(account).toUR().toString().toUpperCase());
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_export_all) {
-            ModalDialog dialog = new ModalDialog();
-            CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-                    R.layout.common_modal, null, false);
-            binding.title.setText(getString(R.string.extend_pubkey));
-            binding.subTitle.setText(getAllExtendPubkeyInfo());
-            binding.subTitle.setGravity(Gravity.START);
-            binding.close.setOnClickListener(v -> dialog.dismiss());
-            binding.confirm.setText(getString(R.string.export));
-            binding.confirm.setOnClickListener(v -> {
-                exportAllToSdcard();
-                dialog.dismiss();
-            });
-            dialog.setBinding(binding);
-            dialog.show(mActivity.getSupportFragmentManager(), "");
-
-        }
-        return true;
-    }
-
-    private String getAllExtendPubkeyInfo() {
-        StringBuilder info = new StringBuilder("<br>");
-        Account[] accounts =
-                Utilities.isMainNet(mActivity) ?
-                        new Account[]{MULTI_P2WSH, MULTI_P2SH_P2WSH, MULTI_P2SH}
-                        : new Account[]{MULTI_P2WSH_TEST, MULTI_P2SH_P2WSH_TEST, MULTI_P2SH_TEST};
-        for (Account a : accounts) {
-            info.append(String.format("%s(%s)", multiSigViewModel.getAddressTypeString(a), a.getScript())).append("<br>")
-                    .append(a.getPath()).append("<br>")
-                    .append(multiSigViewModel.getXPub(a)).append("<br><br>");
-        }
-
-        return info.toString();
     }
 
     private void showBottomSheetMenu() {

@@ -37,7 +37,6 @@ import com.keystone.cold.db.entity.TxEntity;
 import com.keystone.cold.encryption.ChipSigner;
 import com.keystone.cold.util.HashUtil;
 import com.keystone.cold.viewmodel.ParsePsbtViewModel;
-import com.keystone.cold.viewmodel.exceptions.InvalidMultisigPathException;
 import com.keystone.cold.viewmodel.exceptions.NoMatchedMultisigWalletException;
 
 import org.json.JSONArray;
@@ -308,19 +307,18 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
             if (transaction instanceof UtxoTx) {
                 JSONArray inputsClone = new JSONArray();
                 JSONArray inputs = ((UtxoTx) transaction).getInputs();
-
                 for (int i = 0; i < inputs.length(); i++) {
                     JSONObject input = inputs.getJSONObject(i);
                     long value = input.getJSONObject("utxo").getLong("value");
-                    String hdpath = input.getString("ownerKeyPath");
-                    hdpath = hdpath.replace(wallet.getExPubPath() + "/", "");
-                    String[] index = hdpath.split("/");
+                    String hdPath = input.getString("ownerKeyPath").split(AbsTx.SEPARATOR)[0];
+                    String exPubPath = getExPubPath(hdPath);
+                    hdPath = hdPath.replace(exPubPath + "/", "");
+                    String[] index = hdPath.split("/");
                     String from = wallet.deriveAddress(
                             new int[]{Integer.parseInt(index[0]), Integer.parseInt(index[1])}, isMainNet);
                     inputsClone.put(new JSONObject().put("value", value)
                             .put("address", from));
                 }
-
                 return inputsClone.toString();
             }
         } catch (JSONException e) {
@@ -328,6 +326,10 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         }
 
         return "";
+    }
+
+    protected String getExPubPath(String distinctPath) {
+        return wallet.getExPubPath();
     }
 
     private boolean isExternalMulisigPath(@NonNull String path) {
@@ -437,7 +439,11 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     JSONObject item = bip32Derivation.getJSONObject(j);
                     String fingerprint = item.getString("masterFingerprint");
                     if (fingerprint.equalsIgnoreCase(new GetMasterFingerprintCallable().call())) {
-                        hdPath = item.getString("path");
+                        if (j == 0) {
+                            hdPath = item.getString("path");
+                        } else {
+                            hdPath += AbsTx.SEPARATOR + item.getString("path");
+                        }
                     }
                     fps.add(fingerprint);
                 }
