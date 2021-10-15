@@ -77,8 +77,9 @@ public class CaravanMultiSigViewModel extends LegacyMultiSigViewModel {
                     } else if (strings.length > 11) {
                         throw new InvalidMultisigPathException("maximum support depth of 11 layers");
                     }
-                    if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(path))))
-                            && ExtendPubkeyFormat.isEqualIgnorePrefix(getXPub(path), xpub)) {
+                    String xPub = new GetExtendedPublicKeyCallable(path).call();
+                    if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(xPub)))
+                            && ExtendPubkeyFormat.isEqualIgnorePrefix(xPub, xpub)) {
                         xfpMatch = true;
                     }
                 } else {
@@ -97,21 +98,5 @@ public class CaravanMultiSigViewModel extends LegacyMultiSigViewModel {
             throw new XfpNotMatchException("xfp not match");
         }
         return xpubs;
-    }
-
-    @Override
-    public String getXPub(Account account) {
-        if (!xPubMap.containsKey(account)) {
-            boolean isMainnet = Utilities.isMainNet(getApplication());
-            String xPub = new GetExtendedPublicKeyCallable(account.getPath()).call();
-            xPubMap.put(account, ExtendPubkeyFormat.convertExtendPubkey(xPub, isMainnet ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub));
-        }
-        return xPubMap.get(account);
-    }
-
-    public String getXPub(String path) {
-        boolean isMainnet = Utilities.isMainNet(getApplication());
-        String xPub = new GetExtendedPublicKeyCallable(path).call();
-        return ExtendPubkeyFormat.convertExtendPubkey(xPub, isMainnet ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub);
     }
 }

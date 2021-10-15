@@ -37,8 +37,8 @@ public class PsbtCaravanConfirmViewModel extends PsbtLegacyConfirmViewModel{
             Log.w(TAG, "authToken null");
             return null;
         }
-        String expubPath = getExPubPath();
         for (int i = 0; i < distinctPaths.length; i++) {
+            String expubPath = getExPubPath(distinctPaths[i]);
             String path = distinctPaths[i].replace(expubPath + "/", "");
             String[] index = path.split("/");
             if (index.length != 2) {
@@ -53,16 +53,15 @@ public class PsbtCaravanConfirmViewModel extends PsbtLegacyConfirmViewModel{
         return signer;
     }
 
-    private String getExPubPath() {
+    @Override
+    protected String getExPubPath(String distinctPath) {
         String expubPath = wallet.getExPubPath();
         try {
             JSONArray jsonArray = new JSONArray(wallet.getExPubs());
             for (int i = 0; i < jsonArray.length(); i++) {
                 String path = jsonArray.getJSONObject(i).optString("path");
                 if (path.isEmpty()) break;
-                String xpub = jsonArray.getJSONObject(i).getString("xpub");
-                String xpubMatch = new GetExtendedPublicKeyCallable(path).call();
-                if (ExtendPubkeyFormat.isEqualIgnorePrefix(xpub, xpubMatch)) {
+                if (distinctPath.startsWith(path)) {
                     expubPath = path;
                     break;
                 }
@@ -71,11 +70,5 @@ public class PsbtCaravanConfirmViewModel extends PsbtLegacyConfirmViewModel{
             e.printStackTrace();
         }
         return expubPath;
-    }
-
-    public String getXPub(String path) {
-        boolean isMainnet = Utilities.isMainNet(getApplication());
-        String xPub = new GetExtendedPublicKeyCallable(path).call();
-        return ExtendPubkeyFormat.convertExtendPubkey(xPub, isMainnet ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub);
     }
 }
