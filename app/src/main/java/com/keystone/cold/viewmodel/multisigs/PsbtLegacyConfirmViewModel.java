@@ -439,7 +439,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     JSONObject item = bip32Derivation.getJSONObject(j);
                     String fingerprint = item.getString("masterFingerprint");
                     if (fingerprint.equalsIgnoreCase(new GetMasterFingerprintCallable().call())) {
-                        if (j == 0) {
+                        if (hdPath.isEmpty()) {
                             hdPath = item.getString("path");
                         } else {
                             hdPath += AbsTx.SEPARATOR + item.getString("path");
