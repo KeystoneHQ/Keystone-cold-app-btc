@@ -237,9 +237,9 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
             return;
         }
         try {
-            String exPubPath = wallet.getExPubPath();
             for (UtxoTx.ChangeAddressInfo info : changeAddressInfo) {
                 String path = info.hdPath;
+                String exPubPath = getExPubPath(path);
                 String address = info.address;
                 if (!path.startsWith(exPubPath)) {
                     throw new InvalidTransactionException("invalid path");

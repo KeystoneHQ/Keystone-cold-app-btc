@@ -729,7 +729,7 @@
     <string name="import_failed">Import Failed</string>
     <string name="not_include_current_vault">This multisig wallet doesn\'t contain the current wallet.</string>
     <string name="not_valid_multisig_wallet">Not Multisig Wallet</string>
-    <string name="not_valid_path">Keystone does not currently support importing this multisig wallet,please change the path to 10 grades</string>
+    <string name="not_valid_path">Keystone does not currently support importing this multisig wallet,please change the path to 8 grades</string>
     <string name="invalid_wallet_hint">This File/QR Code is not multisig wallet, can\'t import.</string>
     <string name="check_verify_code_hint">Co-signers need to check whether the verification code of the wallet to be imported is the same as the verification code of above, ensure that they are consistent before importing.</string>
     <string name="multisig_already_signed">This transaction has been signed, please broadcast it directly.</string>

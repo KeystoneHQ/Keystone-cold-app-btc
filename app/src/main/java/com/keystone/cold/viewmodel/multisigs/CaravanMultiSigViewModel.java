@@ -74,8 +74,8 @@ public class CaravanMultiSigViewModel extends LegacyMultiSigViewModel {
                     String[] strings = path.split("/");
                     if (strings.length == 1) {
                         throw new InvalidMultisigPathException("bip32Path not exist");
-                    } else if (strings.length > 11) {
-                        throw new InvalidMultisigPathException("maximum support depth of 11 layers");
+                    } else if (strings.length > 9) {
+                        throw new InvalidMultisigPathException("maximum support depth of 8 layers");
                     }
                     String xPub = new GetExtendedPublicKeyCallable(path).call();
                     if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(xPub)))
