@@ -42,6 +42,7 @@ import com.keystone.cold.sdcard.SdCardStatusMonitor;
 import com.keystone.cold.sdcard.SdcardFormatHelper;
 import com.keystone.cold.service.AttackCheckingService;
 import com.keystone.cold.ui.MainActivity;
+import com.keystone.cold.ui.SetupVaultActivity;
 import com.keystone.cold.ui.UnlockActivity;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
@@ -111,8 +112,9 @@ public class MainApplication extends Application {
             public void onInsert() {
                 boolean needFormatSdcard = sdcardFormatHelper.needFormatSdcard();
                 if (needFormatSdcard) {
-                    if (topActivity.get() instanceof MainActivity) {
-                        sdcardFormatHelper.showFormatModal(topActivity.get());
+                    AppCompatActivity activity = topActivity.get();
+                    if (activity instanceof MainActivity || activity instanceof SetupVaultActivity) {
+                        sdcardFormatHelper.showFormatModal(activity);
                         showFormatSdcard = false;
                     } else {
                         showFormatSdcard = true;
@@ -177,7 +179,7 @@ public class MainApplication extends Application {
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
                 topActivity = new SoftReference<>((AppCompatActivity) activity);
-                if (activity instanceof MainActivity && showFormatSdcard) {
+                if ((activity instanceof MainActivity || activity instanceof SetupVaultActivity) && showFormatSdcard) {
                     sdcardFormatHelper.showFormatModal(topActivity.get());
                 }
             }
