@@ -69,7 +69,7 @@ public class ExportCaravanWalletToCosignerFragment extends MultiSigBaseFragment<
         }
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.qrcodeLayout.hint.setVisibility(View.GONE);
-        multiSigViewModel.exportWalletToCosigner(walletFingerprint).observe(this, s -> {
+        multiSigViewModel.exportCaravanWalletToCosigner(walletFingerprint).observe(this, s -> {
             walletFileContent = s;
             mBinding.qrcodeLayout.qrcode.setData(Hex.toHexString(s.getBytes(StandardCharsets.UTF_8)));
         });

@@ -134,7 +134,11 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
             for (int i = 0; i < array.length(); i++) {
                 String xpub = array.getJSONObject(i).getString("xpub");
-                array.getJSONObject(i).put("xpub", ExtendedPublicKeyVersion.convertXPubVersion(xpub, account.getXPubVersion()));
+                if (array.getJSONObject(i).optString("path").isEmpty()) {
+                    array.getJSONObject(i).put("xpub", ExtendedPublicKeyVersion.convertXPubVersion(xpub, account.getXPubVersion()));
+                } else {
+                    array.getJSONObject(i).put("xpub", xpub);
+                }
             }
 
             return new MultiSigWalletEntity(walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(data.getString("wallet_info")))).substring(0, 6).toUpperCase()),
