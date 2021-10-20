@@ -204,7 +204,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 }
             } catch (Exception e) {
                 if (!scannerState.handleException(e)) {
-                    alert(mActivity.getString(R.string.scan_failed), mActivity.getString(R.string.unsupported_qrcode));
+                    alert(mActivity.getString(R.string.invalid_data), mActivity.getString(R.string.unsupported_qrcode));
                 }
             }
         });
@@ -222,7 +222,7 @@ public class ScannerFragment extends BaseFragment<ScannerFragmentBinding>
                 }
             } catch (Exception e) {
                 if (!scannerState.handleException(e)) {
-                    alert(mActivity.getString(R.string.scan_failed), mActivity.getString(R.string.unsupported_qrcode));
+                    alert(mActivity.getString(R.string.invalid_data), mActivity.getString(R.string.unsupported_qrcode));
                 }
             }
         });

@@ -77,7 +77,7 @@ public class AssetScannerState extends ScannerState {
             mFragment.alert(getString(R.string.incorrect_qrcode));
             return true;
         } else if (e instanceof XfpNotMatchException) {
-            mFragment.alert(getString(R.string.uuid_not_match));
+            mFragment.alert(getString(R.string.uuid_not_match), getString(R.string.uuid_not_match_detail));
             return true;
         } else if (e instanceof FingerPrintNotMatchException) {
             mFragment.alert(getString(R.string.master_pubkey_not_match));

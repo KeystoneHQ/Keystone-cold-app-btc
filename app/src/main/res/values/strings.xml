@@ -335,11 +335,12 @@
     <string name="confirm_delete">Confirm Deletion</string>
     <string name="fingerprint_rename_subtitle">Change Fingerprint Name</string>
     <string name="enroll_complete_hint">%s Fingerprint registered.</string>
-    <string name="unsupported_qrcode">Invalid QR Code! Please check and retry.</string>
+    <string name="unsupported_qrcode">This QR code is not supported.</string>
     <string name="error_hint">Error</string>
-    <string name="unknown_qrcode">In current mode, only scan QR code built by %s is supported.</string>
+    <string name="unknown_qrcode">Please scan QR Code built by %s</string>
     <string name="unsupported_coin">Unsupported Cryptocurrency</string>
-    <string name="uuid_not_match">Hot end and cold end do not match. Please check that they been correctly bound.</string>
+    <string name="uuid_not_match">Error</string>
+    <string name="uuid_not_match_detail">The transaction does not belong to the current wallet, please check the transaction information.</string>
     <string name="incorrect_qrcode">Invalid QR Code</string>
     <string name="incorrect_tx_data">Invalid Transaction Data</string>
     <string name="invalid_webauth_qrcode_hint">Invalid QR Code. Please follow the instruction to scan the correct QR Code to complete authentication.</string>
@@ -367,7 +368,7 @@
     <string name="serialno">Serial Number: %s</string>
     <string name="receive_address">To %d</string>
     <string name="sync_in_progress">Sync in Progress</string>
-    <string name="scan_failed">Scan Failed</string>
+    <string name="invalid_data">Error</string>
     <string name="version_not_match">Mobile version does not match. Please update your Keystone firmware.</string>
     <string name="reset_hint">Wrong Password. This device will be wiped.</string>
     <string name="set_passphrase">Passphrase Wallet</string>
