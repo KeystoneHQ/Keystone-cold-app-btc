@@ -352,7 +352,11 @@ public class MultisigMainFragment extends MultiSigEntryBaseFragment<MultisigMain
         data.putString(KEY_COIN_CODE, Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId());
         data.putString(KEY_ADDRESS, addr.getAddress());
         data.putString(KEY_ADDRESS_NAME, addr.getName());
-        data.putString(KEY_ADDRESS_PATH, addr.getPath());
+        if (wallet.getExPubs().contains("path")) {
+            data.putString(KEY_ADDRESS_PATH, addr.getPath().replace(wallet.getExPubPath(), "*"));
+        } else {
+            data.putString(KEY_ADDRESS_PATH, addr.getPath());
+        }
         navigate(R.id.action_to_receiveCoinFragment, data);
     };
 

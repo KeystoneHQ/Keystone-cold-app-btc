@@ -325,7 +325,11 @@ public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultis
         data.putString(KEY_COIN_CODE, Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId());
         data.putString(KEY_ADDRESS, addr.getAddress());
         data.putString(KEY_ADDRESS_NAME, addr.getName());
-        data.putString(KEY_ADDRESS_PATH, addr.getPath());
+        if (caravanWallet.getExPubs().contains("path")) {
+            data.putString(KEY_ADDRESS_PATH, addr.getPath().replace(caravanWallet.getExPubPath(), "*"));
+        } else {
+            data.putString(KEY_ADDRESS_PATH, addr.getPath());
+        }
         navigate(R.id.action_to_receiveCoinFragment, data);
     };
 
