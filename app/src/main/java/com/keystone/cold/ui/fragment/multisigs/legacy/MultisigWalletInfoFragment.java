@@ -113,14 +113,19 @@ public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWal
         return builder.toString();
     }
 
-    private static String getXpub(MultiSigWalletEntity wallet) {
+    private String getXpub(MultiSigWalletEntity wallet) {
         StringBuilder builder = new StringBuilder();
         try {
             JSONArray array = new JSONArray(wallet.getExPubs());
             for (int i = 0; i < wallet.getTotal(); i++) {
                 JSONObject info = array.getJSONObject(i);
-                builder.append(i + 1).append(". ").append(info.getString("xfp")).append("\n")
-                        .append(info.getString("xpub")).append("\n");
+                builder.append(i + 1).append(". ").append(info.getString("xfp")).append("\n");
+                String path = info.optString("path");
+                if (!path.isEmpty()) {
+                    mBinding.llDerivationPath.setVisibility(View.GONE);
+                    builder.append("Derivation:").append(path).append("\n");
+                }
+                builder.append(info.getString("xpub")).append("\n");
                 if (i < wallet.getTotal() - 1) builder.append("\n");
             }
 
