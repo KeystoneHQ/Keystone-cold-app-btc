@@ -181,7 +181,7 @@ public class ImportMultisigFileList extends MultiSigBaseFragment<FileListBinding
                         private boolean handleMultisigWallet(ScanResult result) throws InvalidMultisigWalletException, XfpNotMatchException, JSONException, MultisigWalletNetNotMatchException {
                             byte[] bytes = (byte[]) result.resolve();
                             String hex = Hex.toHexString(bytes);
-                            JSONObject object = LegacyMultiSigViewModel.decodeColdCardWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
+                            JSONObject object = LegacyMultiSigViewModel.decodeColdCardWalletFile(mode, new String(Hex.decode(hex), StandardCharsets.UTF_8));
                             if (object == null) {
                                 object = LegacyMultiSigViewModel.decodeCaravanWalletFile(new String(Hex.decode(hex), StandardCharsets.UTF_8));
                             }

@@ -93,7 +93,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
         repo = ((MainApplication) application).getRepository();
     }
 
-    public static JSONObject decodeColdCardWalletFile(String content) {
+    public static JSONObject decodeColdCardWalletFile(String mode, String content) {
         /*
         # Coldcard Multisig setup file (created on 5271C071)
         #
@@ -183,7 +183,11 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             return null;
         }
         if (content.split("Derivation").length > 2) {
-            object = decodeCaravanTxtWalletFile(content, object);
+            if (TextUtils.equals(mode, "caravan")) {
+                object = decodeCaravanTxtWalletFile(content, object);
+            } else {
+                return null;
+            }
         }
         return object;
     }
@@ -676,7 +680,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 if (files != null) {
                     for (File f : files) {
                         if (f.getName().endsWith(".txt")) {
-                            JSONObject object = decodeColdCardWalletFile(FileUtils.readString(f));
+                            JSONObject object = decodeColdCardWalletFile(mode, FileUtils.readString(f));
                             if (object != null) {
                                 fileList.put(f.getName(), object);
                             }
