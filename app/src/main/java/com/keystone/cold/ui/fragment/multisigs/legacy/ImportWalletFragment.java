@@ -21,6 +21,7 @@ package com.keystone.cold.ui.fragment.multisigs.legacy;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -134,7 +135,16 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
 
             for (int i = 0; i < array.length(); i++) {
                 String xpub = array.getJSONObject(i).getString("xpub");
-                array.getJSONObject(i).put("xpub", ExtendedPublicKeyVersion.convertXPubVersion(xpub, account.getXPubVersion()));
+                if (TextUtils.equals(mode, "caravan")) {
+                    if (isTestNet) {
+                        xpub = ExtendPubkeyFormat.convertExtendPubkey(xpub, ExtendPubkeyFormat.tpub);
+                    } else {
+                        xpub = ExtendPubkeyFormat.convertExtendPubkey(xpub, ExtendPubkeyFormat.xpub);
+                    }
+                    array.getJSONObject(i).put("xpub", xpub);
+                } else {
+                    array.getJSONObject(i).put("xpub", ExtendedPublicKeyVersion.convertXPubVersion(xpub, account.getXPubVersion()));
+                }
             }
 
             return new MultiSigWalletEntity(walletInfo.optString("Name", "KV_Multi_" + Hex.toHexString(Objects.requireNonNull(HashUtil.sha256(data.getString("wallet_info")))).substring(0, 6).toUpperCase()),
@@ -203,15 +213,20 @@ public class ImportWalletFragment extends MultiSigBaseFragment<ImportWalletBindi
             for (int i = 0; i < wallet.getTotal(); i++) {
                 JSONObject info = array.getJSONObject(i);
                 String xpub = info.getString("xpub");
-                if (creator.equals("Coldcard") || creator.equals("Caravan")) {
+                builder.append(i + 1).append(". ").append(info.getString("xfp")).append("\n");
+                if (creator.equals("Coldcard") || creator.equals("Caravan") || TextUtils.equals(mode, "caravan")) {
                     if (isTestNet) {
                         xpub = ExtendPubkeyFormat.convertExtendPubkey(xpub, ExtendPubkeyFormat.tpub);
                     } else {
                         xpub = ExtendPubkeyFormat.convertExtendPubkey(xpub, ExtendPubkeyFormat.xpub);
                     }
                 }
-                builder.append(i + 1).append(". ").append(info.getString("xfp")).append("\n")
-                        .append(xpub).append("\n\n");
+                String path = info.optString("path");
+                if (!path.isEmpty()) {
+                    mBinding.llDerivationPath.setVisibility(View.GONE);
+                    builder.append("Derivation: ").append(path).append("\n");
+                }
+                builder.append(xpub).append("\n\n");
             }
 
         } catch (JSONException e) {
