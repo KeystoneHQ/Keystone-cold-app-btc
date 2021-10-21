@@ -93,7 +93,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
         repo = ((MainApplication) application).getRepository();
     }
 
-    public static JSONObject decodeColdCardWalletFile(String mode, String content) {
+    public static JSONObject decodeColdCardWalletFile(String content) {
         /*
         # Coldcard Multisig setup file (created on 5271C071)
         #
@@ -183,11 +183,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             return null;
         }
         if (content.split("Derivation").length > 2) {
-            if (TextUtils.equals(mode, "caravan")) {
-                object = decodeCaravanTxtWalletFile(content, object);
-            } else {
-                return null;
-            }
+            object = decodeCaravanTxtWalletFile(content, object);
         }
         return object;
     }
@@ -336,37 +332,6 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
     }
 
     public LiveData<String> exportWalletToCosigner(String walletFingerprint) {
-        MutableLiveData<String> result = new MutableLiveData<>();
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            MultiSigWalletEntity wallet = repo.loadMultisigWallet(walletFingerprint);
-            if (wallet != null) {
-                try {
-                    StringBuilder builder = new StringBuilder();
-                    String path = wallet.getExPubPath();
-                    int threshold = wallet.getThreshold();
-                    int total = wallet.getTotal();
-                    builder.append(String.format("# Keystone Multisig setup file (created on %s)", getXfp())).append("\n")
-                            .append("#").append("\n")
-                            .append("Name: ").append(wallet.getWalletName()).append("\n")
-                            .append(String.format("Policy: %d of %d", threshold, total)).append("\n")
-                            .append("Derivation: ").append(path).append("\n")
-                            .append("Format: ").append(MultiSig.ofPath(path).get(0).getScript()).append("\n\n");
-                    JSONArray xpubs = new JSONArray(wallet.getExPubs());
-                    for (int i = 0; i < xpubs.length(); i++) {
-                        JSONObject xpub = xpubs.getJSONObject(i);
-                        builder.append(xpub.getString("xfp")).append(": ").append(xpub.getString("xpub")).append("\n");
-                    }
-                    result.postValue(builder.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        return result;
-    }
-
-    public LiveData<String> exportCaravanWalletToCosigner(String walletFingerprint) {
         MutableLiveData<String> result = new MutableLiveData<>();
         AppExecutors.getInstance().diskIO().execute(() -> {
             MultiSigWalletEntity wallet = repo.loadMultisigWallet(walletFingerprint);
@@ -680,7 +645,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 if (files != null) {
                     for (File f : files) {
                         if (f.getName().endsWith(".txt")) {
-                            JSONObject object = decodeColdCardWalletFile(mode, FileUtils.readString(f));
+                            JSONObject object = decodeColdCardWalletFile(FileUtils.readString(f));
                             if (object != null) {
                                 fileList.put(f.getName(), object);
                             }
