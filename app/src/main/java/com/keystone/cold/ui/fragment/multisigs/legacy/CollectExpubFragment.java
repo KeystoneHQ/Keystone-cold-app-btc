@@ -227,6 +227,10 @@ public class CollectExpubFragment extends MultiSigBaseFragment<CollectExpubBindi
                     JSONObject object = new JSONObject(s);
                     String xfp = object.getString("xfp");
                     String xpub = object.getString("xpub");
+                    if (mode.equals("caravan")) {
+                        xpub = ExtendedPublicKeyVersion.convertXPubVersion(xpub,
+                                Utilities.isMainNet(mActivity) ? ExtendedPublicKeyVersion.xpub : ExtendedPublicKeyVersion.tpub);
+                    }
                     updateXpubInfo(info, xfp.toUpperCase(), xpub);
                 } catch (JSONException e) {
                     e.printStackTrace();

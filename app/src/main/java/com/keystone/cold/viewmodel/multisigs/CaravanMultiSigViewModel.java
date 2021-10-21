@@ -99,4 +99,11 @@ public class CaravanMultiSigViewModel extends LegacyMultiSigViewModel {
         }
         return xpubs;
     }
+
+    public String getXPub(Account account) {
+        String xPub = new GetExtendedPublicKeyCallable(account.getPath()).call();
+        xPub = ExtendedPublicKeyVersion.convertXPubVersion(xPub,
+                Utilities.isMainNet(getApplication()) ? ExtendedPublicKeyVersion.xpub : ExtendedPublicKeyVersion.tpub);
+        return xPub;
+    }
 }
