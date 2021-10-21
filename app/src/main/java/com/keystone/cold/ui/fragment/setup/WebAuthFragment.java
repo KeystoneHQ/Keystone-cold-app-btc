@@ -99,11 +99,8 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
                     @Override
                     public boolean handleException(Exception e) {
                         e.printStackTrace();
-                        if (e instanceof UnknowQrCodeException || e instanceof JSONException) {
-                            mFragment.alert(getString(R.string.invalid_webauth_qrcode_hint));
-                            return true;
-                        }
-                        return super.handleException(e);
+                        mFragment.alert(getString(R.string.invalid_data), getString(R.string.unsupported_qrcode));
+                        return true;
                     }
 
                     private boolean handleWebAuth(ScanResult result) throws JSONException {

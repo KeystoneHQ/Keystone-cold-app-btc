@@ -45,6 +45,7 @@ import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
+import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.db.entity.MultiSigAddressEntity;
 import com.keystone.cold.db.entity.MultiSigWalletEntity;
 import com.keystone.cold.db.entity.TxEntity;
@@ -182,7 +183,48 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             Log.w("Multisig", "invalid wallet ", e);
             return null;
         }
+        if (content.split("Derivation").length > 2) {
+            object = decodeMultDerivationWalletFile(content, object);
+        }
+        return object;
+    }
 
+    /*
+    # Coldcard Multisig setup file (exported from unchained-wallets)
+    # https://github.com/unchained-capital/unchained-wallets
+    # v1.0.0
+    #
+    Name: My Multisig Wallet
+    Policy: 2 of 3
+    Format: P2WSH-P2SH
+
+    Derivation: m/48'/0'/0'/1'/12/32/5
+    748cc6aa: xpub6KMfgiWkVW33LfMbZoGjk6M3CvdZtrzkn38RP2SjbGGU9E85JTXDaX6Jn6bXVqnmq2EnRzWTZxeF3AZ1ZLcssM4DT9GY5RSuJBt1GRx3xm2
+    Derivation: m/48'/0'/0'/1'/5/6/7
+    5271c071: xpub6LfFMiP3hcgrKeTrho9MgKj2zdKGPsd6ufJzrsQNaHSFZ7uj8e1vnSwibBVQ33VfXYJM5zn9G7E9VrMkFPVcdRtH3Brg9ndHLJs8v2QtwHa
+    Derivation: m/48'/0'/0'/1'/110/8/9
+    c2202a77: xpub6LZnaHgbbxyZpChT4w9V5NC91qaZC9rrPoebgH3qGjZmcDKvPjLivfZSKLu5R1PjEpboNsznNwtqBifixCuKTfPxDZVNVN9mnjfTBpafqQf
+    */
+    private static JSONObject decodeMultDerivationWalletFile(String content, JSONObject object) {
+        try {
+            JSONArray xpubs = object.getJSONArray("Xpubs");
+            String[] strings = content.split("Derivation: ");
+            if (xpubs.length() + 1 != strings.length) return null;
+            for (int i = 0; i < xpubs.length(); i++) {
+                String path = strings[i+1].split("\n")[0].trim();
+                xpubs.getJSONObject(i).put("path", path);
+                String xpub = xpubs.getJSONObject(i).getString("xpub");
+                if (object.getBoolean("isTest")) {
+                    xpub = ExtendPubkeyFormat.convertExtendPubkey(xpub, ExtendPubkeyFormat.tpub);
+                } else {
+                    xpub = ExtendPubkeyFormat.convertExtendPubkey(xpub, ExtendPubkeyFormat.xpub);
+                }
+                xpubs.getJSONObject(i).put("xpub", xpub);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.w("Multisig", "invalid caravan wallet ", e);
+        }
         return object;
     }
 
@@ -298,18 +340,33 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 try {
                     StringBuilder builder = new StringBuilder();
                     String path = wallet.getExPubPath();
+                    String expubs = wallet.getExPubs();
+                    boolean isHasPath = false;
+                    if (expubs != null) {
+                        isHasPath = wallet.getExPubs().contains("path");
+                    }
                     int threshold = wallet.getThreshold();
                     int total = wallet.getTotal();
                     builder.append(String.format("# Keystone Multisig setup file (created on %s)", getXfp())).append("\n")
                             .append("#").append("\n")
                             .append("Name: ").append(wallet.getWalletName()).append("\n")
-                            .append(String.format("Policy: %d of %d", threshold, total)).append("\n")
-                            .append("Derivation: ").append(path).append("\n")
-                            .append("Format: ").append(MultiSig.ofPath(path).get(0).getScript()).append("\n\n");
+                            .append(String.format("Policy: %d of %d", threshold, total)).append("\n");
+                    if (!isHasPath) {
+                        builder.append("Derivation: ").append(path).append("\n");
+                    }
+                    builder.append("Format: ").append(MultiSig.ofPath(path).get(0).getScript()).append("\n\n");
                     JSONArray xpubs = new JSONArray(wallet.getExPubs());
                     for (int i = 0; i < xpubs.length(); i++) {
                         JSONObject xpub = xpubs.getJSONObject(i);
-                        builder.append(xpub.getString("xfp")).append(": ").append(xpub.getString("xpub")).append("\n");
+                        if (isHasPath) {
+                            builder.append("Derivation: ").append(xpub.optString("path")).append("\n");
+                        }
+                        String xPub = xpub.getString("xpub");
+                        if (TextUtils.equals(mode, "caravan")) {
+                            xPub = ExtendPubkeyFormat.convertExtendPubkey(xPub, Utilities.isMainNet(MainApplication.getApplication())
+                                    ? ExtendPubkeyFormat.xpub : ExtendPubkeyFormat.tpub);
+                        }
+                        builder.append(xpub.getString("xfp")).append(": ").append(xPub).append("\n");
                     }
                     result.postValue(builder.toString());
                 } catch (JSONException e) {
@@ -505,9 +562,24 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
                 obj = xpubsInfo.getJSONObject(i);
                 String xfp = obj.getString("xfp");
                 String xpub = ExtendedPublicKeyVersion.convertXPubVersion(obj.getString("xpub"), account.getXPubVersion());
-                if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(account))))
-                        && ExtendPubkeyFormat.isEqualIgnorePrefix(getXPub(account), xpub)) {
-                    xfpMatch = true;
+                String path = obj.optString("path");
+                if (!path.isEmpty()) {
+                    String[] strings = path.split("/");
+                    if (strings.length == 1) {
+                        throw new InvalidMultisigPathException("bip32Path not exist");
+                    } else if (strings.length > 9) {
+                        throw new InvalidMultisigPathException("maximum support depth of 8 layers");
+                    }
+                    String xPub = new GetExtendedPublicKeyCallable(path).call();
+                    if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(xPub)))
+                            && ExtendPubkeyFormat.isEqualIgnorePrefix(xPub, xpub)) {
+                        xfpMatch = true;
+                    }
+                } else {
+                    if ((xfp.equalsIgnoreCase(getXfp()) || xfp.equalsIgnoreCase(getExpubFingerprint(getXPub(account))))
+                            && ExtendPubkeyFormat.isEqualIgnorePrefix(getXPub(account), xpub)) {
+                        xfpMatch = true;
+                    }
                 }
                 xpubs.add(xpub);
             } catch (JSONException e) {
@@ -519,20 +591,6 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             throw new XfpNotMatchException("xfp not match");
         }
         return xpubs;
-    }
-
-    @NonNull
-    protected MultiSigWalletEntity createMultiSigWalletEntity(int threshold, Account account, JSONArray xpubsInfo, String creator, int total, String verifyCode, String walletFingerprint, String walletName) {
-        MultiSigWalletEntity wallet = new MultiSigWalletEntity(
-                walletName,
-                threshold,
-                total,
-                account.getPath(),
-                xpubsInfo.toString(),
-                getXfp(),
-                Utilities.isMainNet(getApplication()) ? "main" : "testnet", verifyCode, creator, mode);
-        wallet.setWalletFingerPrint(walletFingerprint);
-        return wallet;
     }
 
     public void setDefaultMultisigWallet(String walletFingerprint) {
