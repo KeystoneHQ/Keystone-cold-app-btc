@@ -200,10 +200,11 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
             return null;
         }
         for (int i = 0; i < distinctPaths.length; i++) {
-            String path = distinctPaths[i].replace(wallet.getExPubPath() + "/", "");
+            String expubPath = getExPubPath(distinctPaths[i]);
+            String path = distinctPaths[i].replace(expubPath + "/", "");
             String[] index = path.split("/");
             if (index.length != 2) return null;
-            String expub = new GetExtendedPublicKeyCallable(wallet.getExPubPath()).call();
+            String expub = new GetExtendedPublicKeyCallable(expubPath).call();
             String pubKey = Util.getPublicKeyHex(
                     ExtendPubkeyFormat.convertExtendPubkey(expub, ExtendPubkeyFormat.xpub),
                     Integer.parseInt(index[0]), Integer.parseInt(index[1]));
@@ -329,7 +330,21 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     }
 
     protected String getExPubPath(String distinctPath) {
-        return wallet.getExPubPath();
+        String expubPath = wallet.getExPubPath();
+        try {
+            JSONArray jsonArray = new JSONArray(wallet.getExPubs());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String path = jsonArray.getJSONObject(i).optString("path");
+                if (path.isEmpty()) break;
+                if (distinctPath.startsWith(path)) {
+                    expubPath = path;
+                    break;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return expubPath;
     }
 
     private boolean isExternalMulisigPath(@NonNull String path) {
@@ -481,7 +496,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     }
                 }
 
-                if (wallet != null) {
+                if (wallet == null) {
                     if (!hdPath.startsWith(wallet.getExPubPath())) {
                         hdPath = wallet.getExPubPath() + hdPath.substring(1);
                     }
