@@ -347,6 +347,34 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         return expubPath;
     }
 
+    @Override
+    protected String getToAddress() {
+        String to = transaction.getTo();
+        if (transaction instanceof UtxoTx) {
+            JSONArray outputs = ((UtxoTx) transaction).getOutputs();
+            if (outputs == null) {
+                return to;
+            }
+            if (!wallet.getExPubs().contains("path")) {
+                return outputs.toString();
+            }
+            try {
+                for (int i = 0; i < outputs.length(); i++) {
+                    JSONObject jsonObject = outputs.getJSONObject(i);
+                    if (jsonObject.optBoolean("isChange", false)) {
+                        String changeAddressPath = jsonObject.getString("changeAddressPath");
+                        changeAddressPath = changeAddressPath.replace(wallet.getExPubPath(), "*");
+                        jsonObject.put("changeAddressPath", changeAddressPath);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return outputs.toString();
+        }
+        return to;
+    }
+
     private boolean isExternalMulisigPath(@NonNull String path) {
         String[] split = path.replace(wallet.getExPubPath() + "/", "").split("/");
         return split.length == 2 && split[0].equals("0");
