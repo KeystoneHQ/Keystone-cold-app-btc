@@ -496,7 +496,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                     }
                 }
 
-                if (wallet == null) {
+                if (wallet != null) {
                     if (!hdPath.startsWith(wallet.getExPubPath())) {
                         hdPath = wallet.getExPubPath() + hdPath.substring(1);
                     }
@@ -562,10 +562,6 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                         if (xfp.equalsIgnoreCase(rootXfp) && isChangeAddress(hdPath)) {
                             if (!hdPath.startsWith(wallet.getExPubPath())) {
                                 hdPath = wallet.getExPubPath() + hdPath.substring(1);
-                            } else {
-                                if (wallet.getExPubs().contains("path")) {
-                                    hdPath = hdPath.replace(wallet.getExPubPath(), "*");
-                                }
                             }
                             out.put("isChange", true);
                             out.put("changeAddressPath", hdPath);
