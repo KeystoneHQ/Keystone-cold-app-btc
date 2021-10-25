@@ -46,6 +46,9 @@ import com.keystone.cold.viewmodel.multisigs.CasaMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.LegacyMultiSigViewModel;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,5 +162,24 @@ public abstract class MultiSigEntryBaseFragment<T extends ViewDataBinding>
         protected void onBindItem(SelectWalletModeBinding binding, Pair<String, String> item) {
 
         }
+    }
+
+    protected boolean isNeedReplace(MultiSigWalletEntity walletEntity) {
+        boolean result = false;
+        try {
+            JSONArray jsonArray = new JSONArray(walletEntity.getExPubs());
+            String path = jsonArray.getJSONObject(0).optString("path");
+            if (!path.isEmpty()) {
+                for (int i = 1; i < jsonArray.length(); i++) {
+                    if (!path.equals(jsonArray.getJSONObject(i).optString("path"))) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

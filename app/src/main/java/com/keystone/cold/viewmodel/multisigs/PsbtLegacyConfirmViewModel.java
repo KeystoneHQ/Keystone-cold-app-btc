@@ -347,6 +347,53 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
         return expubPath;
     }
 
+    @Override
+    protected String getToAddress() {
+        String to = transaction.getTo();
+        if (transaction instanceof UtxoTx) {
+            JSONArray outputs = ((UtxoTx) transaction).getOutputs();
+            if (outputs == null) {
+                return to;
+            }
+            if (!wallet.getExPubs().contains("path")) {
+                return outputs.toString();
+            }
+            try {
+                for (int i = 0; i < outputs.length(); i++) {
+                    JSONObject jsonObject = outputs.getJSONObject(i);
+                    if (jsonObject.optBoolean("isChange", false) && isNeedReplace()) {
+                        String changeAddressPath = jsonObject.getString("changeAddressPath");
+                        changeAddressPath = changeAddressPath.replace(wallet.getExPubPath(), "*");
+                        jsonObject.put("changeAddressPath", changeAddressPath);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return outputs.toString();
+        }
+        return to;
+    }
+
+    private boolean isNeedReplace() {
+        boolean result = false;
+        try {
+            JSONArray jsonArray = new JSONArray(wallet.getExPubs());
+            String path = jsonArray.getJSONObject(0).optString("path");
+            if (!path.isEmpty()) {
+                for (int i = 1; i < jsonArray.length(); i++) {
+                    if (!path.equals(jsonArray.getJSONObject(i).optString("path"))) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     private boolean isExternalMulisigPath(@NonNull String path) {
         String[] split = path.replace(wallet.getExPubPath() + "/", "").split("/");
         return split.length == 2 && split[0].equals("0");
