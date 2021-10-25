@@ -47,6 +47,9 @@ import com.keystone.cold.ui.fragment.multisigs.legacy.AddressClickCallback;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.viewmodel.multisigs.MultiSigMode;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -325,7 +328,7 @@ public class CaravanMainFragment extends MultiSigEntryBaseFragment<CaravanMultis
         data.putString(KEY_COIN_CODE, Utilities.isMainNet(mActivity) ? Coins.BTC.coinId() : Coins.XTN.coinId());
         data.putString(KEY_ADDRESS, addr.getAddress());
         data.putString(KEY_ADDRESS_NAME, addr.getName());
-        if (caravanWallet.getExPubs().contains("path")) {
+        if (isNeedReplace(caravanWallet)) {
             data.putString(KEY_ADDRESS_PATH, addr.getPath().replace(caravanWallet.getExPubPath(), "*"));
         } else {
             data.putString(KEY_ADDRESS_PATH, addr.getPath());

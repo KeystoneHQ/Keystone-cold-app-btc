@@ -361,7 +361,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
             try {
                 for (int i = 0; i < outputs.length(); i++) {
                     JSONObject jsonObject = outputs.getJSONObject(i);
-                    if (jsonObject.optBoolean("isChange", false)) {
+                    if (jsonObject.optBoolean("isChange", false) && isNeedReplace()) {
                         String changeAddressPath = jsonObject.getString("changeAddressPath");
                         changeAddressPath = changeAddressPath.replace(wallet.getExPubPath(), "*");
                         jsonObject.put("changeAddressPath", changeAddressPath);
@@ -373,6 +373,25 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
             return outputs.toString();
         }
         return to;
+    }
+
+    private boolean isNeedReplace() {
+        boolean result = false;
+        try {
+            JSONArray jsonArray = new JSONArray(wallet.getExPubs());
+            String path = jsonArray.getJSONObject(0).optString("path");
+            if (!path.isEmpty()) {
+                for (int i = 1; i < jsonArray.length(); i++) {
+                    if (!path.equals(jsonArray.getJSONObject(i).optString("path"))) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private boolean isExternalMulisigPath(@NonNull String path) {
