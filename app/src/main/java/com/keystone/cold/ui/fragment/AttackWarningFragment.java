@@ -17,6 +17,13 @@
 
 package com.keystone.cold.ui.fragment;
 
+import static com.keystone.cold.selfcheck.SecurityCheck.CODE_FW_GET_STATUS_FAILED;
+import static com.keystone.cold.selfcheck.SecurityCheck.CODE_FW_IN_BOOTMODE;
+import static com.keystone.cold.selfcheck.SecurityCheck.CODE_STATUS_MIS_MATCH;
+import static com.keystone.cold.selfcheck.SecurityCheck.CODE_STATUS_RUNTIME_INVALID;
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.removeAllFingerprint;
+import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.reset;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,15 +45,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
-import static com.keystone.cold.selfcheck.SecurityCheck.CODE_FW_GET_STATUS_FAILED;
-import static com.keystone.cold.selfcheck.SecurityCheck.CODE_FW_IN_BOOTMODE;
-import static com.keystone.cold.selfcheck.SecurityCheck.CODE_STATUS_MIS_MATCH;
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.removeAllFingerprint;
-import static com.keystone.cold.ui.fragment.setting.MainPreferenceFragment.reset;
-
 public class AttackWarningFragment extends BaseFragment<AttackWarningBinding> {
 
-    public static AttackWarningFragment newInstance(Bundle data){
+    public static AttackWarningFragment newInstance(Bundle data) {
         AttackWarningFragment fragment = new AttackWarningFragment();
         fragment.setArguments(data);
         return fragment;
@@ -59,20 +60,20 @@ public class AttackWarningFragment extends BaseFragment<AttackWarningBinding> {
 
     @Override
     protected void init(View view) {
-        Bundle data = Objects.requireNonNull(getArguments());
+        Bundle data = requireArguments();
         mBinding.hint.setText(getString(R.string.attack_warning,
-                 formatErrorCode(data)));
+                formatErrorCode(data)));
         int firmware = data.getInt("firmware");
 
         if (firmware == CODE_FW_IN_BOOTMODE) {
             mBinding.text1.setText(R.string.update_failed);
             mBinding.hint.setText(getString(R.string.contact_keystone_service, formatErrorCode(data)));
-        } else if(firmware == CODE_FW_GET_STATUS_FAILED) {
+        } else if (firmware == CODE_FW_GET_STATUS_FAILED) {
             mBinding.text1.setText(R.string.opration_failed);
-            mBinding.hint.setText(getString(R.string.reboot_hint,formatErrorCode(data)));
-        } else if ((firmware & 0xff00) == CODE_STATUS_MIS_MATCH) {
+            mBinding.hint.setText(getString(R.string.reboot_hint, formatErrorCode(data)));
+        } else if ((firmware & 0xff00) == CODE_STATUS_MIS_MATCH || (firmware & 0xff00) == CODE_STATUS_RUNTIME_INVALID) {
             mBinding.text1.setText(R.string.abnormal_state_title);
-            mBinding.hint.setText(getString(R.string.abnormal_state_hint,formatErrorCode(data)));
+            mBinding.hint.setText(getString(R.string.abnormal_state_hint, formatErrorCode(data)));
         }
 
         if (firmware == CODE_FW_GET_STATUS_FAILED) {
@@ -113,8 +114,8 @@ public class AttackWarningFragment extends BaseFragment<AttackWarningBinding> {
                 DataCleaner.cleanApplicationData(activity);
                 removeAllFingerprint(activity);
                 LocalePicker.updateLocale(Locale.ENGLISH);
-            } catch (Exception ignore){
-            }finally {
+            } catch (Exception ignore) {
+            } finally {
                 DataCleaner.cleanApplicationData(activity);
                 powerOff();
             }

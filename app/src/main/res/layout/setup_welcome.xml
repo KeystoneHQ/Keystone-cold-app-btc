@@ -15,39 +15,45 @@
   ~ in the file COPYING.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-
-        <import type="android.text.TextUtils" />
-
-        <variable
-            name="viewModel"
-            type="com.keystone.cold.viewmodel.SetupVaultViewModel" />
-    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <com.keystone.cold.ui.views.NewStepView
-            android:id="@+id/step"
+        <TextView
+            android:id="@+id/welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:step="4" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/welcome"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
 
-        <fragment
-            android:id="@+id/choose_watch_wallet"
-            android:name="com.keystone.cold.ui.fragment.setting.ChooseWatchWalletFragment"
-            android:layout_width="wrap_content"
+        <com.keystone.cold.ui.views.SpanedTextView
+            android:id="@+id/site"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/welcome_site"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
 
-        <Space
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/welcome_text"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <androidx.legacy.widget.Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
@@ -57,9 +63,7 @@
             style="@style/AcceptButton"
             android:layout_width="match_parent"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/confirm" />
-
-
+            android:layout_marginBottom="20dp"
+            android:text="@string/welcome_done" />
     </LinearLayout>
 </layout>

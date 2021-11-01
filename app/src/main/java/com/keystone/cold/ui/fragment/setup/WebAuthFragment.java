@@ -17,6 +17,9 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.ui.fragment.setup.WebAuthResultFragment.WEB_AUTH_DATA;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,11 +32,11 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.WebAuthBinding;
-import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResult;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScanResultTypes;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerState;
 import com.keystone.cold.ui.fragment.main.scan.scanner.ScannerViewModel;
+import com.keystone.cold.viewmodel.SetupVaultViewModel;
 import com.keystone.cold.viewmodel.exceptions.UnknowQrCodeException;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -45,10 +48,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.ui.fragment.setup.WebAuthResultFragment.WEB_AUTH_DATA;
-
-public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
+public class WebAuthFragment extends SetupVaultBaseFragment<WebAuthBinding> {
     @Override
     protected int setView() {
         return R.layout.web_auth;
@@ -56,6 +56,7 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
 
     @Override
     protected void init(View view) {
+        super.init(view);
         mBinding.scan.setOnClickListener(this::scanVerify);
         mBinding.skip.setOnClickListener(this::skip);
     }
@@ -84,6 +85,7 @@ public class WebAuthFragment extends BaseFragment<WebAuthBinding> {
     void skip(View v) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(IS_SETUP_VAULT, true);
+        viewModel.setVaultCreateStep(SetupVaultViewModel.VAULT_CREATE_STEP_SET_PASSWORD);
         navigate(R.id.action_webAuthFragment_to_setPasswordFragment, bundle);
     }
 

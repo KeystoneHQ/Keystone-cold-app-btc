@@ -24,6 +24,7 @@ import android.app.Application;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.AndroidRuntimeException;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableField;
@@ -37,6 +38,7 @@ import com.keystone.cold.AppExecutors;
 import com.keystone.cold.BuildConfig;
 import com.keystone.cold.DataRepository;
 import com.keystone.cold.MainApplication;
+import com.keystone.cold.Utilities;
 import com.keystone.cold.callables.GetExtendedPublicKeyCallable;
 import com.keystone.cold.callables.GetRandomEntropyCallable;
 import com.keystone.cold.callables.GetVaultIdCallable;
@@ -73,6 +75,15 @@ public class SetupVaultViewModel extends AndroidViewModel {
     public static final int VAULT_STATE_CREATING = 1;
     public static final int VAULT_STATE_CREATED = 2;
     public static final int VAULT_STATE_CREATING_FAILED = 3;
+
+    public static final int VAULT_CREATE_STEP_WELCOME = 0;
+    public static final int VAULT_CREATE_STEP_WEB_AUTH = 10;
+    public static final int VAULT_CREATE_STEP_SET_PASSWORD = 20;
+    public static final int VAULT_CREATE_STEP_FIRMWARE_UPGRADE = 30;
+    public static final int VAULT_CREATE_STEP_WRITE_MNEMONIC = 40;
+    public static final int VAULT_CREATE_STEP_DONE = 100;
+
+    public static final String VAULT_CREATE_STEP = "vault_create_step";
 
     private final ObservableField<String> pwd1 = new ObservableField<>("");
     private final ObservableField<String> pwd2 = new ObservableField<>("");
@@ -125,6 +136,27 @@ public class SetupVaultViewModel extends AndroidViewModel {
         return vaultCreateState;
     }
 
+    public Integer getVaultCreateStep() {
+        return Utilities.getVaultCreateStep(this.getApplication());
+    }
+
+    public void setVaultCreateStep(Integer step) {
+        switch (step) {
+            case SetupVaultViewModel.VAULT_CREATE_STEP_WEB_AUTH:
+            case SetupVaultViewModel.VAULT_CREATE_STEP_SET_PASSWORD:
+            case SetupVaultViewModel.VAULT_CREATE_STEP_FIRMWARE_UPGRADE:
+            case SetupVaultViewModel.VAULT_CREATE_STEP_WRITE_MNEMONIC:
+            case SetupVaultViewModel.VAULT_CREATE_STEP_DONE: {
+                Utilities.setVaultCreateStep(getApplication(), step);
+                break;
+            }
+            default: {
+                throw new AndroidRuntimeException("Invalid Vault Create Step " + step + ", check code");
+            }
+        }
+
+    }
+
     public ObservableField<String> getPwd1() {
         return pwd1;
     }
@@ -145,7 +177,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
 
     public void setPassword(String password) {
         if (TextUtils.isEmpty(password)) return;
-        this.password = password;
+        OneTimePasswordManager.getInstance().setPasswordHash(password);
     }
 
     public void setSignature(String signature) {
@@ -171,7 +203,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
     public void writeMnemonic(String mnemonic) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             vaultCreateState.postValue(VAULT_STATE_CREATING);
-            if (new WriteMnemonicCallable(mnemonic, password).call()) {
+            if (new WriteMnemonicCallable(mnemonic, OneTimePasswordManager.getInstance().useAndDrop()).call()) {
                 vaultId = new GetVaultIdCallable().call();
                 mRepository.clearDb();
                 vaultCreateState.postValue(VAULT_STATE_CREATED);
@@ -188,7 +220,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
                 byte[] masterSeed = new SharedSecret().combineWithoutDecrypt(shares.toArray(new String[0]));
                 vaultCreateState.postValue(VAULT_STATE_CREATING);
                 if (new WriteMnemonicCallable(masterSeed,
-                        firstShare.id, firstShare.iteration_exponent, password).call()) {
+                        firstShare.id, firstShare.iteration_exponent, OneTimePasswordManager.getInstance().useAndDrop()).call()) {
                     vaultId = new GetVaultIdCallable().call();
                     mRepository.clearDb();
                     vaultCreateState.postValue(VAULT_STATE_CREATED);
@@ -224,7 +256,7 @@ public class SetupVaultViewModel extends AndroidViewModel {
             if (TextUtils.isEmpty(passphrase)) {
                 success = new RestartSeCallable().call();
             } else {
-                success = new UpdatePassphraseCallable(passphrase, password, signature).call();
+                success = new UpdatePassphraseCallable(passphrase, OneTimePasswordManager.getInstance().useAndDrop(), signature).call();
             }
 
             try {

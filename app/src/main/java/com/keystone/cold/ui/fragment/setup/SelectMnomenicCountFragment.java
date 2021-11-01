@@ -17,22 +17,19 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.ui.fragment.Constants.KEY_TITLE;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.IS_SHARDING;
+
 import android.os.Bundle;
 import android.view.View;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.SelectMnemonicCountBinding;
 
-import java.util.Objects;
-
-import static com.keystone.cold.ui.fragment.Constants.KEY_TITLE;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.IS_SHARDING;
-
 public class SelectMnomenicCountFragment extends SetupVaultBaseFragment<SelectMnemonicCountBinding> {
 
     private boolean checkMnemonic;
-
     private boolean isSharding;
     private String action;
     private Bundle bundle;
@@ -48,8 +45,9 @@ public class SelectMnomenicCountFragment extends SetupVaultBaseFragment<SelectMn
         mBinding.setViewModel(viewModel);
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.next.setOnClickListener(this::next);
-        bundle = Objects.requireNonNull(getArguments());
+        bundle = requireArguments();
         action = bundle.getString(ACTION);
+
         isSharding = bundle.getBoolean(IS_SHARDING);
         checkMnemonic = PreImportFragment.ACTION_CHECK.equals(action);
 
@@ -75,13 +73,12 @@ public class SelectMnomenicCountFragment extends SetupVaultBaseFragment<SelectMn
         if (checkMnemonic) {
             bundle.putString(KEY_TITLE, getString(R.string.check_mnemonic));
             navigate(R.id.action_to_verifyMnemonic, bundle);
-        } else if(action.equals(PreImportFragment.ACTION_RESET_PWD)) {
+        } else if (action.equals(PreImportFragment.ACTION_RESET_PWD)) {
             bundle.putString(KEY_TITLE, getString(R.string.input_mnemonic));
             navigate(R.id.action_to_verifyMnemonic, bundle);
         } else {
-            navigate(R.id.action_to_mnemonicInputFragment, bundle);
+            navigate(R.id.action_to_mnemonicInputFragment, getArguments());
         }
-
     }
 
     @Override

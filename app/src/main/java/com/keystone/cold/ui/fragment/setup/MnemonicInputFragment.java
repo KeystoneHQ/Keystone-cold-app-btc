@@ -17,6 +17,15 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.mnemonic.MnemonicInputTable.TWENTYTHREE;
+import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.PASSWORD;
+import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.handleRuntimeStateAbnormal;
+import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_CREATE_STEP_DONE;
+import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_STATE_CREATED;
+import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_STATE_CREATING;
+import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_STATE_CREATING_FAILED;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -42,6 +51,7 @@ import com.keystone.cold.databinding.MnemonicInputFragmentBinding;
 import com.keystone.cold.databinding.ModalWithTwoButtonBinding;
 import com.keystone.cold.db.PresetData;
 import com.keystone.cold.db.entity.CoinEntity;
+import com.keystone.cold.selfcheck.RuntimeStatusCode;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.SetupVaultActivity;
 import com.keystone.cold.ui.fragment.unlock.VerifyMnemonicFragment;
@@ -56,14 +66,6 @@ import java.util.List;
 import iton.slip.secret.Share;
 import iton.slip.secret.SharedSecretException;
 import iton.slip.secret.words.Mnemonic;
-
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.mnemonic.MnemonicInputTable.TWENTYTHREE;
-import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.PASSWORD;
-import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.handleSeStateAbnormal;
-import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_STATE_CREATED;
-import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_STATE_CREATING;
-import static com.keystone.cold.viewmodel.SetupVaultViewModel.VAULT_STATE_CREATING_FAILED;
 
 public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputFragmentBinding> {
 
@@ -84,7 +86,7 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
     @Override
     protected void init(View view) {
         super.init(view);
-        mBinding.hint.setText(getString(R.string.input_mnemonic_hint,viewModel.getMnemonicCount().get()));
+        mBinding.hint.setText(getString(R.string.input_mnemonic_hint, viewModel.getMnemonicCount().get()));
 
         Bundle data = getArguments();
         if (data != null) {
@@ -94,11 +96,11 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
         mBinding.table.setMnemonicNumber(viewModel.getMnemonicCount().get());
         if (viewModel.isShardingMnemonic()) {
             initImportSharding();
-        } else if(viewModel.isCreateMnemonic()) {
+        } else if (viewModel.isCreateMnemonic()) {
             mBinding.hint.setText(R.string.please_input_23_words);
             mBinding.importMnemonic.setText(R.string.calculate_24th_word);
             mBinding.table.setMnemonicNumber(TWENTYTHREE);
-            mBinding.toolbar.setNavigationOnClickListener(v-> navigateUp());
+            mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         } else {
             mBinding.toolbar.setNavigationOnClickListener(v -> {
                 Keyboard.hide(mActivity, mBinding.table);
@@ -164,7 +166,7 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
 
         if (!firstShardingWords[index].startsWith(word)) {
             notMatch = true;
-            showDialog(mActivity,getString(R.string.notice),
+            showDialog(mActivity, getString(R.string.notice),
                     getString(R.string.sharding_id_not_match),
                     getString(R.string.cancel_import_sharding),
                     getString(R.string.confirm),
@@ -280,13 +282,14 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
                     if (dialog != null && dialog.getDialog() != null && dialog.getDialog().isShowing()) {
                         dialog.dismiss();
                     }
-
-                    if (((SetupVaultActivity) mActivity).isSetupVault) {
+                    boolean isSetupProcess = ((SetupVaultActivity) mActivity).inSetupProcess;
+                    if (isSetupProcess) {
+                        viewModel.setVaultCreateStep(VAULT_CREATE_STEP_DONE);
                         Bundle data = new Bundle();
-                        data.putBoolean(IS_SETUP_VAULT, ((SetupVaultActivity) mActivity).isSetupVault);
+                        data.putBoolean(IS_SETUP_VAULT, isSetupProcess);
                         navigate(R.id.action_to_setupSyncFragment, data);
                     } else {
-                        Intent intent = new Intent(mActivity,MainActivity.class);
+                        Intent intent = new Intent(mActivity, MainActivity.class);
                         startActivity(intent);
                         mActivity.finish();
                     }
@@ -300,7 +303,7 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
                         && dialog.getDialog().isShowing()) {
                     dialog.dismiss();
                 }
-                handleSeStateAbnormal(mActivity);
+                handleRuntimeStateAbnormal(mActivity, RuntimeStatusCode.RUNTIME_VAULT_CREATE_FAILED);
             }
         });
     }
@@ -347,15 +350,15 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
             Share share = Mnemonic.INSTANCE.decode(mnemonic);
             if (share.group_count == 1) {
                 int remainCount = share.member_threshold - 1;
-                showDialog(mActivity,getString(R.string.verify_pass),
-                        getString(R.string.first_sharding_hint,remainCount),
+                showDialog(mActivity, getString(R.string.verify_pass),
+                        getString(R.string.first_sharding_hint, remainCount),
                         getString(R.string.cancel_import_sharding),
                         getString(R.string.continue_import_sharding),
                         this::cancelImportSharding,
                         () -> addSharding(mnemonic));
             } else {
                 //current not support group_count > 1
-                showDialog(mActivity,getString(R.string.notice1),
+                showDialog(mActivity, getString(R.string.notice1),
                         getString(R.string.not_support_multi_group_sharding),
                         getString(R.string.cancel_import_sharding),
                         getString(R.string.confirm),
@@ -398,11 +401,11 @@ public class MnemonicInputFragment extends SetupVaultBaseFragment<MnemonicInputF
                     break;
                 case RESULT_REPEAT:
                     text = getString(R.string.sharding_repeat);
-                    showDialog(mActivity,title, text, left, right, leftAction, rightAction);
+                    showDialog(mActivity, title, text, left, right, leftAction, rightAction);
                     break;
                 case RESULT_NOT_MATCH:
                     text = getString(R.string.sharding_id_not_match);
-                    showDialog(mActivity,title, text, left, right, leftAction, rightAction);
+                    showDialog(mActivity, title, text, left, right, leftAction, rightAction);
             }
         } catch (SharedSecretException e) {
             e.printStackTrace();

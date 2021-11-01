@@ -59,59 +59,51 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp" />
 
-        <RelativeLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/web_auth_code"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="40dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp">
 
             <TextView
-                android:id="@+id/text"
+                android:id="@+id/web_auth_result"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/fl"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="20dp"
-                android:text="@string/web_auth_code"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="36sp"
                 android:textStyle="bold" />
 
-            <FrameLayout
-                android:id="@+id/fl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingVertical="16dp">
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
-                <TextView
-                    android:id="@+id/web_auth_result"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
 
-                <ProgressBar
-                    android:id="@+id/progress"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center" />
-            </FrameLayout>
+        <TextView
+            android:id="@+id/hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/verify_code_hint"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fl"
-                android:layout_centerHorizontal="true"
-                android:layout_marginHorizontal="16dp"
-                android:text="@string/verify_code_hint"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
-        </RelativeLayout>
+        <androidx.legacy.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -190,10 +190,21 @@
 
     <string name="tab_my_address">Receiving</string>
     <string name="tab_my_change_address">Change</string>
-    <string name="web_auth1"><![CDATA[1. Please visit <font color="#00cdc3">https://keyst.one/auth<font/>]]></string>
-    <string name="web_auth2"><![CDATA[2. Click on <font color="#00cdc3">\"Scan QR Code\" <font/>below and scan the QR code displayed on the website]]></string>
-    <string name="web_auth3">3. Enter the code displayed on your Keystone on the official website for authentication;</string>
-    <string name="web_auth4">4. If authentication fails, do not use your device as it may have been compromised</string>
+    <string name="web_auth1"><![CDATA[1. Click on <font color="#00cdc3">"Scan QR Code"<font/> button below and scan the QR code displayed on the website]]></string>
+    <string name="web_auth2">2. Your Keystone would then display a code. Please enter that into the official website to verify the authenticity of your device</string>
+    <string name="web_auth3"><![CDATA[3. Click <font color="#00cdc3">"Verify"<font/> button on the website to see your result]]></string>
+    <string name="web_auth4">If the authentication fails, please do not use this device as it may have been compromised!</string>
+    <string name="web_auth5"><![CDATA[Web Auth Link: <br> <font color="#00cdc3">https://keyst.one/start/1<font/>]]></string>
+
+
+    <string name="firmware_upgrade1">Upgrading your firmware to the latest version to benefit from new features is highly recommended.</string>
+    <string name="firmware_upgrade2">A microSD card in FAT32 format with a maximum memory capacity of 512GB is required</string>
+    <string name="firmware_upgrade3">A minimum of 70% battery charge is required</string>
+    <string name="firmware_upgrade4"><![CDATA[To download the latest firmware, please visit: <br> <font color="#00cdc3">https://keyst.one/start/3<font/>]]></string>
+    <string name="firmware_upgrade_start">Update Now</string>
+    <string name="firmware_upgrade_unable">Error detected</string>
+    <string name="firmware_upgrade_unable_description">The new Firmware package was not detected.Please check whether your microSD card has been formatted to FAT32, has no more than 512GB of memory, and if the \'update.zip\' file has been properly copied onto the card.</string>
+
     <string name="skip">Skip</string>
     <string name="read_confirm"><![CDATA[I\'ve read and agreed to the <font color="#00cdc3"><u>\"Terms of Service\"</u><font/>, and  <font color="#00cdc3"><u>\"Privacy Policy\"</u><font/> ]]></string>
     <string name="create_vault_hint"><![CDATA[1.Touch <font color="#00cdc3">\"Create Wallet\"<font/> to generate a new Wallet.]]></string>
@@ -303,6 +314,11 @@
     <string name="secret_modal_msg">Anyone with your recovery phrase has full access to your cryptocurrency. Please make sure there are no onlookers or cameras when you record your recovery phrase.</string>
     <string name="select_mnemonic_count">Recovery Phrase Length</string>
     <string name="set_password">Set Password</string>
+    <string name="firmware_upgrade">Firmware Upgrade</string>
+    <string name="welcome">Welcome to Keystone!</string>
+    <string name="welcome_site"><![CDATA[Please open the following link using a PC: <font color="#00cdc3">https://keyst.one/start</font>]]></string>
+    <string name="welcome_text">This will help guide setting up your Keystone hardware wallet.</string>
+    <string name="welcome_done">It\'s ready, start</string>
     <string name="text_password_required">Must contain at least 10 characters and include upper and lower case letters and digits. Symbols are allowed. Case sensitive.</string>
     <string name="guide_completed_title">Congratulations! \nSetup is now complete!</string>
     <string name="guide_completed_remind"><![CDATA[You can create Passphrase(Hidden Wallet) or reset your password in Settings. \n Read the enclosed Quick Guide or visit our website to learn more: <br> <font color="#00cdc3"><u>https://keyst.one</u><font/>]]></string>
