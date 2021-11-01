@@ -52,7 +52,7 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
     private int currentPos;
 
     private final int numOfColumn = 10;
-    private final OnClickListener onClickListener = v -> {
+    private OnClickListener onClickListener = v -> {
         String tag = (String) v.getTag();
         if (tag.equals("X")) {
             if (currentPos != 0) {
@@ -63,19 +63,19 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
         } else {
             rolls[currentPos] = Byte.parseByte(tag);
             currentPos++;
-            if (currentPos == rolls.length -1) {
+            if (currentPos == rolls.length - 1) {
                 enlarge();
                 adapter.notifyDataSetChanged();
             } else {
                 adapter.notifyItemRangeChanged(currentPos - 1, 2, 1);
             }
         }
-        int first = ((GridLayoutManager)mBinding.diceGrid.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-        int last = ((GridLayoutManager)mBinding.diceGrid.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+        int first = ((GridLayoutManager) mBinding.diceGrid.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        int last = ((GridLayoutManager) mBinding.diceGrid.getLayoutManager()).findLastCompletelyVisibleItemPosition();
         if (currentPos > last - numOfColumn) {
             mBinding.diceGrid.smoothScrollToPosition(Math.min(currentPos + INIT_ROLLS / 2, rolls.length));
-        } else if(currentPos < first + numOfColumn) {
-            int scrollTo =  (currentPos - INIT_ROLLS / 2);
+        } else if (currentPos < first + numOfColumn) {
+            int scrollTo = (currentPos - INIT_ROLLS / 2);
             if (scrollTo < 0) return;
             mBinding.diceGrid.smoothScrollToPosition(currentPos - INIT_ROLLS / 2);
         }
@@ -104,21 +104,21 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
     private void onCompleteClick() {
         if (currentPos < 50) {
             ModalDialog dialog = new ModalDialog();
-            CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),R.layout.common_modal,
-                    null,false);
+            CommonModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity), R.layout.common_modal,
+                    null, false);
             binding.title.setText(R.string.rolling_not_enough);
-            binding.subTitle.setText(mActivity.getString(R.string.rolling_hint_less_than_50,currentPos));
+            binding.subTitle.setText(mActivity.getString(R.string.rolling_hint_less_than_50, currentPos));
             binding.confirm.setText(R.string.know);
             binding.close.setVisibility(View.GONE);
             binding.confirm.setOnClickListener(v -> dialog.dismiss());
             dialog.setBinding(binding);
-            dialog.show(mActivity.getSupportFragmentManager(),"");
-        } else if(currentPos < 99) {
+            dialog.show(mActivity.getSupportFragmentManager(), "");
+        } else if (currentPos < 99) {
             ModalDialog dialog = new ModalDialog();
-            ModalWithTwoButtonBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),R.layout.modal_with_two_button,
-                    null,false);
+            ModalWithTwoButtonBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity), R.layout.modal_with_two_button,
+                    null, false);
             binding.title.setText(R.string.keep_rolling);
-            binding.subTitle.setText(mActivity.getString(R.string.rolling_hint_less_than_99,currentPos));
+            binding.subTitle.setText(mActivity.getString(R.string.rolling_hint_less_than_99, currentPos));
             binding.left.setText(R.string.confirm_rolling);
             binding.left.setOnClickListener(v -> {
                 dialog.dismiss();
@@ -127,7 +127,7 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
             binding.right.setText(R.string.keep_rolling);
             binding.right.setOnClickListener(v -> dialog.dismiss());
             dialog.setBinding(binding);
-            dialog.show(mActivity.getSupportFragmentManager(),"");
+            dialog.show(mActivity.getSupportFragmentManager(), "");
         } else {
             navigateToGenerateMnemonic();
         }
@@ -135,14 +135,14 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
 
     private void navigateToGenerateMnemonic() {
         Bundle data = new Bundle();
-        data.putByteArray("dice_rolls", Arrays.copyOfRange(rolls,0, currentPos));
+        data.putByteArray("dice_rolls", Arrays.copyOfRange(rolls, 0, currentPos));
         data.putBoolean("use_dice", true);
         navigate(R.id.action_to_generateMnemonicFragment, data);
     }
 
     private void setupDiceGrid() {
         adapter = new DiceGridAdapter();
-        GridLayoutManager layoutManager = new GridLayoutManager(mActivity,21);
+        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 21);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -154,7 +154,7 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
         });
         mBinding.diceGrid.setLayoutManager(layoutManager);
         mBinding.diceGrid.setAdapter(adapter);
-        mBinding.diceGrid.addItemDecoration(new TableItemDecoration(mActivity) );
+        mBinding.diceGrid.addItemDecoration(new TableItemDecoration(mActivity));
     }
 
     @Override
@@ -167,7 +167,7 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
         @NonNull
         @Override
         public DiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(mActivity).inflate(R.layout.dice_grid_item,parent,false);
+            View view = LayoutInflater.from(mActivity).inflate(R.layout.dice_grid_item, parent, false);
             return new DiceViewHolder(view);
         }
 
@@ -205,10 +205,10 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
             if (position == 0) {
                 holder.top.setVisibility(View.VISIBLE);
                 holder.left.setVisibility(View.VISIBLE);
-            } else if(position < numOfColumn){
+            } else if (position < numOfColumn) {
                 holder.top.setVisibility(View.VISIBLE);
                 holder.left.setVisibility(View.GONE);
-            } else if(position % numOfColumn == 0) {
+            } else if (position % numOfColumn == 0) {
                 holder.left.setVisibility(View.VISIBLE);
                 holder.top.setVisibility(View.GONE);
             } else {
@@ -270,8 +270,8 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
                 final int right = child.getRight();
                 final int top = child.getBottom();
 
-                if ( i % numOfColumn == 0) {
-                    left += dp2px(mActivity,14);
+                if (i % numOfColumn == 0) {
+                    left += dp2px(mActivity, 14);
                 }
 
                 if (i + numOfColumn >= childCount) {
@@ -282,8 +282,8 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
 
                 //first row
                 if (i < numOfColumn) {
-                    c.drawLine(left, child.getTop() + (dividerWidth >> 1) + dp2px(mActivity,14), right,
-                            child.getTop() + (dividerWidth >> 1) + dp2px(mActivity,14), mPaint);
+                    c.drawLine(left, child.getTop() + (dividerWidth >> 1) + dp2px(mActivity, 14), right,
+                            child.getTop() + (dividerWidth >> 1) + dp2px(mActivity, 14), mPaint);
                 }
             }
         }
@@ -299,7 +299,7 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
                 final int left = child.getRight();
 
                 if (i < numOfColumn) {
-                    top += dp2px(mActivity,14);
+                    top += dp2px(mActivity, 14);
                 }
 
                 //last column
@@ -312,8 +312,8 @@ public class RollingDiceFragment extends BaseFragment<RollingDiceBinding> {
 
                 //first column
                 if (i % numOfColumn == 0) {
-                    c.drawLine(child.getLeft() + (dividerWidth >> 1) + dp2px(mActivity,14), top,
-                            child.getLeft() + (dividerWidth >> 1) + dp2px(mActivity,14), bottom, mPaint);
+                    c.drawLine(child.getLeft() + (dividerWidth >> 1) + dp2px(mActivity, 14), top,
+                            child.getLeft() + (dividerWidth >> 1) + dp2px(mActivity, 14), bottom, mPaint);
                 }
             }
         }

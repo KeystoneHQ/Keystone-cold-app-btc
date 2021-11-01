@@ -25,8 +25,6 @@ import android.view.View;
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.PreImportShardingBinding;
 
-import java.util.Objects;
-
 public class PreImportFragment extends SetupVaultBaseFragment<PreImportShardingBinding> {
     public static final String ACTION = "action";
     public static final String IS_SHARDING = "is_sharding";
@@ -42,7 +40,7 @@ public class PreImportFragment extends SetupVaultBaseFragment<PreImportShardingB
     @Override
     protected void init(View view) {
         super.init(view);
-        Bundle bundle = Objects.requireNonNull(getArguments());
+        Bundle bundle = requireArguments();
         String action = bundle.getString(ACTION);
         refreshUI(action);
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());

@@ -17,6 +17,9 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.viewmodel.SetupVaultViewModel.PasswordValidationResult.RESULT_OK;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +40,7 @@ import com.keystone.cold.callables.ChangePasswordCallable;
 import com.keystone.cold.callables.ResetPasswordCallable;
 import com.keystone.cold.databinding.ModalBinding;
 import com.keystone.cold.databinding.SetPasswordBinding;
+import com.keystone.cold.selfcheck.RuntimeStatusCode;
 import com.keystone.cold.ui.AttackWarningActivity;
 import com.keystone.cold.ui.UnlockActivity;
 import com.keystone.cold.ui.modal.ModalDialog;
@@ -48,12 +52,10 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.util.Objects;
 
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.viewmodel.SetupVaultViewModel.PasswordValidationResult.RESULT_OK;
-
 public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBinding> {
 
-    private boolean isSetupVault;
+    private boolean inSetupProcess;
+    private boolean shouldPopBack;
 
     private boolean deleteAll;
 
@@ -71,6 +73,8 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
     public static final String SLIP39_SEED = "slip39_seed";
     public static final String SLIP39_ID = "slip39_id";
 
+    public static final String SHOULD_POP_BACK = "should_pop_back";
+
     private boolean paused;
 
     @Override
@@ -79,18 +83,19 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
     }
 
     @Override
-    protected void init(View view) {
-        super.init(view);
-        mBinding.setViewModel(viewModel);
-        Bundle bundle = getArguments();
-        isSetupVault = bundle != null && bundle.getBoolean(IS_SETUP_VAULT);
-        currentPassword = bundle != null ? bundle.getString(PASSWORD): null;
-        mnemonic = bundle != null ? bundle.getString(MNEMONIC): null;
-        slip39MasterSeed = bundle != null ? bundle.getString(SLIP39_SEED): null;
-        slip39Id = bundle != null ? bundle.getInt(SLIP39_ID): 0;
-        mBinding.pwd1.setFilters(new InputFilter[]{new InputFilter.LengthFilter(64)});
-        mBinding.pwd2.setFilters(new InputFilter[]{new InputFilter.LengthFilter(64)});
+    public void onResume() {
+        super.onResume();
+        mBinding.confirm.setEnabled(false);
+        registerListeners();
+        Keyboard.show(mActivity, mBinding.pwd1);
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    private void registerListeners() {
         mBinding.pwd1.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (!paused) {
@@ -120,6 +125,29 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
             return false;
         });
 
+        viewModel.getPwd1().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                String password1 = viewModel.getPwd1().get();
+                String password2 = viewModel.getPwd2().get();
+                if (password2.length() >= password1.length()) {
+                    if (password1.equals(password2)) {
+                        if (inputValid) {
+                            mBinding.confirm.setEnabled(true);
+                        } else {
+                            mBinding.confirm.setEnabled(false);
+                        }
+                        mBinding.hint2.setVisibility(View.GONE);
+                    } else {
+                        mBinding.confirm.setEnabled(false);
+                    }
+                } else {
+                    mBinding.confirm.setEnabled(false);
+                }
+            }
+        });
+
         viewModel.getPwd2().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
@@ -128,7 +156,11 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
                 String password2 = viewModel.getPwd2().get();
                 if (password2.length() >= password1.length()) {
                     if (password1.equals(password2)) {
-                        mBinding.confirm.setEnabled(inputValid);
+                        if (inputValid) {
+                            mBinding.confirm.setEnabled(true);
+                        } else {
+                            mBinding.confirm.setEnabled(false);
+                        }
                         mBinding.hint2.setVisibility(View.GONE);
                     } else {
                         mBinding.hint2.setVisibility(View.VISIBLE);
@@ -141,14 +173,38 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
             }
         });
 
+    }
 
-        if (isSetupVault) {
+    @Override
+    protected void init(View view) {
+        super.init(view);
+        mBinding.setViewModel(viewModel);
+        Bundle bundle = getArguments();
+        inSetupProcess = bundle != null && bundle.getBoolean(IS_SETUP_VAULT);
+        if (inSetupProcess) {
+            viewModel.setVaultCreateStep(SetupVaultViewModel.VAULT_CREATE_STEP_SET_PASSWORD);
+            Utilities.clearPasswordSet(mActivity);
+        }
+        shouldPopBack = bundle != null && bundle.getBoolean(SHOULD_POP_BACK);
+        currentPassword = bundle != null ? bundle.getString(PASSWORD) : null;
+        mnemonic = bundle != null ? bundle.getString(MNEMONIC) : null;
+        slip39MasterSeed = bundle != null ? bundle.getString(SLIP39_SEED) : null;
+        slip39Id = bundle != null ? bundle.getInt(SLIP39_ID) : 0;
+        mBinding.pwd1.setFilters(new InputFilter[]{new InputFilter.LengthFilter(64)});
+        mBinding.pwd2.setFilters(new InputFilter[]{new InputFilter.LengthFilter(64)});
+        boolean setupFinished = Utilities.getVaultCreateStep(mActivity).equals(SetupVaultViewModel.VAULT_CREATE_STEP_DONE);
+        registerListeners();
+
+        if (inSetupProcess) {
             mBinding.toolbar.setVisibility(View.GONE);
             mBinding.divider.setVisibility(View.GONE);
         } else {
             mBinding.step.setVisibility(View.GONE);
             mBinding.toolbar.setNavigationOnClickListener(v -> {
                 Keyboard.hide(mActivity, mBinding.pwd1);
+                if (!setupFinished) {
+                    navigateUp();
+                }
                 // change pwd by old pwd
                 if (!TextUtils.isEmpty(currentPassword)) {
                     navigateUp();
@@ -197,13 +253,17 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
                 String password = Objects.requireNonNull(viewModel.getPwd1().get());
                 String passwordHash = Hex.toHexString(Objects.requireNonNull(HashUtil.twiceSha256(password)));
                 Runnable action;
+                boolean hasSetupFinished = Utilities.getVaultCreateStep(mActivity).equals(SetupVaultViewModel.VAULT_CREATE_STEP_DONE);
                 if (mActivity instanceof UnlockActivity) {
                     new ResetPasswordCallable(passwordHash, mnemonic, slip39MasterSeed, slip39Id).call();
                     action = () -> {
-                        Utilities.setPatternRetryTimes(mActivity,0);
+                        if (!hasSetupFinished) {
+                            Utilities.markPasswordSet(mActivity);
+                        }
+                        Utilities.setPatternRetryTimes(mActivity, 0);
                         mActivity.finish();
                     };
-                } else if(!isSetupVault) {
+                } else if (!inSetupProcess) {
                     if (!TextUtils.isEmpty(currentPassword)) {
                         new ChangePasswordCallable(passwordHash, currentPassword).call();
                         action = this::navigateUp;
@@ -213,14 +273,19 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
                     }
                 } else {
                     if (new ResetPasswordCallable(passwordHash, mnemonic, slip39MasterSeed, slip39Id).call()) {
-                        viewModel.setPassword(passwordHash);
+                        Utilities.markPasswordSet(mActivity);
                         action = () -> {
-                            Bundle data = new Bundle();
-                            data.putBoolean(IS_SETUP_VAULT, true);
-                            navigate(R.id.action_setPasswordFragment_to_setupVaultFragment, data);
+                            if (shouldPopBack) {
+                                navigateUp();
+                            } else {
+                                Bundle data = new Bundle();
+                                data.putBoolean(IS_SETUP_VAULT, true);
+                                viewModel.setVaultCreateStep(SetupVaultViewModel.VAULT_CREATE_STEP_FIRMWARE_UPGRADE);
+                                navigate(R.id.action_to_firmwareUpgradeFragment, data);
+                            }
                         };
                     } else {
-                        handleSeStateAbnormal(mActivity);
+                        handleRuntimeStateAbnormal(mActivity, RuntimeStatusCode.RUNTIME_WRITE_PASSWORD_FAILED);
                         return;
                     }
                 }
@@ -233,10 +298,10 @@ public class SetPasswordFragment extends SetupVaultBaseFragment<SetPasswordBindi
         }
     }
 
-    public static void handleSeStateAbnormal(Activity activity) {
+    public static void handleRuntimeStateAbnormal(Activity activity, int statusCode) {
         Utilities.setAttackDetected(activity, true);
         Bundle data = new Bundle();
-        data.putInt("firmware", 0x0600);
+        data.putInt("firmware", statusCode);
         data.putInt("system", 0);
         data.putInt("signature", 0);
         Intent intent = new Intent(activity, AttackWarningActivity.class);

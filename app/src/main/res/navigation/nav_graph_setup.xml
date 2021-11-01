@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 Keystone
   ~
   ~ This program is free software: you can redistribute it and/or modify
@@ -23,13 +22,22 @@
     app:startDestination="@id/webAuthFragment">
 
     <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.keystone.cold.ui.fragment.setup.WelcomeFragment"
+        android:label="WelcomeFragment"
+        tools:layout="@layout/setup_welcome">
+        <action
+            android:id="@+id/action_to_webAuthFragment"
+            app:destination="@id/webAuthFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/webAuthFragment"
         android:name="com.keystone.cold.ui.fragment.setup.WebAuthFragment"
         android:label="WebAuthFragment"
         tools:layout="@layout/web_auth">
         <action
             android:id="@+id/action_to_scanner"
-            app:destination="@id/ScannerFragment"/>
+            app:destination="@id/ScannerFragment" />
         <action
             android:id="@+id/action_webAuthFragment_to_setPasswordFragment"
             app:destination="@id/setPasswordFragment" />
@@ -54,21 +62,21 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_tabletQrcodeFragment"
             app:destination="@id/tabletQrcodeFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_preImportFragment"
             app:destination="@id/preImportFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@id/licenseFragment"
@@ -99,28 +107,27 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_selectLastMnemonicFragment"
             app:destination="@id/selectLastMnemonicFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
         android:id="@+id/selectLastMnemonicFragment"
         android:name="com.keystone.cold.ui.fragment.setup.SelectLastMnemonicFragment"
-        android:label="SelectLastMnemonicFragment"
-        >
+        android:label="SelectLastMnemonicFragment">
         <action
             android:id="@id/action_to_generateMnemonicFragment"
             app:destination="@id/generateMnemonicFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -129,7 +136,16 @@
         android:label="SetPasswordFragment"
         tools:layout="@layout/set_password">
         <action
-            android:id="@+id/action_setPasswordFragment_to_setupVaultFragment"
+            android:id="@+id/action_to_firmwareUpgradeFragment"
+            app:destination="@id/firmwareUpgradeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/firmwareUpgradeFragment"
+        android:name="com.keystone.cold.ui.fragment.setup.FirmwareUpgradeFragment"
+        android:label="FirmwareUpgradeFragment"
+        tools:layout="@layout/setup_firmware_upgrade">
+        <action
+            android:id="@+id/action_to_setupVaultFragment"
             app:destination="@id/setupVaultFragment" />
     </fragment>
     <fragment
@@ -143,28 +159,28 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_rollingDiceGuideFragment"
             app:destination="@id/rollingDiceGuideFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_shardingSettingFragment"
             app:destination="@id/shardingSettingFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_to_createMnemonicGuide"
             app:destination="@id/createMnemonicGuide"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/shardingSettingFragment"
@@ -177,7 +193,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -191,7 +207,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -205,7 +221,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/shardingGuideFragment"
@@ -218,9 +234,8 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
-
 
 
     <fragment
@@ -234,7 +249,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/confirmMnemonicFragment"
@@ -247,9 +262,9 @@
     </fragment>
     <fragment
         android:id="@+id/SetupWatchWalletFragment"
-        tools:layout="@layout/setup_watch_wallet"
         android:name="com.keystone.cold.ui.fragment.setup.SetupWatchWalletFragment"
-        android:label="SetupWatchWalletFragment">
+        android:label="SetupWatchWalletFragment"
+        tools:layout="@layout/setup_watch_wallet">
 
         <action
             android:id="@+id/action_to_selectAddressFormatFragment"
@@ -257,7 +272,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
             android:id="@id/action_to_export_xpub_guide"
@@ -265,18 +280,18 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/setupCompleteFragment"
         android:name="com.keystone.cold.ui.fragment.setup.SetupCompleteFragment"
-        tools:layout="@layout/setup_complete"
-        android:label="SetupCompleteFragment" />
+        android:label="SetupCompleteFragment"
+        tools:layout="@layout/setup_complete" />
     <fragment
         android:id="@+id/webAuthResultFragment"
         android:name="com.keystone.cold.ui.fragment.setup.WebAuthResultFragment"
-        tools:layout="@layout/web_auth_result"
-        android:label="WebAuthResultFragment">
+        android:label="WebAuthResultFragment"
+        tools:layout="@layout/web_auth_result">
         <action
             android:id="@+id/action_webAuth_retry"
             app:destination="@id/webAuthFragment" />
@@ -326,7 +341,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/rollingDiceFragment"
@@ -339,7 +354,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -353,38 +368,43 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@id/exportXpubGuideFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ExportXpubGuideFragment"
-        tools:layout="@layout/export_xpub_guide"
-        android:label="ElectrumGuideFragment">
-        <action android:id="@id/action_to_setupCompleteFragment"
+        android:label="ElectrumGuideFragment"
+        tools:layout="@layout/export_xpub_guide">
+        <action
+            android:id="@id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <action android:id="@id/export_electrum_ypub"
+        <action
+            android:id="@id/export_electrum_ypub"
             app:destination="@id/electrumExportFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <action android:id="@+id/export_xpub_keystone"
+        <action
+            android:id="@+id/export_xpub_keystone"
             app:destination="@id/syncFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <action android:id="@+id/action_to_export_xpub_blue"
+        <action
+            android:id="@+id/action_to_export_xpub_blue"
             app:destination="@id/blueWalletExportFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <action android:id="@id/action_to_export_xpub_generic"
+        <action
+            android:id="@id/action_to_export_xpub_generic"
             app:destination="@id/exportGenericXpubFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -396,7 +416,8 @@
         android:id="@+id/exportGenericXpubFragment"
         android:name="com.keystone.cold.ui.fragment.main.ExportGenericXpubFragment"
         android:label="ExportGenericXpubFragment">
-        <action android:id="@id/action_to_setupCompleteFragment"
+        <action
+            android:id="@id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -407,9 +428,10 @@
     <fragment
         android:id="@id/syncFragment"
         android:name="com.keystone.cold.ui.fragment.SyncFragment"
-        tools:layout="@layout/sync_fragment"
-        android:label="SyncFragment" >
-        <action android:id="@id/action_to_setupCompleteFragment"
+        android:label="SyncFragment"
+        tools:layout="@layout/sync_fragment">
+        <action
+            android:id="@id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -420,9 +442,10 @@
     <fragment
         android:id="@id/electrumExportFragment"
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
-        tools:layout="@layout/psbt_export"
-        android:label="ElectrumExportFragment">
-        <action android:id="@+id/action_to_setupCompleteFragment"
+        android:label="ElectrumExportFragment"
+        tools:layout="@layout/psbt_export">
+        <action
+            android:id="@+id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -436,7 +459,8 @@
         android:name="com.keystone.cold.ui.fragment.main.BlueWalletExportFragment"
         android:label="blueWalletExportFragment"
         tools:layout="@layout/blue_export">
-        <action android:id="@id/action_to_setupCompleteFragment"
+        <action
+            android:id="@id/action_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -448,12 +472,21 @@
         android:id="@+id/createMnemonicGuide"
         android:name="com.keystone.cold.ui.fragment.CreateMnemonicGuide"
         android:label="CreateMnemonicGuide">
-        <action android:id="@+id/action_to_createMnemonic"
+        <action
+            android:id="@+id/action_to_createMnemonic"
             app:destination="@id/mnemonicInputFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
+
+    <action
+        android:id="@+id/global_action_to_setPasswordFragment"
+        app:destination="@id/setPasswordFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@android:anim/slide_in_left"
+        app:popExitAnim="@android:anim/slide_out_right" />
 
 </navigation>

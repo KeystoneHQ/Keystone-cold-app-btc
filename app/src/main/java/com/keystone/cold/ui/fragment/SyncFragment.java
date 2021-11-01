@@ -17,6 +17,7 @@
 
 package com.keystone.cold.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -32,12 +33,13 @@ import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.SyncFragmentBinding;
 import com.keystone.cold.db.entity.CoinEntity;
 import com.keystone.cold.ui.MainActivity;
+import com.keystone.cold.ui.fragment.setup.SetupVaultBaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.viewmodel.CoinListViewModel;
 
 import java.util.List;
 
-public class SyncFragment extends BaseFragment<SyncFragmentBinding> {
+public class SyncFragment extends SetupVaultBaseFragment<SyncFragmentBinding> {
 
     public static final String TAG = "SyncFragment";
     private CoinListViewModel viewModel;
@@ -55,7 +57,10 @@ public class SyncFragment extends BaseFragment<SyncFragmentBinding> {
         if (mActivity instanceof MainActivity) {
             mBinding.complete.setOnClickListener(v -> popBackStack(R.id.assetFragment, false));
         } else {
-            mBinding.complete.setOnClickListener(v -> navigate(R.id.action_to_setupCompleteFragment));
+            mBinding.complete.setOnClickListener(v -> {
+                startActivity(new Intent(mActivity, MainActivity.class));
+                mActivity.finish();
+            });
         }
         mBinding.sync.info.setOnClickListener(v -> showKeystoneInfo());
     }
