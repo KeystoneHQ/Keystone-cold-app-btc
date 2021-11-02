@@ -38,6 +38,7 @@ import com.keystone.cold.databinding.WebAuthResultBinding;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.ui.modal.ProgressModalDialog;
 import com.keystone.cold.util.DataCleaner;
+import com.keystone.cold.viewmodel.SetupVaultViewModel;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -47,98 +48,101 @@ public class WebAuthResultFragment extends SetupVaultBaseFragment<WebAuthResultB
 
     public static final String WEB_AUTH_DATA = "web_auth_data";
 
-	private boolean isSetupVault;
+    private boolean inSetupProcess;
 
-	@Override
-	protected int setView() {
-		return R.layout.web_auth_result;
-	}
+    @Override
+    protected int setView() {
+        return R.layout.web_auth_result;
+    }
 
-	@Override
-	protected void init(View view) {
-		super.init(view);
-		Bundle bundle = requireArguments();
-		isSetupVault = bundle.getBoolean(IS_SETUP_VAULT);
-		mBinding.setViewModel(viewModel);
-		viewModel.calcAuthCode(bundle.getString(WEB_AUTH_DATA));
-		mBinding.success.setOnClickListener(this::handleSuccess);
-		mBinding.fail.setOnClickListener(this::handleFail);
+    @Override
+    protected void init(View view) {
+        super.init(view);
+        Bundle bundle = requireArguments();
+        inSetupProcess = bundle.getBoolean(IS_SETUP_VAULT);
+        mBinding.setViewModel(viewModel);
+        viewModel.calcAuthCode(bundle.getString(WEB_AUTH_DATA));
+        mBinding.success.setOnClickListener(this::handleSuccess);
+        mBinding.fail.setOnClickListener(this::handleFail);
 
-		if (isSetupVault) {
-			mBinding.toolbar.setVisibility(View.GONE);
-			mBinding.divider.setVisibility(View.GONE);
-		} else {
-			mBinding.step.setVisibility(View.GONE);
-			mBinding.toolbar.setNavigationOnClickListener(v ->navigate(R.id.action_auth_to_home));
-		}
-		MutableLiveData<String> webAuthResult = viewModel.getWebAuthCode();
-		webAuthResult.observe(this, s -> {
-			if (s != null) {
-				mBinding.webAuthResult.setText(s);
-				mBinding.progress.setVisibility(View.GONE);
-				webAuthResult.removeObservers(this);
-				webAuthResult.setValue(null);
-			}
-		});
+        if (inSetupProcess) {
+            mBinding.divider.setVisibility(View.GONE);
+            mBinding.step.setVisibility(View.GONE);
+            mBinding.hint.setVisibility(View.GONE);
+            mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
+        } else {
+            mBinding.step.setVisibility(View.GONE);
+            mBinding.toolbar.setNavigationOnClickListener(v -> navigate(R.id.action_auth_to_home));
+        }
+        MutableLiveData<String> webAuthResult = viewModel.getWebAuthCode();
+        webAuthResult.observe(this, s -> {
+            if (s != null) {
+                mBinding.webAuthResult.setText(s);
+                mBinding.progress.setVisibility(View.GONE);
+                webAuthResult.removeObservers(this);
+                webAuthResult.setValue(null);
+            }
+        });
 
-	}
+    }
 
-	private void handleFail(View view) {
-		ModalDialog dialog = ModalDialog.newInstance();
-		DestructionModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
-				R.layout.destruction_modal,null,false);
+    private void handleFail(View view) {
+        ModalDialog dialog = ModalDialog.newInstance();
+        DestructionModalBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
+                R.layout.destruction_modal, null, false);
 
-		binding.cleanData.setOnClickListener(v -> {
-			dialog.dismiss();
-			cleanDataAndPowerOff(mActivity);
-		});
+        binding.cleanData.setOnClickListener(v -> {
+            dialog.dismiss();
+            cleanDataAndPowerOff(mActivity);
+        });
 
-		binding.retry.setOnClickListener(v -> {
-			dialog.dismiss();
-			if (isSetupVault) {
-				navigate(R.id.action_webAuth_retry);
-			} else {
-				navigateUp();
-			}
-		});
+        binding.retry.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (inSetupProcess) {
+                navigate(R.id.action_webAuth_retry);
+            } else {
+                navigateUp();
+            }
+        });
 
-		dialog.setBinding(binding);
-		dialog.show(mActivity.getSupportFragmentManager(),"");
-	}
+        dialog.setBinding(binding);
+        dialog.show(mActivity.getSupportFragmentManager(), "");
+    }
 
-	private void handleSuccess(View view) {
-		if (isSetupVault) {
-			Bundle bundle = new Bundle();
-			bundle.putBoolean(IS_SETUP_VAULT, true);
-			navigate(R.id.action_webAuthResultFragment_to_setPasswordFragment, bundle);
-		} else {
-			navigate(R.id.action_auth_to_home);
-		}
-	}
+    private void handleSuccess(View view) {
+        if (inSetupProcess) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(IS_SETUP_VAULT, true);
+            viewModel.setVaultCreateStep(SetupVaultViewModel.VAULT_CREATE_STEP_SET_PASSWORD);
+            navigate(R.id.action_webAuthResultFragment_to_setPasswordFragment, bundle);
+        } else {
+            navigate(R.id.action_auth_to_home);
+        }
+    }
 
-	private static void powerOff(Activity activity) {
-		Intent i = new Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN");
-		i.putExtra("android.intent.extra.KEY_CONFIRM", false);
-		i.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		activity.startActivity(i);
-	}
+    private static void powerOff(Activity activity) {
+        Intent i = new Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN");
+        i.putExtra("android.intent.extra.KEY_CONFIRM", false);
+        i.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(i);
+    }
 
-	private void cleanDataAndPowerOff(AppCompatActivity activity) {
-		ProgressModalDialog dialog = ProgressModalDialog.newInstance();
-		dialog.show(Objects.requireNonNull(activity.getSupportFragmentManager()), "");
-		Executors.newSingleThreadExecutor().execute(() -> {
-			try {
-				new ResetCallable().call();
-				DataCleaner.cleanApplicationData(activity);
-				removeAllFingerprint(activity);
-				LocalePicker.updateLocale(Locale.ENGLISH);
-			} catch (Exception ignored){
-			}finally {
-				DataCleaner.cleanApplicationData(activity);
-				powerOff(activity);
-			}
-		});
-	}
+    private void cleanDataAndPowerOff(AppCompatActivity activity) {
+        ProgressModalDialog dialog = ProgressModalDialog.newInstance();
+        dialog.show(Objects.requireNonNull(activity.getSupportFragmentManager()), "");
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                new ResetCallable().call();
+                DataCleaner.cleanApplicationData(activity);
+                removeAllFingerprint(activity);
+                LocalePicker.updateLocale(Locale.ENGLISH);
+            } catch (Exception ignored) {
+            } finally {
+                DataCleaner.cleanApplicationData(activity);
+                powerOff(activity);
+            }
+        });
+    }
 
 }

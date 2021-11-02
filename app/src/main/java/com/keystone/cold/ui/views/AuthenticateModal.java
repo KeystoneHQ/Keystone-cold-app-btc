@@ -17,6 +17,9 @@
 
 package com.keystone.cold.ui.views;
 
+import static com.keystone.cold.ui.fragment.PasswordLockFragment.MAX_PWD_RETRY_TIMES;
+import static com.keystone.cold.ui.fragment.setting.FingerprintEnrollFragment.SECP256R1;
+
 import android.app.Activity;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Handler;
@@ -50,9 +53,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.UnrecoverableKeyException;
-
-import static com.keystone.cold.ui.fragment.PasswordLockFragment.MAX_PWD_RETRY_TIMES;
-import static com.keystone.cold.ui.fragment.setting.FingerprintEnrollFragment.SECP256R1;
 
 public class AuthenticateModal {
     public static void show(AppCompatActivity activity,
@@ -124,7 +124,7 @@ public class AuthenticateModal {
         Signature signature;
         try {
             signature = Signature.getInstance("SHA256withECDSA");
-            PrivateKey key = (PrivateKey) KeyStoreUtil.prepareKeyStore().getKey(SECP256R1,null);
+            PrivateKey key = (PrivateKey) KeyStoreUtil.prepareKeyStore().getKey(SECP256R1, null);
             signature.initSign(key);
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
             e.printStackTrace();
@@ -143,6 +143,9 @@ public class AuthenticateModal {
                                      ModalDialog dialog) {
         ObservableField<String> password = new ObservableField<>();
         password.set("");
+        dialog.setRunOnResume(() -> {
+            password.set("");
+        });
         binding.setPassword(password);
         binding.title.setText(title);
         if (!TextUtils.isEmpty(subTitle)) {
@@ -168,7 +171,7 @@ public class AuthenticateModal {
             binding.progress.setVisibility(View.VISIBLE);
             AppExecutors.getInstance().networkIO().execute(() -> {
                 String passwordHash = Hex.toHexString(HashUtil.twiceSha256(password.get()));
-                boolean verified = PasswordLockFragment.verifyPassword(password.get());
+                boolean verified = PasswordLockFragment.verifyPasswordHash(passwordHash);
 
                 if (verified) {
                     FingerprintKit.verifyPassword(activity);
@@ -177,7 +180,7 @@ public class AuthenticateModal {
                         Utilities.setPatternRetryTimes(activity, 0);
                         dialog.dismiss();
                         Keyboard.hide(activity, binding.input);
-                        onVerify.onVerify(new OnVerify.VerifyToken(passwordHash,null));
+                        onVerify.onVerify(new OnVerify.VerifyToken(passwordHash, null));
                     });
                 } else {
                     handler.post(() -> {
@@ -238,6 +241,7 @@ public class AuthenticateModal {
                 token = null;
             }
         }
+
         void onVerify(VerifyToken token);
     }
 }

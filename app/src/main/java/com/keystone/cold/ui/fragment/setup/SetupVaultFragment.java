@@ -17,17 +17,23 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
+
+import androidx.navigation.Navigation;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.SetupVaultBinding;
 import com.keystone.cold.ui.fragment.BaseFragment;
-
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import com.keystone.cold.ui.views.AuthenticateModal;
+import com.keystone.cold.viewmodel.OneTimePasswordManager;
 
 public class SetupVaultFragment extends BaseFragment<SetupVaultBinding> {
+    private boolean inSetupProcess;
 
     @Override
     protected int setView() {
@@ -37,31 +43,71 @@ public class SetupVaultFragment extends BaseFragment<SetupVaultBinding> {
     @Override
     protected void init(View view) {
         Bundle bundle = getArguments();
-        initToolbarUI(bundle);
+        inSetupProcess = bundle != null && bundle.getBoolean(IS_SETUP_VAULT);
+        initToolbarUI();
         mBinding.importVault.setOnClickListener(this::importVault);
         mBinding.createVault.setOnClickListener(this::createVault);
     }
 
-    private void initToolbarUI(Bundle bundle) {
-        if (bundle != null && bundle.getBoolean(IS_SETUP_VAULT)) {
+    private void initToolbarUI() {
+        if (inSetupProcess) {
             mBinding.step.setVisibility(View.VISIBLE);
             mBinding.toolbar.setVisibility(View.GONE);
             mBinding.divider.setVisibility(View.GONE);
         } else {
             mBinding.step.setVisibility(View.GONE);
             mBinding.toolbar.setVisibility(View.VISIBLE);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            final float scale = mActivity.getResources().getDisplayMetrics().density;
+            int marginLeft = (int) (16 * scale + 0.5f);
+            int marginTop = (int) (20 * scale + 0.5f);
+            params.setMargins(marginLeft, marginTop, 0, 0);
+            mBinding.createVaultHint.setLayoutParams(params);
             mBinding.toolbar.setNavigationOnClickListener(v -> mActivity.onBackPressed());
         }
     }
 
     private void createVault(View view) {
-        navigate(R.id.action_to_tabletQrcodeFragment);
+        if (inSetupProcess) {
+            AuthenticateModal.show(mActivity, mActivity.getString(R.string.password_modal_title),
+                    "",
+                    password -> {
+                        OneTimePasswordManager.getInstance().setPasswordHash(password.password);
+                        navigate(R.id.action_to_tabletQrcodeFragment);
+                    },
+                    () -> {
+                        Bundle data = new Bundle();
+                        data.putBoolean(IS_SETUP_VAULT, true);
+                        Navigation.findNavController(mActivity, R.id.nav_host_fragment)
+                                .navigate(R.id.global_action_to_setPasswordFragment, data);
+                    });
+        } else {
+            navigate(R.id.action_to_tabletQrcodeFragment);
+        }
     }
 
     private void importVault(View view) {
-        Bundle data = new Bundle();
-        data.putString(ACTION,PreImportFragment.ACTION_IMPORT);
-        navigate(R.id.action_to_preImportFragment, data);
+        if (inSetupProcess) {
+            AuthenticateModal.show(mActivity, mActivity.getString(R.string.password_modal_title),
+                    "",
+                    password -> {
+                        OneTimePasswordManager.getInstance().setPasswordHash(password.password);
+                        Bundle data = new Bundle();
+                        data.putString(ACTION, PreImportFragment.ACTION_IMPORT);
+                        navigate(R.id.action_to_preImportFragment, data);
+                    },
+                    () -> {
+                        Bundle data = new Bundle();
+                        data.putBoolean(IS_SETUP_VAULT, true);
+                        Navigation.findNavController(mActivity, R.id.nav_host_fragment)
+                                .navigate(R.id.global_action_to_setPasswordFragment, data);
+                    });
+        } else {
+            Bundle data = new Bundle();
+            data.putString(ACTION, PreImportFragment.ACTION_IMPORT);
+            navigate(R.id.action_to_preImportFragment, data);
+        }
+
     }
 
     @Override

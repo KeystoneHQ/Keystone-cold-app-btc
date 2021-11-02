@@ -17,6 +17,11 @@
 
 package com.keystone.cold.ui.views;
 
+import static android.content.Context.BATTERY_SERVICE;
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
+import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.SHOULD_POP_BACK;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,16 +46,15 @@ import com.keystone.cold.encryptioncore.utils.Preconditions;
 import com.keystone.cold.ui.fragment.setup.PreImportFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
 import com.keystone.cold.update.data.UpdateManifest;
+import com.keystone.cold.viewmodel.SetupVaultViewModel;
 import com.keystone.cold.viewmodel.UpdatingViewModel;
 
 import java.util.Objects;
 
-import static android.content.Context.BATTERY_SERVICE;
-import static com.keystone.cold.ui.fragment.setup.PreImportFragment.ACTION;
-
 public class UpdatingHelper implements OnBatteryChangeListener {
 
     private final UpdatingViewModel updatingViewModel;
+    private final SetupVaultViewModel setupVaultViewModel;
     private final AppCompatActivity mActivity;
     private final boolean proactive;
     private int batteryPercent = -1;
@@ -60,11 +64,12 @@ public class UpdatingHelper implements OnBatteryChangeListener {
         mActivity = activity;
         this.proactive = proactive;
         updatingViewModel = ViewModelProviders.of(mActivity).get(UpdatingViewModel.class);
+        setupVaultViewModel = ViewModelProviders.of(mActivity).get(SetupVaultViewModel.class);
         registerBroadcastReceiver(activity);
     }
 
     public UpdatingHelper(AppCompatActivity activity) {
-        this(activity,false);
+        this(activity, false);
     }
 
     public MutableLiveData<UpdateManifest> getUpdateManifest() {
@@ -75,6 +80,8 @@ public class UpdatingHelper implements OnBatteryChangeListener {
             updatingViewModel.getUpdateManifest().observe(mActivity, updateManifest -> {
                 if (updateManifest != null) {
                     manifestLiveData.setValue(updateManifest);
+                } else {
+                    manifestLiveData.setValue(null);
                 }
             });
         }
@@ -82,6 +89,10 @@ public class UpdatingHelper implements OnBatteryChangeListener {
     }
 
     public void onUpdatingDetect(UpdateManifest manifest) {
+        this.onUpdatingDetect(manifest, false);
+    }
+
+    public void onUpdatingDetect(UpdateManifest manifest, boolean inSetupProcess) {
         BatteryManager manager = (BatteryManager) mActivity.getSystemService(BATTERY_SERVICE);
         int percent = batteryPercent != -1 ? batteryPercent :
                 Objects.requireNonNull(manager).getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
@@ -97,9 +108,10 @@ public class UpdatingHelper implements OnBatteryChangeListener {
         binding.subTitle.setText(mActivity.getString(R.string.new_version_hint_message,
                 getDisplayVersion(manifest)));
         binding.sha256.setText("\nsha256:\n" + manifest.sha256);
+
         if (percent < UpdatingViewModel.MIN_BATTERY_FOR_UPDATE) {
             String batterHint = mActivity.getString(R.string.update_alert_boot_low_battery_message,
-                    UpdatingViewModel.MIN_BATTERY_FOR_UPDATE + "%", percent +"%");
+                    UpdatingViewModel.MIN_BATTERY_FOR_UPDATE + "%", percent + "%");
             binding.subTitle.setText(batterHint);
             binding.sha256.setVisibility(View.GONE);
             binding.checkbox.setVisibility(View.GONE);
@@ -108,23 +120,47 @@ public class UpdatingHelper implements OnBatteryChangeListener {
             binding.footer.setVisibility(View.GONE);
             binding.confirm.setOnClickListener(v -> dialog.dismiss());
         } else {
-            binding.confirm.setOnClickListener(v -> {
-                dialog.dismiss();
-                AuthenticateModal.show(mActivity,
-                        mActivity.getString(R.string.password_modal_title),
-                        "",
-                        password->{
-                            updatingViewModel.doUpdate(password.password);
-                            subscribeUpdateState();
-                        },
-                         () -> {
-                            Bundle data = new Bundle();
-                            data.putString(ACTION, PreImportFragment.ACTION_RESET_PWD);
-                            Navigation.findNavController(mActivity, R.id.nav_host_fragment)
-                                    .navigate(R.id.action_to_preImportFragment, data);
-                        }
-                        );
-            });
+            if (inSetupProcess) {
+                binding.checkbox.setVisibility(View.GONE);
+                binding.agreeButton.setChecked(true);
+                binding.footer.setVisibility(View.GONE);
+                binding.confirm.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    AuthenticateModal.show(mActivity,
+                            mActivity.getString(R.string.password_modal_title),
+                            "",
+                            password -> {
+                                updatingViewModel.doUpdate(password.password);
+                                subscribeUpdateState(true);
+                            },
+                            () -> {
+                                Bundle data = new Bundle();
+                                data.putBoolean(IS_SETUP_VAULT, true);
+                                data.putBoolean(SHOULD_POP_BACK, true);
+                                Navigation.findNavController(mActivity, R.id.nav_host_fragment)
+                                        .navigate(R.id.global_action_to_setPasswordFragment, data);
+                            }
+                    );
+                });
+            } else {
+                binding.confirm.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    AuthenticateModal.show(mActivity,
+                            mActivity.getString(R.string.password_modal_title),
+                            "",
+                            password -> {
+                                updatingViewModel.doUpdate(password.password);
+                                subscribeUpdateState();
+                            },
+                            () -> {
+                                Bundle data = new Bundle();
+                                data.putString(ACTION, PreImportFragment.ACTION_RESET_PWD);
+                                Navigation.findNavController(mActivity, R.id.nav_host_fragment)
+                                        .navigate(R.id.action_to_preImportFragment, data);
+                            }
+                    );
+                });
+            }
 
         }
         dialog.show(mActivity.getSupportFragmentManager(), "");
@@ -133,15 +169,20 @@ public class UpdatingHelper implements OnBatteryChangeListener {
     private String getDisplayVersion(UpdateManifest manifest) {
         if (manifest == null) {
             return "";
-        } else if(manifest.app != null) {
+        } else if (manifest.app != null) {
             return manifest.app.displayVersion;
-        } else if(manifest.system != null) {
+        } else if (manifest.system != null) {
             return manifest.system.displayVersion;
         } else {
             return "";
         }
     }
+
     private void subscribeUpdateState() {
+        subscribeUpdateState(false);
+    }
+
+    private void subscribeUpdateState(boolean inSetupProcess) {
         ModalDialog dialog = new ModalDialog();
         UpdatingBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mActivity),
                 R.layout.updating, null, false);
@@ -151,7 +192,11 @@ public class UpdatingHelper implements OnBatteryChangeListener {
                 case UPDATING:
                     dialog.show(mActivity.getSupportFragmentManager(), "");
                     break;
-                case UPDATING_SUCCESS:
+                case UPDATING_SUCCESS: {
+                    if (inSetupProcess) {
+                        setupVaultViewModel.setVaultCreateStep(SetupVaultViewModel.VAULT_CREATE_STEP_WRITE_MNEMONIC);
+                    }
+                }
                 case UPDATING_FAILED:
                     if (dialog.getDialog() != null && dialog.getDialog().isShowing()) {
                         dialog.dismiss();
