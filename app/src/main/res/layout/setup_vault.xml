@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 Keystone
   ~
   ~ This program is free software: you can redistribute it and/or modify
@@ -54,22 +53,12 @@
                 android:id="@+id/divider"
                 layout="@layout/divider" />
 
-            <com.keystone.cold.ui.views.StepView
+            <com.keystone.cold.ui.views.NewStepView
                 android:id="@+id/step"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="34dp"
-                app:step="2" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="44dp"
-                android:lineSpacingExtra="8dp"
-                android:text="@string/setup_wallet_hint1"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
+                android:layout_marginTop="20dp"
+                app:step="3" />
 
             <com.keystone.cold.ui.views.SpanedTextView
                 android:id="@+id/create_vault_hint"
@@ -77,7 +66,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
-                android:lineSpacingExtra="8dp"
                 android:text="@string/create_vault_hint"
                 android:textColor="@color/white"
                 android:textSize="13sp" />
@@ -88,7 +76,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
-                android:lineSpacingExtra="8dp"
                 android:text="@string/import_vault_hint"
                 android:textColor="@color/white"
                 android:textSize="13sp" />
@@ -154,9 +141,9 @@
         <View
             android:id="@+id/passphrase"
             android:layout_width="100dp"
-            android:layout_gravity="end|top"
-            android:background="@color/white"
             android:layout_height="100dp"
-            android:alpha="0" />
+            android:layout_gravity="end|top"
+            android:alpha="0"
+            android:background="@color/white" />
     </FrameLayout>
 </layout>

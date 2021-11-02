@@ -17,6 +17,8 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,8 +43,6 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.util.List;
 
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-
 public class SetPatternUnlockFragment extends BaseFragment<SetPatternUnlockBinding> {
 
     private static final int STAGE_1 = 1;
@@ -50,6 +50,7 @@ public class SetPatternUnlockFragment extends BaseFragment<SetPatternUnlockBindi
     private int stage = STAGE_1;
     private String patternStr;
 
+    private boolean inSetupProcess;
     private final PatternLockViewListener mListener = new PatternLockViewListener() {
         @Override
         public void onStarted() {
@@ -132,8 +133,8 @@ public class SetPatternUnlockFragment extends BaseFragment<SetPatternUnlockBindi
     protected void init(View view) {
 
         Bundle data = getArguments();
-        boolean isSetupVault = data != null && data.getBoolean(IS_SETUP_VAULT);
-        if (isSetupVault) {
+        inSetupProcess = data != null && data.getBoolean(IS_SETUP_VAULT);
+        if (inSetupProcess) {
             mBinding.toolbar.setVisibility(View.GONE);
             mBinding.divider.setVisibility(View.GONE);
         } else {

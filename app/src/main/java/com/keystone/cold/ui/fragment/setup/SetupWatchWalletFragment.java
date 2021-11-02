@@ -17,10 +17,14 @@
 
 package com.keystone.cold.ui.fragment.setup;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+
+import android.os.Bundle;
 import android.view.View;
 
 import com.keystone.cold.R;
 import com.keystone.cold.databinding.SetupWatchWalletBinding;
+import com.keystone.cold.ui.SetupVaultActivity;
 
 public class SetupWatchWalletFragment extends SetupVaultBaseFragment<SetupWatchWalletBinding> {
 
@@ -32,6 +36,10 @@ public class SetupWatchWalletFragment extends SetupVaultBaseFragment<SetupWatchW
     @Override
     protected void init(View view) {
         super.init(view);
-        mBinding.complete.setOnClickListener(v -> navigate(R.id.action_to_export_xpub_guide));
+        mBinding.complete.setOnClickListener(v -> {
+            Bundle data = new Bundle();
+            data.putBoolean(IS_SETUP_VAULT, ((SetupVaultActivity) mActivity).inSetupProcess);
+            navigate(R.id.action_to_export_xpub_guide, data);
+        });
     }
 }

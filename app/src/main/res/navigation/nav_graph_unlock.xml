@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021 Keystone
   ~
   ~ This program is free software: you can redistribute it and/or modify
@@ -25,8 +24,8 @@
     <fragment
         android:id="@id/patternLockFragment"
         android:name="com.keystone.cold.ui.fragment.PatternLockFragment"
-        tools:layout="@layout/pattern_lock_fragment"
-        android:label="PatternLockFragment">
+        android:label="PatternLockFragment"
+        tools:layout="@layout/pattern_lock_fragment">
         <action
             android:id="@+id/action_to_passwordLockFragment"
             app:destination="@id/passwordLockFragment" />
@@ -34,17 +33,26 @@
     <fragment
         android:id="@+id/passwordLockFragment"
         android:name="com.keystone.cold.ui.fragment.PasswordLockFragment"
-        tools:layout="@layout/password_unlock"
-        android:label="PasswordLockFragment">
+        android:label="PasswordLockFragment"
+        tools:layout="@layout/password_unlock">
         <action
             android:id="@+id/action_resetpassword_verifyMnemonic"
             app:destination="@id/preImportFragment" />
+        <action
+            android:id="@+id/action_to_setPasswordFragment"
+            app:destination="@id/setPasswordFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/verifyMnemonicFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@id/verifyMnemonicFragment"
         android:name="com.keystone.cold.ui.fragment.unlock.VerifyMnemonicFragment"
-        tools:layout="@layout/verify_mnemonic"
-        android:label="VerifyMnemonicFragment">
+        android:label="VerifyMnemonicFragment"
+        tools:layout="@layout/verify_mnemonic">
         <action
             android:id="@+id/action_to_setPasswordFragment"
             app:destination="@id/setPasswordFragment"
@@ -68,7 +76,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"/>
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -88,8 +96,8 @@
     <fragment
         android:id="@+id/setPasswordFragment"
         android:name="com.keystone.cold.ui.fragment.setup.SetPasswordFragment"
-        tools:layout="@layout/set_password"
-        android:label="SetPasswordFragment"/>
+        android:label="SetPasswordFragment"
+        tools:layout="@layout/set_password" />
     <fragment
         android:id="@+id/fingerprintLockFragment"
         android:name="com.keystone.cold.ui.fragment.FingerprintLockFragment"

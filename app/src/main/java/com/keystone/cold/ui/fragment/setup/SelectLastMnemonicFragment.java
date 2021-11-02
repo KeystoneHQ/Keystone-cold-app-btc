@@ -49,7 +49,7 @@ public class SelectLastMnemonicFragment extends SetupVaultBaseFragment<SelectLas
         mBinding.setViewModel(viewModel);
         mBinding.toolbar.setNavigationOnClickListener(v -> navigateUp());
         mBinding.confirm.setOnClickListener(this::confirm);
-        Bundle bundle = Objects.requireNonNull(getArguments());
+        Bundle bundle = requireArguments();
         words = bundle.getString("words");
         calculateLastWords(words);
     }

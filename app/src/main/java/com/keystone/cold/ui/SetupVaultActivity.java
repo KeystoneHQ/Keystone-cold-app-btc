@@ -17,6 +17,11 @@
 
 package com.keystone.cold.ui;
 
+import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
+import static com.keystone.cold.Utilities.hasPasswordSet;
+import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.PASSWORD;
+import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.handleRuntimeStateAbnormal;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -29,27 +34,26 @@ import androidx.navigation.NavInflater;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.keystone.cold.R;
+import com.keystone.cold.selfcheck.RuntimeStatusCode;
 import com.keystone.cold.ui.common.FullScreenActivity;
 import com.keystone.cold.viewmodel.SetupVaultViewModel;
 
 import java.util.Objects;
 
-import static com.keystone.cold.Utilities.IS_SETUP_VAULT;
-import static com.keystone.cold.ui.fragment.setup.SetPasswordFragment.PASSWORD;
-
 public class SetupVaultActivity extends FullScreenActivity {
 
-    public boolean isSetupVault;
+    public boolean inSetupProcess;
+    private SetupVaultViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DataBindingUtil.setContentView(this, R.layout.activity_setup_vault);
+        model = ViewModelProviders.of(this).get(SetupVaultViewModel.class);
         setupNavController(savedInstanceState);
 
         if (getIntent() != null) {
             String password = getIntent().getStringExtra(PASSWORD);
-            SetupVaultViewModel model = ViewModelProviders.of(this).get(SetupVaultViewModel.class);
             model.setPassword(password);
         }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -62,20 +66,66 @@ public class SetupVaultActivity extends FullScreenActivity {
         NavGraph graph = inflater.inflate(R.navigation.nav_graph_setup);
         Intent intent = getIntent();
 
+        Bundle bundle = new Bundle();
+
         if (savedInstanceState != null) {
-            isSetupVault = savedInstanceState.getBoolean(IS_SETUP_VAULT);
+            inSetupProcess = savedInstanceState.getBoolean(IS_SETUP_VAULT);
         } else {
-            isSetupVault = intent != null && intent.getBooleanExtra(IS_SETUP_VAULT, true);
+            inSetupProcess = intent != null && intent.getBooleanExtra(IS_SETUP_VAULT, true);
         }
-        if (!isSetupVault) {
+        if (!inSetupProcess) {
             graph.setStartDestination(R.id.setupVaultFragment);
+        } else {
+            bundle.putBoolean(IS_SETUP_VAULT, true);
+            switch (model.getVaultCreateStep()) {
+                case SetupVaultViewModel.VAULT_CREATE_STEP_WELCOME: {
+                    graph.setStartDestination(R.id.welcomeFragment);
+                    break;
+                }
+                case SetupVaultViewModel.VAULT_CREATE_STEP_WEB_AUTH: {
+                    graph.setStartDestination(R.id.webAuthFragment);
+                    break;
+                }
+                case SetupVaultViewModel.VAULT_CREATE_STEP_SET_PASSWORD: {
+                    graph.setStartDestination(R.id.setPasswordFragment);
+                    break;
+                }
+                case SetupVaultViewModel.VAULT_CREATE_STEP_FIRMWARE_UPGRADE: {
+                    graph.setStartDestination(R.id.firmwareUpgradeFragment);
+                    break;
+                }
+                case SetupVaultViewModel.VAULT_CREATE_STEP_WRITE_MNEMONIC: {
+                    graph.setStartDestination(R.id.setupVaultFragment);
+                    break;
+                }
+                case SetupVaultViewModel.VAULT_CREATE_STEP_DONE: {
+                    startActivity(new Intent(this, MainActivity.class));
+                    this.finish();
+                    return;
+                }
+                default: {
+                    handleRuntimeStateAbnormal(this, RuntimeStatusCode.RUNTIME_INVALID_VAULT_CREATE_STEP);
+                }
+            }
         }
-        navHostFragment.getNavController().setGraph(graph);
+        navHostFragment.getNavController().setGraph(graph, bundle);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(IS_SETUP_VAULT, isSetupVault);
+        outState.putBoolean(IS_SETUP_VAULT, inSetupProcess);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (model.getVaultCreateStep() >= SetupVaultViewModel.VAULT_CREATE_STEP_SET_PASSWORD && !hasPasswordSet(this)) {
+            NavHostFragment navHostFragment =
+                    (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            Bundle data = new Bundle();
+            data.putBoolean(IS_SETUP_VAULT, true);
+            navHostFragment.getNavController().navigate(R.id.setPasswordFragment, data);
+        }
     }
 }

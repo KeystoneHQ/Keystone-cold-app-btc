@@ -17,6 +17,8 @@
 
 package com.keystone.cold.ui.fragment;
 
+import static com.keystone.cold.selfcheck.SecurityCheck.RESULT_OK;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,10 +32,9 @@ import com.keystone.cold.selfcheck.SecurityCheck;
 import com.keystone.cold.ui.AttackWarningActivity;
 import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.SetupVaultActivity;
+import com.keystone.cold.viewmodel.SetupVaultViewModel;
 
 import java.util.concurrent.Executors;
-
-import static com.keystone.cold.selfcheck.SecurityCheck.RESULT_OK;
 
 public class SecurityCheckFragment extends BaseFragment<SecurityCheckBinding> {
 
@@ -49,11 +50,11 @@ public class SecurityCheckFragment extends BaseFragment<SecurityCheckBinding> {
             SecurityCheck.CheckResult checkResult = new SecurityCheck().doSelfCheck(mActivity);
             handler.postDelayed(() -> {
                 if (checkResult.result == RESULT_OK) {
+                    boolean setupFinished = Utilities.getVaultCreateStep(mActivity).equals(SetupVaultViewModel.VAULT_CREATE_STEP_DONE);
                     Utilities.setAttackDetected(mActivity, false);
-                    boolean vaultCreated = Utilities.hasVaultCreated(mActivity);
-                    Log.d(TAG, "vaultCreated = " + vaultCreated);
+                    Log.d(TAG, "setupFinished = " + setupFinished);
                     Intent intent;
-                    if (vaultCreated) {
+                    if (setupFinished) {
                         intent = new Intent(mActivity, MainActivity.class);
                     } else {
                         intent = new Intent(mActivity, SetupVaultActivity.class);
