@@ -101,7 +101,7 @@ public class TxListFragment extends BaseFragment<TxListBinding> {
                         .filter(this::filterSingleSig)
                         .filter(this::shouldShow)
                         .filter(this::filterByMode)
-                        .sorted((o1, o2) -> (int) (o1.getTimeStamp() - o2.getTimeStamp()))
+                        .sorted((o1, o2) -> (int) (o2.getTimeStamp() - o1.getTimeStamp()))
                         .collect(Collectors.toList());
             } else {
                 Collections.reverse(txEntities);

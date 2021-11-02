@@ -153,21 +153,25 @@
     <string-array name="address_format">
         <item>Nested SegWit（P2SH-P2WPKH）</item>
         <item>Native SegWit（P2WPKH）</item>
+        <item>Legacy（P2PKH）</item>
     </string-array>
 
     <string-array name="address_format_subtitle">
         <item><![CDATA[eg. <font color="#00cdc3">3<font/>7VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]]></item>
         <item><![CDATA[eg. <font color="#00cdc3">bc1<font/>qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu]]></item>
+        <item><![CDATA[eg. <font color="#00cdc3">1<font/>LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA]]></item>
     </string-array>
 
     <string-array name="address_format_subtitle_testnet">
         <item><![CDATA[eg. <font color="#00cdc3">2<font/>7VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]]></item>
         <item><![CDATA[eg. <font color="#00cdc3">tb1<font/>qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu]]></item>
+        <item><![CDATA[eg. <font color="#00cdc3">m<font/>kpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV]]></item>
     </string-array>
 
     <string-array name="address_format_value" translatable="false">
         <item>P2SH-P2WPKH</item>
         <item>P2WPKH</item>
+        <item>P2PKH</item>
     </string-array>
 
     <string-array name="screen_off_entries">
