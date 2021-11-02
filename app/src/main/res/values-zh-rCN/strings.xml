@@ -519,15 +519,19 @@
     <string-array name="address_format">
         <item>隔离见证兼容（P2SH-P2WPKH）</item>
         <item>隔离见证原生（P2WPKH）</item>
+        <item>支付给公钥哈希（P2PKH）</item>
     </string-array>
+
     <string-array name="address_format_subtitle">
         <item><![CDATA[举例：<font color="#00cdc3">3<font/>7VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]]></item>
         <item><![CDATA[举例：<font color="#00cdc3">bc1<font/>qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu]]></item>
+        <item><![CDATA[举例：<font color="#00cdc3">1<font/>LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA]]></item>
     </string-array>
 
     <string-array name="address_format_subtitle_testnet">
         <item><![CDATA[举例：<font color="#00cdc3">2<font/>7VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]]></item>
         <item><![CDATA[举例：<font color="#00cdc3">tb1<font/>qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu]]></item>
+        <item><![CDATA[举例：<font color="#00cdc3">m<font/>kpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV]]></item>
     </string-array>
 
     <string name="abnormal_tx">异常交易</string>
