@@ -103,6 +103,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     }
                 })
                 .addMigrations(MIGRATION_1_5)
+                .addMigrations(MIGRATION_2_5)
                 .addMigrations(MIGRATION_5_6)
                 .addMigrations(MIGRATION_6_7)
                 .fallbackToDestructiveMigration()
@@ -145,6 +146,47 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         }
     };
+
+    private static final Migration MIGRATION_2_5 = new Migration(2, 5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                database.execSQL("DELETE FROM coins WHERE coinCode != 'BTC'");
+                database.execSQL("ALTER TABLE txs ADD COLUMN signStatus TEXT");
+                database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_wallet` " +
+                        "(`walletFingerPrint` TEXT PRIMARY KEY NOT NULL, " +
+                        "`walletName` TEXT, " +
+                        "`threshold` INTEGER NOT NULL, " +
+                        "`total` INTEGER NOT NULL, " +
+                        "`exPubPath` TEXT NOT NULL, " +
+                        "`exPubs` TEXT NOT NULL , " +
+                        "`belongTo` TEXT NOT NULL , " +
+                        "`verifyCode` TEXT NOT NULL , " +
+                        "`creator` TEXT NOT NULL default '' , " +
+                        "`network` TEXT NOT NULL)");
+                database.execSQL("CREATE INDEX index_multi_sig_wallet_walletFingerPrint ON multi_sig_wallet (walletFingerPrint)");
+                database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_address` " +
+                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`address` TEXT NOT NULL, " +
+                        "`index` INTEGER NOT NULL, " +
+                        "`walletFingerPrint` TEXT NOT NULL, " +
+                        "`path` TEXT NOT NULL, " +
+                        "`changeIndex` INTEGER NOT NULL, " +
+                        "`name` TEXT, " +
+                        "FOREIGN KEY(`walletFingerPrint`) REFERENCES `multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+                database.execSQL("CREATE UNIQUE INDEX index_multi_sig_address_id ON multi_sig_address (id)");
+                database.execSQL("CREATE INDEX index_multi_sig_address_walletFingerPrint ON multi_sig_address (walletFingerPrint)");
+                database.execSQL("DROP TABLE ethtxs;");
+                database.execSQL("DROP TABLE ethmsgs;");
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+
+
     private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
