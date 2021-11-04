@@ -52,11 +52,11 @@
     <string name="tab_transaction_history">SIGNATURES</string>
 
     <string-array name="step_label">
-        <item>Authentication</item>
+        <item>Web Authentication</item>
         <item>Set Password</item>
-        <item>Create Wallet</item>
-        <item>Watch-Only Wallet</item>
-        <item>Complete</item>
+        <item>Firmware Upgrade</item>
+        <item>Create/Import Wallet</item>
+        <item>Choose Companion App</item>
     </string-array>
     <string name="create_addr">Create %s Address</string>
     <string name="signing_hint">Signing…</string>
