@@ -19,6 +19,7 @@
 
 package com.keystone.cold.ui.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,7 +51,8 @@ public class BlueWalletExportFragment extends BaseFragment<BlueExportBinding> {
         mBinding.info.setOnClickListener(v -> showBlueWalletInfo());
         mBinding.done.setOnClickListener(v -> {
             if (mActivity instanceof SetupVaultActivity) {
-                navigate(R.id.action_to_setupCompleteFragment);
+                startActivity(new Intent(mActivity, MainActivity.class));
+                mActivity.finish();
             } else {
                 MainActivity activity = (MainActivity) mActivity;
                 activity.getNavController().popBackStack(R.id.assetFragment, false);
