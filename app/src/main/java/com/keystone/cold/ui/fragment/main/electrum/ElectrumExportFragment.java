@@ -17,6 +17,7 @@
 
 package com.keystone.cold.ui.fragment.main.electrum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -73,7 +74,8 @@ public class ElectrumExportFragment extends BaseFragment<PsbtExportBinding> {
                 GlobalViewModel.getAddressFormat(mActivity)));
         mBinding.done.setOnClickListener(v -> {
             if (mActivity instanceof SetupVaultActivity) {
-                navigate(R.id.action_to_setupCompleteFragment);
+                startActivity(new Intent(mActivity, MainActivity.class));
+                mActivity.finish();
             } else {
                 MainActivity activity = (MainActivity) mActivity;
                 activity.getNavController().popBackStack(R.id.assetFragment, false);

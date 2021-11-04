@@ -17,6 +17,7 @@
 
 package com.keystone.cold.ui.fragment.main.electrum;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +63,10 @@ public class ExportXpubGuideFragment extends BaseFragment<ExportXpubGuideBinding
             mBinding.skip.setOnClickListener(v -> popBackStack(R.id.assetFragment, false));
         } else {
             mBinding.skip.setText(R.string.export_later);
-            mBinding.skip.setOnClickListener(v -> navigate(R.id.action_to_setupCompleteFragment));
+            mBinding.skip.setOnClickListener(v -> {
+                startActivity(new Intent(mActivity, MainActivity.class));
+                mActivity.finish();
+            });
         }
 
         mBinding.text1.setText(getText1());
@@ -112,7 +116,10 @@ public class ExportXpubGuideFragment extends BaseFragment<ExportXpubGuideBinding
                 Runnable runnable = null;
                 if (result) {
                     if (mActivity instanceof SetupVaultActivity) {
-                        runnable = () -> navigate(R.id.action_to_setupCompleteFragment);
+                        runnable = () -> {
+                            startActivity(new Intent(mActivity, MainActivity.class));
+                            mActivity.finish();
+                        };
                     } else {
                         runnable = () -> popBackStack(R.id.assetFragment, false);
                     }

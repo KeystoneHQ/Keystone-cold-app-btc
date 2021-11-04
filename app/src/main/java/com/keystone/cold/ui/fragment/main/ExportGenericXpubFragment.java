@@ -17,6 +17,7 @@
 
 package com.keystone.cold.ui.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.keystone.cold.R;
 import com.keystone.cold.databinding.CommonModalBinding;
 import com.keystone.cold.databinding.ExportSdcardModalBinding;
 import com.keystone.cold.databinding.ExportXpubGenericBinding;
+import com.keystone.cold.ui.MainActivity;
 import com.keystone.cold.ui.SetupVaultActivity;
 import com.keystone.cold.ui.fragment.BaseFragment;
 import com.keystone.cold.ui.modal.ModalDialog;
@@ -104,7 +106,8 @@ public class ExportGenericXpubFragment extends BaseFragment<ExportXpubGenericBin
 
     private void handleButtonClick() {
         if (mActivity instanceof SetupVaultActivity) {
-            navigate(R.id.action_to_setupCompleteFragment);
+            startActivity(new Intent(mActivity, MainActivity.class));
+            mActivity.finish();
         } else {
             popBackStack(R.id.assetFragment, false);
         }

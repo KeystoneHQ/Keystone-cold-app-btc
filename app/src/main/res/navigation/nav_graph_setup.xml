@@ -283,11 +283,6 @@
             app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
-        android:id="@+id/setupCompleteFragment"
-        android:name="com.keystone.cold.ui.fragment.setup.SetupCompleteFragment"
-        android:label="SetupCompleteFragment"
-        tools:layout="@layout/setup_complete" />
-    <fragment
         android:id="@+id/webAuthResultFragment"
         android:name="com.keystone.cold.ui.fragment.setup.WebAuthResultFragment"
         android:label="WebAuthResultFragment"
@@ -376,13 +371,6 @@
         android:label="ElectrumGuideFragment"
         tools:layout="@layout/export_xpub_guide">
         <action
-            android:id="@id/action_to_setupCompleteFragment"
-            app:destination="@id/setupCompleteFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
             android:id="@id/export_electrum_ypub"
             app:destination="@id/electrumExportFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -416,13 +404,6 @@
         android:id="@+id/exportGenericXpubFragment"
         android:name="com.keystone.cold.ui.fragment.main.ExportGenericXpubFragment"
         android:label="ExportGenericXpubFragment">
-        <action
-            android:id="@id/action_to_setupCompleteFragment"
-            app:destination="@id/setupCompleteFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -430,13 +411,6 @@
         android:name="com.keystone.cold.ui.fragment.SyncFragment"
         android:label="SyncFragment"
         tools:layout="@layout/sync_fragment">
-        <action
-            android:id="@id/action_to_setupCompleteFragment"
-            app:destination="@id/setupCompleteFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -444,13 +418,6 @@
         android:name="com.keystone.cold.ui.fragment.main.electrum.ElectrumExportFragment"
         android:label="ElectrumExportFragment"
         tools:layout="@layout/psbt_export">
-        <action
-            android:id="@+id/action_to_setupCompleteFragment"
-            app:destination="@id/setupCompleteFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
 
@@ -459,13 +426,6 @@
         android:name="com.keystone.cold.ui.fragment.main.BlueWalletExportFragment"
         android:label="blueWalletExportFragment"
         tools:layout="@layout/blue_export">
-        <action
-            android:id="@id/action_to_setupCompleteFragment"
-            app:destination="@id/setupCompleteFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
