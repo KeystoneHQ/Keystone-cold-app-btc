@@ -412,11 +412,11 @@ Email: support@keyst.one</string>
     <item>Testnet</item>
   </string-array>
   <string-array name="step_label">
-    <item>Autenticación</item>
-    <item>Configurar contraseña</item>
-    <item>Crear billetera</item>
-    <item>Billetera Watch-only</item>
-    <item>Completo</item>
+      <item>Autenticación web</item>
+      <item>Configurar la clave</item>
+      <item>Actualización de firmware</item>
+      <item>Crear/importar billetera</item>
+      <item>Elige la aplicación complementaria</item>
   </string-array>
   <string-array name="watch_wallet_list">
     <item>Keystone Mobile</item>
