@@ -17,12 +17,12 @@
   <string name="app_name">Keystone</string>
   <string name="action_scan_qr_code">Escanear código QR</string>
   <string name="drawer_menu_my_vault">Mi Keystone</string>
-  <string name="drawer_menu_add_remove">Agregar / ocultar activos</string>
+  <string name="drawer_menu_add_remove">Agregar / Ocultar activos</string>
   <string name="drawer_menu_setting">Ajustes</string>
   <string name="drawer_menu_about">Acerca de Keystone</string>
   <string name="title_about">Acerca de Keystone</string>
   <string name="title_setting">Ajustes</string>
-  <string name="add_remove_coin">Agregar / ocultar activos</string>
+  <string name="add_remove_coin">Agregar / Ocultar activos</string>
   <string name="scan">Escanear código QR</string>
   <string name="scan_hint">Alinear el código QR dentro del marco para escanear</string>
   <string name="pattern_lock">Desbloqueo de patrón</string>
@@ -34,7 +34,7 @@
  Versión del sistema：%s</string>
   <string name="mnemonic_hint1">\"La frase de recuperación se utiliza para restaurar tu billetera. Utiliza una tableta Keystone para registrar las 24 palabras de la frase de recuperación y almacenarlas de forma segura\".</string>
   <string name="mnemonic_hint2">No compartas tu frase de recuperación con nadie ni le tomes una foto. Si se pierde o es robado, todos los activos son irrecuperables.</string>
-  <string name="saved">Frase de Recuperación guardada</string>
+  <string name="saved">Frase de recuperación guardada</string>
   <string name="tab_my_pubkey">Mi PubKey</string>
   <string name="tab_transaction_history">FIRMAS</string>
   <string name="create_addr">Crear %s direcciones</string>
@@ -47,30 +47,30 @@
   <string name="setting_language">Idioma</string>
   <string name="setting_vibrator">Vibrar Encendido / Apagado</string>
   <string name="setting_brightness">Brillo de la pantalla</string>
-  <string name="setting_screen_off_time">Duración del tiempo de espera de la pantalla</string>
+  <string name="setting_screen_off_time">Tiempo de espera de la pantalla</string>
   <string name="skip">Omitir</string>
   <string name="read_confirm"><![CDATA[He leído y acepto los <font color=\"#00cdc3\"><u>\"Términos de servicio\"</u><font/>3 y la <font color=\"#00cdc3\"><u>\"Política de privacidad\"</u><font/>]]></string>
   <string name="license">Términos de servicio</string>
   <string name="privacy_policy">Política de privacidad</string>
   <string name="input_mnemonic_hint">Ingresa la palabra %d de tu frase de recuperación en la tabla a continuación.</string>
-  <string name="input_mnemonic">Ingresa la Frase de Recuperación</string>
+  <string name="input_mnemonic">Ingresa la frase de recuperación</string>
   <string name="pwd_again_hint">Confirmar contraseña</string>
   <string name="pwd_hint">Por favor, introduce tu contraseña</string>
   <string name="password_verify_wrong">Las contraseñas no coinciden.</string>
   <string name="passphrase_not_match">La passphrase no coincide.</string>
   <string name="password_input_wrong">Debe incluir letras mayúsculas y minúsculas y números.</string>
-  <string name="mnemonic_hint"><![CDATA[Información importante: <br>1. La frase de recuperación es la única manera de recuperar tus activos. Por favor, utiliza el registro de la frase de recuperación con cuidado y guárdala en un lugar seguro.  <br><br>2. No tomes fotos de tu frase de recuperación ni la guardes en un dispositivo conectado a Internet. No compartas la frase de recuperación con otras personas.  <br><br>3. Visita <font color=\"#00cdc3\">https://keyst.one/kt<font/> para comprar una tableta Keystone para almacenar tu frase de recuperación con un mayor grado de seguridad.]]></string>
-  <string name="generate_mnemonic">Generar Frase de Recuperación</string>
+  <string name="mnemonic_hint"><![CDATA[Información importante: <br>1. La frase de recuperación es la única manera de recuperar tus activos. Registra la frase de recuperación con cuidado y guárdala en un lugar seguro.  <br><br>2. No tomes fotos de tu frase de recuperación no la guardes en un dispositivo conectado a Internet, ni la compartas con otras personas.  <br><br>3. Visita <font color=\"#00cdc3\">https://keyst.one/kt<font/> para comprar una tableta Keystone para almacenar tu frase de recuperación con una mayor seguridad.]]></string>
+  <string name="generate_mnemonic">Generar frase de recuperación</string>
   <string name="next">Siguiente</string>
   <string name="and">Y</string>
   <string name="import_vault">Importar billetera</string>
   <string name="create_vault">Crear billetera</string>
-  <string name="confirm_mnemonic">Confirmar la Frase de Recuperación</string>
+  <string name="confirm_mnemonic">Confirmar la frase de recuperación</string>
   <string name="confirm_input_mnemonic_hint">Ingresa la palabra %d de tu frase de recuperación en la tabla a continuación.</string>
   <string name="complete">Hecho</string>
   <string name="password_verify_too_short">Demasiado corta</string>
   <string name="sync_hint2"><![CDATA[Descarga Keystone Mobile:<br><font color=\"#00cdc3\"><u>https://keyst.one/app</u><font/><br>]]></string>
-  <string name="wrong_mnemonic_please_check">Frase de Recuperación incorrecta, inténtalo de nuevo.</string>
+  <string name="wrong_mnemonic_please_check">Frase de recuperación incorrecta, inténtalo de nuevo.</string>
   <string name="dots_not_enough">Conecta al menos 4 puntos.</string>
   <string name="input_pattern_again">Dibuja de nuevo para confirmar.</string>
   <string name="two_pattern_not_match">El patrón no coincide, dibuja de nuevo.</string>
@@ -81,8 +81,8 @@
   <string name="wrong_pattern_hint">Patrón incorrecto, inténtalo de nuevo.</string>
   <string name="factory_reset_hint">Se borrarán todos los datos. Esto no se puede deshacer.</string>
   <string name="factory_reset_title">Borrar dispositivo</string>
-  <string name="password_modal_title">Por favor, ingrese contraseña.</string>
-  <string name="passphrase_hint2">Introduce de nuevo la passphrase (distingue mayúsculas y minúsculas)</string>
+  <string name="password_modal_title">Ingresa tu contraseña.</string>
+  <string name="passphrase_hint2">Escribe la passphrase (distingue may/min)</string>
   <string name="passphrase_hint_agian">Introduce de nuevo la passphrase</string>
   <string name="passphrase_hint1">Información importante:
 1. Cuando se crea una Billetera Oculta, tu passphrase no puede ser cambiada. Si la passphrase se pierde u olvida, la Cartera Oculta y todos sus activos serán irrecuperables. Registra y guarda la passphrase de forma segura antes de crear una Cartera Oculta 
@@ -90,18 +90,18 @@
   <string name="passphrase_hint">Ingresa una passphrase</string>
   <string name="passphrase_title">Passphrase de billetera</string>
   <string name="passphrase_confirm_modal_title">Cambiar de la billetera actual</string>
-  <string name="passphrase_confirm_modal_hint">Confirma para cambiar de la billetera actual a una nueva billetera. Puedes regresar a cualquier billetera ingresando su passphrase. Ten en cuenta que la passphrase para la billetera HD predeterminada está en blanco.</string>
+  <string name="passphrase_confirm_modal_hint">Confirma para cambiar de la billetera actual a una nueva. Puedes regresar a cualquier billetera ingresando su passphrase. Observa que la passphrase de la billetera HD predeterminada está en blanco.</string>
   <string name="password_error_hint">Contraseña incorrecta, te quedan %d posibilidades.</string>
   <string name="verify_mnemonic_hint">Ingresa la palabra %d de tu frase de recuperación en la tabla a continuación.</string>
   <string name="delete_white_list_hint">¿Confirmar la eliminación de la Lista Blanca de direcciones:%s?</string>
   <string name="invalid_qrcode">Código QR inválido</string>
   <string name="attack_warning">Para proteger tus activos, toda la información ha sido borrada de tu Keystone. Por favor, deja de usar este dispositivo y ponte en contacto con el Servicio de Atención al Cliente inmediatamente.
   Código de estado:%s</string>
-  <string name="verify_mnemonic">Verificar la Frase de Recuperación</string>
+  <string name="verify_mnemonic">Verificar la frase de recuperación</string>
   <string name="set_pattern">Establecer bloqueo de patrón</string>
-  <string name="system_settings">Ajustes del Sistema</string>
+  <string name="system_settings">Ajustes del sistema</string>
   <string name="white_list">Lista blanca</string>
-  <string name="create_import_vault">Crear/importar billetera</string>
+  <string name="create_import_vault">Crear/Importar billetera</string>
   <string name="safety_instruction">Manual de seguridad</string>
   <string name="setting_license">Términos de servicio</string>
   <string name="factory_reset">Borrar dispositivo</string>
@@ -115,14 +115,14 @@
   <string name="scan_to_auth">Escanear código QR</string>
   <string name="add_coins">Agregar criptomoneda</string>
   <string name="not_in_whitelist_reject">Recibiendo dirección no autorizada, ¡transacción rechazada!</string>
-  <string name="invalid_mnemonic">La Frase de Recuperación es incorrecta, inténtalo de nuevo.</string>
+  <string name="invalid_mnemonic">La frase de recuperación es incorrecta, inténtalo de nuevo.</string>
   <string name="scan_permission_denied">Permiso de escaneo denegado</string>
-  <string name="wrong_mnemonic">Frase de Recuperación incorrecta</string>
+  <string name="wrong_mnemonic">Frase de recuperación incorrecta</string>
   <string name="too_many_passphrase">Solo puede tener hasta 5 passphrase</string>
-  <string name="about_message">Keystone es una billetera de hardware sin conexión que utiliza transmisiones de datos de código QR completamente transparentes para que pueda verificar lo que entra y sale de ella. Nuestro Elemento Seguro realiza una verdadera generación de números aleatorios (TRNG) para asegurar que tus claves privadas provienen de fuentes reales y físicas de entropía. Toda la firma de las transacciones se produce por completo dentro del Elemento Seguro, que cuenta con defensas de última generación para protegerte en caso de que un atacante tenga acceso físico a tu dispositivo.</string>
+  <string name="about_message">Keystone es una billetera de hardware sin conexión que utiliza transmisiones de datos de código QR completamente transparentes para que puedas verificar lo que entra y sale de ella. Nuestro Elemento Seguro realiza una verdadera generación de números aleatorios (TRNG) para asegurar que tus claves privadas provienen de fuentes reales y físicas de entropía. Todas las firmas de las transacciones se produce dentro del Elemento Seguro, que cuenta con defensas de última generación para protegerte en caso de que un atacante tenga acceso físico a tu dispositivo.</string>
   <string name="amount_hint">Fijar cantidad</string>
   <string name="setup_wallet_hint1">¡Gracias por elegir Keystone!</string>
-  <string name="change_password">Cambiar la contraseña</string>
+  <string name="change_password">Cambiar contraseña</string>
   <string name="self_checking">Verificación de seguridad en curso…</string>
   <string name="text_create_address_main_text">Seleccione el número de direcciones</string>
   <string name="address_name_hint">Las direcciones no se pueden eliminar una vez creadas. Elige un nombre que pueda reconocer.</string>
@@ -132,13 +132,13 @@
   <string name="device_under_attack">¡Este dispositivo ya no es seguro de usar!</string>
   <string name="power_off">Apagar</string>
   <string name="create_new_address">Crear direcciones</string>
-  <string name="screen_brightness_hint">Desliza para ajustar el brillo de la pantalla</string>
+  <string name="screen_brightness_hint">Desliza para ajustar el brillo</string>
   <string name="broadcast_tx">Transmitir transacción</string>
   <string name="please_confirm">Por favor confirmar</string>
   <string name="creating_vault_hint">Creando billetera, mantén la pantalla encendida.</string>
   <string name="delete_white_list">Eliminar lista blanca</string>
   <string name="self_check_under_disassemble">¡Alguien ha intentado piratear tu dispositivo!</string>
-  <string name="self_check_alert_content">Tu dispositivo ha sido atacado y puede haber sido comprometido. Si sigues utilizando este dispositivo, te arriesgas a que se revele información sensible y a que se pierdan tus activos. Te recomendamos encarecidamente que borres toda la información personal del dispositivo y te pongas en contacto con el servicio de atención al cliente inmediatamente.</string>
+  <string name="self_check_alert_content">Tu dispositivo ha sido atacado y puede estar comprometido. Si utilizas este dispositivo, te arriesgas a revelar información sensible y perder tus activos. Recomendamos encarecidamente que borres toda la información personal del dispositivo y contacta con el servicio de atención al cliente inmediatamente.</string>
   <string name="web_auth_scan_agian">Escanea otra vez</string>
   <string name="clean_data_and_power_off">Borrar datos y apagar</string>
   <string name="generate_mnemonic_hint">Una vez que se crea una billetera, la frase de recuperación no se volverá a mostrar.</string>
@@ -152,13 +152,13 @@
 2. Si no has generado una dirección, puedes invitar a un amigo con %s a escanear esta Pub Key y generar una dirección.</string>
   <string name="secret_modal_title">Por favor revisa tu entorno</string>
   <string name="secret_modal_msg">Cualquiera con tu frase de recuperación tiene acceso completo a tus criptomonedas. Asegúrate de que no haya espectadores ni cámaras cuando grabes tu frase de recuperación.</string>
-  <string name="select_mnemonic_count">Longitud de la Frase de Recuperación</string>
+  <string name="select_mnemonic_count">Longitud de la frase de recuperación</string>
   <string name="set_password">Establecer contraseña</string>
-  <string name="text_password_required">Debe contener al menos 10 caracteres e incluir letras mayúsculas y minúsculas y dígitos. Se permiten símbolos. Distingue mayúsculas y minúsculas.</string>
+  <string name="text_password_required">Debe contener al menos 10 caracteres e incluir letras mayúsculas, minúsculas y dígitos. Se permiten símbolos. Distingue mayúsculas y minúsculas.</string>
   <string name="guide_completed_title">Felicitaciones. 
 La instalación está completa.</string>
   <string name="guide_completed_remind"><![CDATA[Puedes crear una passphrase (billetera oculta) o restablecer tu contraseña en la configuración. 
- Lee la Guía Rápida adjunta o visita nuestro sitio web para obtener más información: <br> <font color=\"#00cdc3\"><u>https://keyst.one</u><font/>]]></string>
+ Lee la Guía Rápida adjunta o por mayor información, visita: <br> <font color=\"#00cdc3\"><u>https://keyst.one</u><font/>]]></string>
   <string name="tx_from">De</string>
   <string name="tx_to">A</string>
   <string name="tx_fee">Tarifa</string>
@@ -174,7 +174,7 @@ La instalación está completa.</string>
   <string name="fail">Fallido</string>
   <string name="verify_way">Selecciona el método de verificación</string>
   <string name="verify_way_sharding">Verificar fragmentación</string>
-  <string name="verify_way_mnemonic">Verificar la Frase de Recuperación</string>
+  <string name="verify_way_mnemonic">Verificar la frase de recuperación</string>
   <string name="tx_id">ID de transacción</string>
   <string name="mnemonic_save_hint">La frase de recuperación es la única forma de recuperar tus activos y contraseña. Si se pierde, tus activos son irrecuperables y el dispositivo puede quedar bloqueado. (La frase de recuperación no se volverá a mostrar después de la inicialización del dispositivo).</string>
   <string name="verify_code_hint">Ingresa el código de verificación en la página de Autenticación web del sitio web oficial para que tu dispositivo sea autenticado.</string>
@@ -186,32 +186,32 @@ La instalación está completa.</string>
   <string name="delete_fingerprint">Borrar huella digital</string>
   <string name="rename_fingerprint">Renombrar</string>
   <string name="confirm_delete">Confirmar la eliminación</string>
-  <string name="fingerprint_rename_subtitle">Cambiar el nombre de la huella digital</string>
+  <string name="fingerprint_rename_subtitle">Renombrar la huella digital</string>
   <string name="enroll_complete_hint">%s Huella digital registrada.</string>
   <string name="unsupported_qrcode">Este código QR no es compatible.</string>
   <string name="unsupported_coin">Criptomoneda no admitida</string>
   <string name="incorrect_qrcode">Código QR inválido</string>
   <string name="incorrect_tx_data">Datos de transacción no válidos</string>
-  <string name="invalid_webauth_qrcode_hint">Código QR no válido. Sigue las instrucciones para escanear el código QR correcto para completar la autenticación.</string>
+  <string name="invalid_webauth_qrcode_hint">QR no válido. Sigue instrucciones para escanear el código QR correcto y completar la autenticación.</string>
   <string name="hint">Sugerencias</string>
-  <string name="enroll_fingerprint">Registro de huellas dactilares</string>
-  <string name="enroll_fingerprint_hint">Coloca tu dedo en el área de detección de huellas dactilares y retíralo cuando sientas una vibración. Repite hasta que el proceso esté completo.</string>
+  <string name="enroll_fingerprint">Registro de huellas digitales</string>
+  <string name="enroll_fingerprint_hint">Coloca tu dedo en el área de detección de huellas digitales y retíralo cuando sientas una vibración. Repite hasta que el proceso esté completo.</string>
   <string name="complete_enroll">Hecho</string>
   <string name="modify_fingerprint_name">Editar nombre</string>
-  <string name="fingerprint_settings">Configuración de huellas dactilares</string>
-  <string name="enroll_fingerprint_hint1">Coloca tu dedo en el área de detección de huellas dactilares y presiona ligeramente.</string>
-  <string name="fingerprint_use_hint">La huella dactilar se puede utilizar para firmar transacciones o desbloquear el dispositivo.</string>
+  <string name="fingerprint_settings">Configuración de huellas digitales</string>
+  <string name="enroll_fingerprint_hint1">Coloca tu dedo en el área de detección de huellas digitales y presiona ligeramente.</string>
+  <string name="fingerprint_use_hint">La huella digital se utiliza para firmar transacciones o desbloquear el dispositivo.</string>
   <string name="fingerprint_start_enroll">Iniciar registro</string>
   <string name="delete">Borrar</string>
   <string name="rename">Renombrar</string>
-  <string name="fingerprint_unlock">Desbloqueo de huellas dactilares</string>
+  <string name="fingerprint_unlock">Desbloqueo de huella digital</string>
   <string name="verify_fingerprint_hint">Verificar huella digital</string>
   <string name="add_fingerprint">+Agregar huella digital</string>
   <string name="search_coin_no_result_hint">Sin resultados</string>
   <string name="verify_fingerprint_to_sign">Verifica la huella digital para firmar la transacción.</string>
   <string name="switch_to_fingerprint_sign"><![CDATA[Cambiar a contraseña >]]></string>
   <string name="use_fingerprint_unlock">Desbloquear dispositivo</string>
-  <string name="use_fingerprint_sign">Firmar Transacciones</string>
+  <string name="use_fingerprint_sign">Firmar transacciones</string>
   <string name="serialno">Número de serie: %s</string>
   <string name="receive_address">A %d</string>
   <string name="sync_in_progress">Sincronización en curso</string>
@@ -225,7 +225,7 @@ Por favor, introduce la dirección o las palabras clave del nombre</string>
   <string name="tag">Memo</string>
   <string name="confirm_to_verify_mnemonic">Siguiente paso</string>
   <string name="factory_reset_warning">Se borrarán todos los datos. Confirma si deseas continuar</string>
-  <string name="export_to_electrum">Crea una billetera Watch-only en Electrum</string>
+  <string name="export_to_electrum">Crea una billetera watch-only en Electrum</string>
   <string name="export_xpub">Mostrar clave pública maestra</string>
   <string name="send_address">Desde %d</string>
   <string name="input">Entrada %d</string>
@@ -235,7 +235,7 @@ Por favor, introduce la dirección o las palabras clave del nombre</string>
   <string name="no_sdcard">Tarjeta microSD no encontrada</string>
   <string name="no_sdcard_hint">Asegúrate de haber insertado una tarjeta microSD de formato FAT32</string>
   <string name="no_unsigned_txn">Archivo no encontrado</string>
-  <string name="no_unsigned_txn_hint">Por favor asegurate de que el archivo que deseas firmar ha sido exitosamente salvado a tu microSD</string>
+  <string name="no_unsigned_txn_hint">Asegúrate de que el archivo que deseas firmar ha sido exitosamente salvado a tu microSD</string>
   <string name="electrum_broadcast_guide">Cómo transmitir</string>
   <string name="electrum_broadcast_action_guide">En Electrum, ve a Herramientas &gt; Cargar transacción &gt; Desde código QR
 
@@ -247,7 +247,7 @@ Por favor, introduce la dirección o las palabras clave del nombre</string>
 3. Elige \"Usar una llave maestra\". 
 4. Haz clic en el icono de la cámara en la ventana \"Crear almacén de claves a partir de una llave maestra\" en Electrum para escanear el código QR que aparece en Keystone.
 
-¿Dificultad para escanear? También puedes exportar el archivo de la clave pública maestra utilizando una tarjeta microSD.</string>
+¿Dificultad para escanear? Exporta el archivo de la clave púb. maestra utilizando una tarjeta microSD.</string>
   <string name="error_txn_file">No se puede leer el archivo, intenta importar de nuevo.</string>
   <string name="export_signed_txn">Exportar archivo a transmitir</string>
   <string name="electrum_import_signed_txn">En Electrum, ve a Herramientas&gt; Cargar transacción&gt; Desde Archivo para abrir el archivo.</string>
@@ -257,14 +257,14 @@ Por favor, introduce la dirección o las palabras clave del nombre</string>
   <string name="use_electrum_to_broadcast">Escanea el código QR con Electrum para transmitir</string>
   <string name="transaction_from_electrum">Esta transacción es de Electrum</string>
   <string name="add_address">Añadir direcciones</string>
-  <string name="use_electrum_scan_xpub">Escanea la clave pública maestra usando Electrum</string>
+  <string name="use_electrum_scan_xpub">Escanea clave púb. maestra usando Electrum</string>
   <string name="export_signed_txn_file">Exportar archivo firmado</string>
   <string name="export_signed_txn_action_guide">Cómo transmitir con Electrum: En Electrum, ve a Herramientas&gt; Cargar transacción&gt; Desde archivo. Abre el archivo y haz clic en \"Transmitir\".</string>
   <string name="export">Exportar</string>
   <string name="export_xpub_text_file">Exportar archivo de clave pública maestra</string>
   <string name="file_name_label">Nombre del archivo:</string>
   <string name="sign_txn_in_sdcard">Archivos de transacciones sin firmar</string>
-  <string name="master_pubkey_not_match">Transacción no reconocida. Tu Keystone no se ha emparejado correctamente con la billetera Watch-only</string>
+  <string name="master_pubkey_not_match">Transacción no reconocida. Tu Keystone no se enlazó correctamente con la billetera watch-only.</string>
   <string name="change">Cambio</string>
   <string name="identification_failed">Identificación fallida</string>
   <string name="from_electrum">De Electrum</string>
@@ -281,58 +281,58 @@ Por favor, introduce la dirección o las palabras clave del nombre</string>
   <string name="start">Comienzo</string>
   <string name="contact_info">Twitter: @KeystoneWallet
 Email: support@keyst.one</string>
-  <string name="keep_mnemonic_hint">* Keystone nunca te pedirá tu Frase de Recuperación bajo ninguna circunstancia, asegúrate de guardar tu Frase de Recuperación y no la reveles a nadie.</string>
+  <string name="keep_mnemonic_hint">*Keystone nunca te pedirá tu rase de recuperación bajo ninguna circunstancia, asegúrate de guardar tu frase de recuperación y no la reveles a nadie.</string>
   <string name="contact_us">Contáctanos</string>
   <string name="current_device_info">Información del equipo</string>
-  <string name="switch_passphrase">Ingresa la passphrase de la billetera</string>
-  <string name="check_mnemonic">Comprobación de la Frase de Recuperación</string>
+  <string name="switch_passphrase">Ingresar passphrase de la billetera</string>
+  <string name="check_mnemonic">Comprobar frase de recuperación</string>
   <string name="check_failed">Verificación fallida</string>
   <string name="check_mnemonic_failed">La frase de recuperación ingresada no coincide con la de Keystone. No reinicies el dispositivo hasta que se haya verificado una copia de seguridad válida.</string>
   <string name="invalid_mnemonic_hint">Has ingresado una frase de recuperación inválida, por favor intenta de nuevo.</string>
-  <string name="check_successful">Comprobar con éxito</string>
-  <string name="check_successful_hint">La frase de recuperación ingresada coincidía con la de Keystone.</string>
+  <string name="check_successful">Comprobación exitosa</string>
+  <string name="check_successful_hint">La frase de recuperación ingresada coincide con la de Keystone.</string>
   <string name="notice">Error</string>
   <string name="notice1">Aviso</string>
-  <string name="switching_to_main_vault">Ingresando a la billetera predeterminada, mantén la pantalla encendida.</string>
+  <string name="switching_to_main_vault">Entrando a billetera predeterminada, mantén la pantalla encendida.</string>
   <string name="shading_guide"><![CDATA[
     1. Has creado <font color=\"#00cdc3\">%1$d<font/>/<font color=\"#00cdc3\">%2$d<font/> un respaldo Shamir. Es una copia de seguridad Shamir con <font color=\"#00cdc3\">%3$d<font/> partes y necesita <font color=\"#00cdc3\">%4$d<font/> partes al menos para recuperar tu billetera.<br><br>
-    2. A continuación, deberás confirmar cada parte. Si todas las partes son mantenidas por una persona diferente, por favor confirma que cada confirmación es realizada por la persona específica.<br> <br>
-    3. Por favor, no hagas fotos de las partes ni las almacenes en Internet. No la compartas con nadie más o te arriesgas a perder tus fondos.
+    2. A continuación, confirma cada parte. Si todas las partes son mantenidas por una persona diferente, confirma que cada confirmación es realizada por la persona específica.<br> <br>
+    3. No hagas fotos de las partes ni las almacenes en Internet. No las compartas con nadie más o te arriesgas a perder tus fondos.
     ]]></string>
   <string name="generate_sharding_sequence" formatted="false">parte # %d(Total %d)</string>
   <string name="generate_shading_hint">Por favor, confirma que eres el custodio de la parte #%d</string>
   <string name="cancel_create_sharding">Cancelar</string>
   <string name="input_sharding_mnemonic_hint"><![CDATA[Por favor, introduce la frase de recuperación para <font color=\"#00cdc3\">parte #%d<font/> en el siguiente formulario]]></string>
-  <string name="verify_pass">Verificar exitoso</string>
+  <string name="verify_pass">Verificación exitosa</string>
   <string name="verify_sharding_pass_hint">La frase de recuperación de esta parte fue verificada con éxito, ahora procede a la siguiente parte. Toca confirmar y entrega al segundo custodio de la parte que mantiene el número de parte #%d</string>
   <string name="sharding_no">parte #%d</string>
   <string name="reset_password">Restablecimiento de contraseña</string>
   <string name="first_sharding_hint">La primera parte entró con éxito, se necesita %d acción más para entrar.</string>
-  <string name="cancel_import_sharding">Cancelar Entrar</string>
+  <string name="cancel_import_sharding">Cancelar entrar</string>
   <string name="continue_import_sharding">Sigue entrando</string>
   <string name="sharding_repeat">Parte ya introducida, por favor, introduce una parte diferente.</string>
   <string name="sharding_id_not_match">Has introducido una parte de otra copia de seguridad de Shamir.</string>
-  <string name="confirm_cancel_import_sharding">Confirmar Cancelar</string>
+  <string name="confirm_cancel_import_sharding">Confirmar cancelar</string>
   <string name="continue_create_sharding">Sigue entrando</string>
-  <string name="invalid_shard">Frase de Recuperación incorrecta, verifica.</string>
+  <string name="invalid_shard">Frase de recuperación incorrecta, verifica.</string>
   <string name="ask_confirm_cancel_import_sharding">¿Cancelar importar billetera?</string>
   <string name="ask_confirm_cancel_create_sharding">¿Cancelar crear billetera?</string>
-  <string name="ask_confirm_cancel_check_sharding">¿Cancelar la verificación de la frase de recuperación?</string>
+  <string name="ask_confirm_cancel_check_sharding">¿Cancelar verificación de la frase de recuperación?</string>
   <string name="ask_confirm_cancel_enter_sharding">¿Cancelar la entrada de la frase de recuperación?</string>
-  <string name="cancel_import_sharding_notice">La parte confirmada se perderá después de la cancelación. ¿Estás seguro de que quieres cancelar?</string>
+  <string name="cancel_import_sharding_notice">La parte confirmada se perderá después de la cancelación. ¿Seguro de que quieres cancelar?</string>
   <string name="next_sharding">Siguiente parte</string>
   <string name="not_support_multi_group_sharding">Has entrado en Super Shamir (configuración de dos niveles de respaldo Shamir), Keystone no lo soporta actualmente.</string>
   <string name="total_sharding_count">Número de partes</string>
   <string name="sharding_threshold">Umbral</string>
   <string name="confirm_cancel_create_sharding_title">¿Cancelar crear billetera?</string>
-  <string name="confirm_cancel_create_sharding">La parte confirmada se perderá después de cancelar. ¿Estás seguro de que quieres cancelar?</string>
+  <string name="confirm_cancel_create_sharding">La parte confirmada se perderá después de cancelar. ¿Seguro de que quieres cancelar?</string>
   <string name="choose_check_type">Selecciona el modo de comprobación</string>
   <string name="choose_import_type">Selecciona la forma de importar</string>
   <string name="check_bip39_phrase">Verifica la billetera con copia de seguridad única</string>
   <string name="check_slip39_phrase">Verifica la billetera con copia de seguridad Shamir</string>
   <string name="import_bip39_phrase">Importa una billetera con copia de seguridad única</string>
   <string name="import_slip39_phrase">Importa una billetera con copia de seguridad Shamir</string>
-  <string name="enter_bip39_phrase">Ingresa la Frase de Recuperación genérica</string>
+  <string name="enter_bip39_phrase">Ingresa la frase de recuperación genérica</string>
   <string name="enter_slip39_phrase">Ingresa la copia de seguridad Shamir</string>
   <string name="reset_password_by_phrase">Restablece la contraseña a través de la frase de recuperación</string>
   <string name="shamir_backup">Copia de seguridad Shamir</string>
@@ -340,23 +340,23 @@ Email: support@keyst.one</string>
   <string name="generate_bip39_phrase">Crea una billetera con copia de seguridad única</string>
   <string name="shard_setting">Configuración</string>
   <string name="opration_failed">Operación fallida</string>
-  <string name="reboot_hint">Por favor, reinicia o ponte en contacto con nosotros en support@keyst.one
+  <string name="reboot_hint">Reinicia o ponte en contacto con nosotros en support@keyst.one
  Código de estado:%s</string>
   <string name="reboot">Reiniciar</string>
   <string name="clear_and_power_off">Borrar toda la información y apagar</string>
   <string name="abnormal_state_hint">Se recomienda borrar el dispositivo y luego restablecerlo. Reintentos repetidos fallaron, puedes contactarnos: support@keyst.one
   Código de estado:%s</string>
   <string name="abnormal_state_title">Estado anormal</string>
-  <string name="qrcode_capacity">Densidad del código QR：%s</string>
+  <string name="qrcode_capacity">Densidad del código QR: %s</string>
   <string name="qr_capacity_high">Alto</string>
   <string name="qr_capacity_mid">Medio</string>
   <string name="qr_capacity_low">Bajo</string>
-  <string name="adjust_qr_capacity">Dificultad para escanear, puedes ajustar el tamaño del código QR o reducir la densidad del código QR</string>
+  <string name="adjust_qr_capacity">¿Dificultad para escanear? Ajusta el tamaño del código QR o reduce la densidad del código QR</string>
   <string name="create_mnemonic_guide_content"><![CDATA[
-        1. Toca el botón \"Completa tus 23 palabras\" a continuación.<br>
-        2. Seleccione las primeras 23 de la lista oficial de 2048 palabras y completa<br>
+        1. Toca \"Completa tus 23 palabras\" a continuación.<br>
+        2. Selecciona las primeras 23 de la lista oficial de 2048 palabras y completa<br>
         3. Keystone calculará la palabra 24<br>
-        4. Haz una copia de seguridad de tu Frase de Recuperación<br>
+        4. Haz un respaldo de tu frase de recuperación<br>
     
     ]]></string>
   <string name="create_mnemonic_web_guide">La lista oficial de 2048 palabras y más detalles, visita: https://keyst.one/24th</string>
@@ -366,10 +366,10 @@ Email: support@keyst.one</string>
     ]]></string>
   <string name="please_input_23_words">Completa tus primeras 23 palabras</string>
   <string name="calculate_24th_word">Calcula la palabra 24</string>
-  <string name="create_23_word">Crea tu propia Frase de Recuperación de 24 palabras</string>
-  <string name="create_23_word_title">Crea tu Frase de Recuperación</string>
-  <string name="mnemonic_backuped">Tengo mi Frase de Recuperación</string>
-  <string name="calc_mnemonic_warning">Has activado una función avanzada de \"Crea tu Frase de Recuperación\". Por favor, asegúrate de entender completamente los peligros de esta función antes de proceder a generar una frase de recuperación con ella. Tus fondos podrían verse comprometidos si no lo haces. ¡Procede bajo tu propio riesgo!</string>
+  <string name="create_23_word">Crea tu frase de recuperación de 24 palabras</string>
+  <string name="create_23_word_title">Crea tu frase de recuperación</string>
+  <string name="mnemonic_backuped">Tengo mi frase de recuperación</string>
+  <string name="calc_mnemonic_warning">Has activado una función avanzada de \"Crea tu frase de recuperación\". Asegúrate de entender completamente los peligros de esta función antes de proceder a generar una frase de recuperación con ella. Tus fondos podrían verse comprometidos si no lo haces. ¡Procede bajo tu propio riesgo!</string>
   <string name="calc_mnemonic_warning_checkbox">Entiendo completamente la entropía, BIP39, la generación de claves privadas y otro material relacionado para generar mi frase de recuperación.</string>
   <string name="note">¡PELIGRO!</string>
   <string name="select_last_word_hint">Elige una de las siguientes palabras como la palabra 24</string>
@@ -384,8 +384,7 @@ Email: support@keyst.one</string>
   <string name="retry_format">¿Está reformateado?</string>
   <string name="retry">Reintentar</string>
   <string name="formatting">Formateando…</string>
-
-  <string-array name="address_format">
+    <string-array name="address_format">
     <item>SegWit anidado（P2SH-P2WPKH）</item>
     <item>SegWit nativo (P2WPKH)</item>
   </string-array>
@@ -412,11 +411,11 @@ Email: support@keyst.one</string>
     <item>Testnet</item>
   </string-array>
   <string-array name="step_label">
-      <item>Autenticación web</item>
-      <item>Configurar la clave</item>
-      <item>Actualización de firmware</item>
-      <item>Crear/importar billetera</item>
-      <item>Elige la aplicación complementaria</item>
+    <item>Autenticación</item>
+    <item>Configurar contraseña</item>
+    <item>Crear billetera</item>
+    <item>Billetera Watch-only</item>
+    <item>Completo</item>
   </string-array>
   <string-array name="watch_wallet_list">
     <item>Keystone Mobile</item>
@@ -446,22 +445,22 @@ Email: support@keyst.one</string>
   <string name="casa_operation_export">Exportar XPUB</string>
   <string name="casa_sign_message">Firmar mensaje</string>
   <string name="casa_sign_message_result">Exportar firma</string>
-  <string name="casa_sign_message_result_export">Escanea el código QR con tu aplicación Casa</string>
+  <string name="casa_sign_message_result_export">Escanea el código QR con tu app Casa</string>
   <string name="casa_sign_message_message">Mensaje: </string>
   <string name="casa_sign_message_address">Dirección asociada</string>
   <string name="casa_sign_message_path">Usando la clave asociada con la dirección:</string>
   <string name="casa_operation">OPCIONES</string>
   <string name="casa_signatures">HISTORIAL DE FIRMAS</string>
   <string name="scan_qrcode_with_casa">Escanea el código QR usando Casa</string>
-  <string name="tab_my_address">Recibiendo</string>
-  <string name="tab_my_change_address">Cambiar</string>
+  <string name="tab_my_address">Recibir</string>
+  <string name="tab_my_change_address">Cambio</string>
   <string name="web_auth1"><![CDATA[1. Visita <font color=\"#00cdc3\">https://keyst.one/auth<font/>]]></string>
-  <string name="web_auth2"><![CDATA[2. Haz clic en <font color=\"#00cdc3\">\"Escanear código QR\" <font/> a continuación y escanea el código QR que se muestra en el sitio web]]></string>
+  <string name="web_auth2"><![CDATA[2. Haz clic en <font color=\"#00cdc3\">\"Escanear código QR\" <font/> y escanea el código QR que se muestra en el sitio web]]></string>
   <string name="web_auth3">3. Ingresa el código que se muestra en tu Keystone en el sitio web oficial para la autenticación;</string>
   <string name="web_auth4">4. Si la autenticación falla, no uses tu dispositivo, ya que puede haber sido comprometido.</string>
   <string name="create_vault_hint"><![CDATA[1. Toca <font color=\"#00cdc3\">\"Crear billetera\"<font/> para generar una nueva billetera.]]></string>
   <string name="import_vault_hint"><![CDATA[2. Toca <font color=\"#00cdc3\">\"Importar billetera\"<font/> para importar una billetera HD existente.]]></string>
-  <string name="sync_hint1">Escanea el código QR con Keystone Mobile</string>
+  <string name="sync_hint1">Escanear código QR con Keystone app</string>
   <string name="passphrase_hint3">Las Passphrases no pueden superar los 128 caracteres. Puede constar de letras mayúsculas y minúsculas, dígitos y símbolos, pero no espacios. Distingue mayúsculas y minúsculas.</string>
   <string name="signing_history">Firmas</string>
   <string name="please_broadcast_with_hot">Escanea el código QR con Keystone Mobile para transmitir la transacción a la cadena de bloques</string>
@@ -481,26 +480,26 @@ Email: support@keyst.one</string>
         3. Elige el número de firmas necesarias para desbloquear los fondos de tu billetera.<br>
         <font color=\"#00cdc3\">Esta billetera: A partir de %d cofirmantes, requiere %d firmas<font/><br>
         4. Elige \"Usar una llave maestra \"<br>
-        5. Toca \"Mostrar código QR de la clave pública\" abajo y luego haz clic en el icono de la cámara en Electrum para escanear el código QR que se muestra en Keystone, al añadir un cofirmante, elige \"Introducir la clave del cofirmante\"<br>
+        5. Toca \"Mostrar QR de la clave pública\" y luego toca el icono de cámara en Electrum para escanear el QR que se muestra en Keystone, al añadir un cofirmante, elige \"Introducir la clave del cofirmante\"<br>
         6. Establece una contraseña.<br>
         7. Entra en la billetera watch-only.<br>
-        <font color=\"#808080\">Por favor, asegúrate de que has insertado una tarjeta microSD con formato FAT32 antes de exportar.<br>
+        <font color=\"#808080\">Asegúrate de haber insertado una tarjeta microSD con formato FAT32 antes de exportar.<br>
     ]]></string>
   <string name="export_to_electrum_guide_hint">Cómo crear una billetera watch-only con Electrum:</string>
   <string name="use_wallet_to_broadcast">Escanea el código QR en %s para transmitir</string>
   <string name="scan_xpub">Escanear clave pública maestra</string>
   <string name="master_xpub">Clave Pública Maestra (%s)</string>
-  <string name="electrum_qrcode_hint"><![CDATA[¿Dificultad para escanear? Toca el código QR para ajustar el tamaño<br>o <u> toca aquí para exportar el archivo con microSD</u>.]]></string>
-  <string name="generic_qrcode_hint"><![CDATA[¿Dificultad para escanear? Toca el código QR para ajustar el tamaño<br>o <u>toca aquí para exportar el archivo con microSD</u>.]]></string>
-  <string name="scan_electrum_hint">¿Dificultad para escanear? Puedes importar transacciones pendientes de Electrum usando una tarjeta microSD.</string>
+  <string name="electrum_qrcode_hint"><![CDATA[¿Dificultad para escanear? Toca el QR para ajustar el tamaño<br>o <u>exportar el archivo con microSD</u>.]]></string>
+  <string name="generic_qrcode_hint"><![CDATA[¿Dificultad al escanear? Toca QR para ajustar el tamaño<br>o <u>exporta el archivo con microSD</u>.]]></string>
+  <string name="scan_electrum_hint">¿Dificultad para escanear? Importa transacciones pendientes de Electrum usando una microSD.</string>
   <string name="electrum_compatibility">Exportar a Electrum watch-only</string>
   <string name="generic_compatibility">Billetera genérica</string>
   <string name="only_support_btc">Escanea solo BTC</string>
   <string name="pattern_lock_hide_track">Las marcas de seguimiento están ocultas para evitar que un espectador robe tu contraseña.</string>
   <string name="toggle_address_format">Alternar tipo de dirección</string>
   <string name="select_address_format">Seleccionar tipo de dirección</string>
-  <string name="select_address_num">Seleccionar número de %s direcciones</string>
-  <string name="change_address">Cambiar dirección</string>
+  <string name="select_address_num">Número de direcciones para %s</string>
+  <string name="change_address">Dirección de cambio</string>
   <string name="export_xpub_guide_title_electrum">Exportar a Electrum watch-Only</string>
   <string name="export_xpub_guide_title_wasabi">Exportar a Wasabi watch-only</string>
   <string name="export_xpub_guide_title_btcpay">Exportar a BTCPay watch-only</string>
@@ -537,8 +536,8 @@ Email: support@keyst.one</string>
         5. Migra el archivo de la billetera a tu ordenador utilizando la tarjeta microSD. <br>
         6. Haz clic en <font color=\"#00cdc3\">\"Cargar Billetera\"<font/> y abre el archivo en Wasabi.<br>
         7. Entra en la billetera watch-only.<br><br>
-        <font color=\"#808080\">Asegúrate de haber insertado una tarjeta microSD con formato FAT32.<br>
-        Wasabi requiere el xPub, la huella digital de la billetera de hardware y la versión del firmware para ser utilizado como una billetera watch-only. Esta información se exportará si tocas \"Exportar con MicroSD\" a continuación.<font/>
+        <font color=\"#808080\">Asegúrate de haber insertado una microSD con formato FAT32.<br>
+        Wasabi requiere xPub, huella digital de la billetera de hardware y versión de firmware para ser utilizada como billetera watch-only. Esta información se exportará si tocas \"Exportar con MicroSD\".<font/>
     ]]></string>
   <string name="export_xpub_guide_text2_btcpay"><![CDATA[
         1. En el Servidor BTCPay, Configuración de la tienda > General > Esquema de derivación > Importar desde... <br>
@@ -551,7 +550,7 @@ Email: support@keyst.one</string>
         1. Abre BlueWallet y añade una nueva billetera.<br>
         2. Selecciona \"Importar billetera\".<br>
         3. Toca <font color=\"#00cdc3\">\"Mostrar código QR\"<font/> a continuación, toca \"Escanear o importar archivo\" en BlueWallet para escanear el código QR que aparece en Keystone.<br><br>
-        <font color=\"#808080\">BlueWallet requiere el zPub, el tipo de billetera, la huella digital de la billetera de hardware y la versión del firmware para ser utilizado como billetera watch-only. Esta información se exportará si tocas \"Mostrar código QR\" a continuación.<font/>
+        <font color=\"#808080\">BlueWallet requiere zPub, tipo de billetera, huella digital de la billetera de hardware y versión de firmware para utilizar como billetera watch-only. Esta información se exportará si tocas \"Mostrar código QR\" a continuación.<font/>
     ]]></string>
   <string name="export_xpub_guide_text2_sparrow"><![CDATA[
         1. Abre Sparrow Wallet, ve a Configuración >Billetera de Hardware Airgapped.<br>
@@ -564,7 +563,7 @@ Email: support@keyst.one</string>
   <string name="export_xpub_guide_text2_blue_info"><![CDATA[
      1. Abre BlueWallet y añade una nueva billetera.<br>
      2. Elige <font color=\"#00cdc3\">\"Importar billetera\"<font/>.<br>
-     3. Toca <font color=\"#00cdc3\">\"Escanear o importar archivo\"<font/> en BlueWallet para escanear el código QR que aparece en Keystone.
+     3. Toca <font color=\"#00cdc3\">\"Escanear o importar archivo\"<font/> en BlueWallet para escanear el QR que aparece en Keystone.
     ]]></string>
   <string name="export_xpub_guide_text2_keystone_info"><![CDATA[
         1. Abre la app Keystone Mobile y añade una nueva billetera.<br>
@@ -574,15 +573,15 @@ Email: support@keyst.one</string>
     ]]></string>
   <string name="export_xpub_guide_text2_electrum_info"><![CDATA[
         1. Abre Electrum y crea una nueva billetera.<br>
-        2. Elige <font color=\"#00cdc3\">\" Billetera estándar\"<font/>.<br>
+        2. Elige <font color=\"#00cdc3\">\"Billetera estándar\"<font/>.<br>
         3. Elige <font color=\"#00cdc3\">\"Usar una llave maestra \"<font/>.<br>
-        4. Haz clic en el icono de la cámara de Electrum para escanear el código QR que aparece en Keystone.<br>
+        4. Haz clic en la cámara de Electrum para escanear el código QR que aparece en Keystone.<br>
         5. Establece una contraseña.<br>
         6. Entra en la billetera watch-only.
     ]]></string>
   <string name="wasabi_broadcast_guide"><![CDATA[
        Transmitir con Wasabi<br>
-       ir a Wasabi > Herramientas > Transacciones Broadcaster > Importar transacción abrir este archivo para transmitir.
+       ir a Wasabi > Herramientas > Transacciones Broadcaster > Importar transacción abre este archivo para transmitir.
     ]]></string>
   <string name="btcpay_broadcast_guide"><![CDATA[
         Transmisión con el servidor BTCPay<br>
@@ -595,13 +594,13 @@ Email: support@keyst.one</string>
   <string name="show_qrcode">Mostrar código QR</string>
   <string name="export_wallet">Exportar billetera</string>
   <string name="native_segwit">SegWit nativo</string>
-  <string name="p2pkh">Pagar a Clave Pública Hash</string>
+  <string name="p2pkh">Pagar a Hash de Clave Pública</string>
   <string name="nested_segwit">SegWit anidado</string>
   <string name="txid">TxID</string>
-  <string name="skip_export">Exportado / Exportar más tarde</string>
+  <string name="skip_export">Exportado / Exportar luego</string>
   <string name="export_later">Exportar más tarde</string>
   <string name="choose_watch_only_wallet">Seleccionar una billetera watch-only</string>
-  <string name="watch_only_wallet">Billetera Watch-only</string>
+  <string name="watch_only_wallet">Billetera watch-only</string>
   <string name="switch_watch_only_wallet_guide">Ve a Menú&gt; Configuración&gt; Para cambiar a billetera watch-only</string>
   <string name="wallet_info">Información de la billetera</string>
   <string name="wallet">Huella digital de la clave:</string>
@@ -640,17 +639,17 @@ Email: support@keyst.one</string>
   <string name="blue_wallet_broadcast_guide1">Abre la billetera watch-only en BlueWallet, ingresa la información de la billetera, toca \"Transmitir transacción\" y escanea el código QR de Keystone.</string>
   <string name="no_signatures">No hay firmas</string>
   <string name="scan_blue_hint">Escanea el código QR animado de BlueWallet.</string>
-  <string name="scan_wasabi_hint">Wasabi Wallet no admite la exportación de transacciones mediante código QR. Exporta transacciones usando microSD.</string>
-  <string name="btcpay_scan_hint">BTCPay Server no admite la exportación de transacciones mediante código QR. Exporta transacciones usando microSD.</string>
+  <string name="scan_wasabi_hint">Wasabi Wallet no admite exportar transacciones mediante código QR. Exporta transacciones usando microSD.</string>
+  <string name="btcpay_scan_hint">BTCPay Server no admite exportar transacciones mediante código QR. Exporta transacciones usando microSD.</string>
   <string name="network">Cadena de bloques</string>
   <string name="select_network">Seleccionar cadena de bloques</string>
   <string name="test_net">Testnet</string>
   <string name="no_multisig_wallet">No hay billetera multifirma</string>
   <string name="create_multisig_wallet_hint"><![CDATA[
-     Es necesario crear o importar una billetera multifirma antes de firmar transacciones con esta billetera.<br><br>
+     Debes crear o importar una billetera multifirma antes de firmar transacciones con esta billetera.<br><br>
      Cómo crear una billetera multifirma:<br>
-     1. Reúne primero los XPUB de los cofirmantes, haz clic en Más > Mostrar/Exportar XPUB para exportar XPUB.<br>
-     2. El XPUB puede mostrarse como un código QR o guardarse como un archivo,<font color=\"#00cdc3\"> es necesario guardar los archivos XPUBs recogidos en una tarjeta microSD <font/> si el XPUB se guarda como archivo (formato FAT32).<br>
+     1. Reúne los XPUB de los cofirmantes, haz clic en Más > Mostrar/Exportar XPUB para exportar XPUB.<br>
+     2. El XPUB puede mostrarse como un código QR o guardarse como archivo.<font color=\"#00cdc3\"> Guarda los archivos XPUBs recogidos en una tarjeta microSD <font/> si el XPUB se guarda como archivo (formato FAT32).<br>
      3. Toca el botón \"Crear billetera multifirma\" abajo para determinar el número de cofirmantes y firmas y el tipo de dirección, luego rellena los XPUBs escaneando el código QR o importando el archivo. <br>
     ]]></string>
   <string name="export_all">Exportar todo</string>
@@ -674,14 +673,14 @@ Cofirmante:</string>
   <string name="next_one">Mostrar siguiente</string>
   <string name="prev_one">Mostrar último</string>
   <string name="verify_wallet_hint"><![CDATA[
-    Código de verificación de la billetera：<br>
+    Código de verificación de la billetera: <br>
     <font color=\"#00cdc3\">%s<font/> <br>
-    Comprueba si el código de verificación de la billetera anterior y el código de verificación de la billetera exportada son iguales. Por favor, asegúrate de que son iguales antes de importar, si son inconsistentes, vuelve a comprobar la información del monedero.<br>
+    Comprueba si el código de verificación de la billetera anterior y el código de verificación de la billetera exportada son iguales. Asegúrate de que son iguales antes de importar, si son inconsistentes, vuelve a comprobar la información de la billetera.<br>
     
     ]]></string>
   <string name="import_success">Importación exitosa</string>
   <string name="view_xpub_qrcode">Mostrar código QR de clave pública</string>
-  <string name="multisig_wallet_info_xpub_warning">*Estas Claves Públicas sólo se utilizan para generar la billetera multifirma y no expondrá ninguna información de tu billetera personal.
+  <string name="multisig_wallet_info_xpub_warning">*Estas Claves Públicas solo se utilizan para generar la billetera multifirma y no expondrá ninguna información de tu billetera personal.
 *No compartas la Clave Pública con otras personas que no sean cofirmantes, las Claves Públicas pueden obtener tus direcciones y averiguar cuántas monedas tienes.</string>
   <string name="sign_status">Estado</string>
   <string name="unsigned">No firmado</string>
@@ -693,8 +692,8 @@ Cofirmante:</string>
     
     ]]></string>
   <string name="check_input_pub_key">Comprueba el XPUB rellenado</string>
-  <string name="check_pub_key_hint"><![CDATA[A continuación, debes rellenar el XPUB de los cofirmantes,<font color=\"#00cdc3\"> por favor, comprueba el XPUB<font/> para asegurarte de que el XPUB rellenado es coherente con el XPUB exportado por los cofirmantes.]]></string>
-  <string name="no_pub_file_found">No se encontró ningún archivo XPUB</string>
+  <string name="check_pub_key_hint"><![CDATA[A continuación, debes rellenar el XPUB de los cofirmantes,<font color=\"#00cdc3\"> comprueba el XPUB<font/> para asegurarte de que el XPUB rellenado es coherente con el XPUB exportado por los cofirmantes.]]></string>
+  <string name="no_pub_file_found">No se encontró archivo XPUB</string>
   <string name="wrong_xpub_format_hint" formatted="false">Cambia a %s. Dado que XPUB es %s, cambia el tipo de XPUB.</string>
   <string name="wrong_xpub_format">Tipo de XPUB incorrecto</string>
   <string name="invalid_xpub_file">Información incorrecta</string>
@@ -707,33 +706,34 @@ Cofirmante:</string>
   <string name="duplicate_xpub_title">Repetir XPUB</string>
   <string name="duplicate_xpub_hint">Has completado el XPUB. Por favor completa el XPUB de otros cofirmantes.</string>
   <string name="no_multisig_wallet_file">Sin archivo de billetera multifirma</string>
-  <string name="no_multisig_wallet_file_hint">Puedes hacer clic en el botón del código QR para escanear el código QR de la billetera multifirma o importar el archivo de la billetera multifirma (asegúrate de haber insertado una tarjeta microSD en formato FAT32 antes de exportar)</string>
+  <string name="no_multisig_wallet_file_hint">Puedes tocar el botón del código QR para escanear el QR de la billetera multifirma o importar el archivo de esta (asegúrate de haber insertado una tarjeta microSD en formato FAT32 antes de exportar)</string>
   <string name="stop_export_xpub">Sigue creando</string>
-  <string name="stop_export_xpub_hint">Necesitas escanear %d clave pública para completar la creación de una billetera watch-only</string>
+  <string name="stop_export_xpub_hint">Debes escanear %d clave pública para completar la creación de una billetera watch-only</string>
   <string name="keep_create">Sigue creando</string>
   <string name="create_later">Crear luego</string>
   <string name="open_int_siglesig_wallet">Abre la transacción en My Keystone</string>
-  <string name="open_int_siglesig_wallet_hint">Esta transacción es de firma única. Ve a Menú&gt; Mi Keystone y haz clic en el icono Escanear o tarjeta MicroSD.</string>
+  <string name="open_int_siglesig_wallet_hint">Esta transacción es de firma única. Ve a Menú&gt; Mi Keystone y toca en Escanear o MicroSD.</string>
   <string name="open_int_multisig_wallet">Abre la transacción en la billetera multifirma</string>
-  <string name="open_int_multisig_wallet_hint">Esta transacción es multifirma. Ve a Menú&gt; Billetera multifirma y haz clic en el icono Escanear o tarjeta microSD.</string>
+  <string name="open_int_multisig_wallet_hint">Esta transacción es multifirma. Ve a Menú&gt; Billetera multifirma y toca en Escanear o tarjeta microSD.</string>
   <string name="no_matched_wallet">No hay tal billetera multifirma</string>
   <string name="no_matched_wallet_hint">Debes crear o importar la billetera multifirma de la transacción antes de firmar la transacción.</string>
   <string name="import_multisig_wallet_fail">Importación fallida</string>
   <string name="import_multisig_wallet_fail_hint">Esta billetera multifirma no contiene la billetera actual.</string>
   <string name="invalid_multisig_wallet">No es una billetera multifirma</string>
-  <string name="invalid_multisig_wallet_hint">Este código QR no es de una billetera multifirma y no se puede importar</string>
+  <string name="invalid_multisig_wallet_hint">Este código QR no es de una billetera multifirma, no se puede importar</string>
   <string name="mainnet">Mainnet</string>
   <string name="testnet">Testnet</string>
   <string name="export_multisig_xpub">Exportar XPUB</string>
   <string name="export_multisig_to_cosigner">Exportar billetera a cofirmantes</string>
-  <string name="please_check_multisig_wallet_info">Verifique la información de la billetera</string>
-  <string name="check_multisig_wallet_hint">Verifica cuidadosamente la información de la billetera para asegurarte de que sea completamente consistente con la información de la billetera creada antes de importar.</string>
+  <string name="please_check_multisig_wallet_info">Verifica la información de la billetera</string>
+  <string name="check_multisig_wallet_hint">Verifica cuidadosamente la información de la billetera para asegurarte de que sea consistente con la información de la billetera creada antes de importar.</string>
   <string name="verify_multisig_wallet">Verificación de billetera</string>
   <string name="verify_code_ok">Verificado, continúa importando</string>
-  <string name="error_verify_code">Código de verificación incorrecto, comprueba la información de la billetera</string>
+  <string name="error_verify_code">Código de verificación incorrecto, comprueba información de la billetera</string>
   <string name="check_xpub_info">Comparar XPUBs</string>
   <string name="create">Crear</string>
-  <string name="export_to_cosigner_hint">Invita a los cofirmantes a escanear el código QR, o exporta el archivo para que los cosignatarios lo importen</string>
+  <string name="export_to_cosigner_hint">Invita a los cofirmantes a escanear el código QR,
+o exportar el archivo para que los cofirmantes lo importen</string>
   <string name="total_key_number">Total %d Cofirmantes</string>
   <string name="wallet_name">Nombre de la billetera</string>
   <string name="wallet_type1">Tipo de billetera</string>
@@ -742,7 +742,7 @@ Cofirmante:</string>
   <string name="cosigner">Cofirmantes</string>
   <string name="manage_myltisig_wallet">Administrar billetera multifirma</string>
   <string name="choose_current_wallet">Selecciona la billetera que se muestra en la página de inicio</string>
-  <string name="view_or_export_xpub">Mostrar/Exportar XPUB</string>
+  <string name="view_or_export_xpub">Mostrar / Exportar XPUB</string>
   <string name="confirm_sdcard_insert">Tutorial gráfico completo para billetera multifirma, visita: https://keyst.one/multisig</string>
   <string name="export_wallet_to_electrum">Exportar para crear Watch-only (Electrum)</string>
   <string name="view_wallet_info">Información de la billetera</string>
@@ -756,7 +756,7 @@ Cofirmante:</string>
   <string name="select_xpub_file">Seleccionar archivo XPUB</string>
   <string name="delete_wallet_title">¿Borrar billetera?</string>
   <string name="delete_wallet">Borrar billetera</string>
-  <string name="delete_wallet_hint">Confirma para eliminar la billetera？ La transacción de la billetera no se puede firmar después de eliminarla.</string>
+  <string name="delete_wallet_hint">¿Confirma para eliminar billetera? La transacción de la billetera no se puede firmar desp. de eliminarla.</string>
   <string name="no_multisig_Wallet">No hay billetera multifirma</string>
   <string name="import_failed">Importación fallida</string>
   <string name="not_include_current_vault">Esta billetera multifirma no contiene la billetera actual.</string>
@@ -770,7 +770,7 @@ Cofirmante:</string>
   <string name="export_multisig_tx_hint">Invita a los cofirmantes a seguir firmando</string>
   <string name="export_tx">Exportar transacción</string>
   <string name="import_failed_network_not_match" formatted="false">La red de la cadena de bloques actual es la %s, y la billetera que se va a importar es la %s. Primero tienes que cambiar la red de la cadena de bloques a la %s (Menú &gt; Configuración &gt; Cadena de bloques)</string>
-  <string name="default_vault_notice">Has actualizado con éxito a la última versión. Para proteger tus activos, la billetera se restablece automáticamente a la billetera por defecto cada vez que se reinicia el dispositivo. (También cuando se actualiza, se apaga o se reinicia).</string>
+  <string name="default_vault_notice">Actualizaste con éxito a la última versión. Para proteger tus activos, la billetera se restablece automáticamente a la billetera por defecto cada vez que se reinicia el dispositivo. (También cuando se actualiza, se apaga o se reinicia).</string>
   <string name="next_qr">Siguiente</string>
   <string name="previous_qr">Anterior</string>
   <string name="scan_xpub_qrcode_with_btc_pay">Escanea el código QR con BTCPay Server</string>
@@ -788,21 +788,21 @@ Cofirmante:</string>
   <string name="scan_with_caravan">Escanear con Caravan</string>
   <string name="xpub_format_hint">XPUB se puede convertir en xpub (testnet es tpub), lo que no afecta al resultado de la generación de billeteras multifirma.</string>
   <string name="format_sdcard_hint">Debes formatear la tarjeta microSD actual al formato FAT32; de lo contrario, los archivos no se podrán leer/exportar.</string>
-  <string name="format_sdcard_hint1">Sugerencia: Esta operación borrará todos los archivos de la tarjeta microSD. Haz una copia de seguridad de los archivos importantes antes de formatear.</string>
+  <string name="format_sdcard_hint1">Sugerencia: Esta operación borrará todos los archivos de la tarjeta microSD. Respalda los archivos antes de formatear.</string>
   <string name="export_failed">Exportación fallida</string>
   <string name="connect_casa">Conecta Keystone a Casa</string>
   <string name="casa_use">Para usar un dispositivo Keystone con Casa:</string>
   <string name="casa_member">Necesitas ser miembro de Casa</string>
-  <string name="casa_app_phone">Haz que la aplicación Casa configure tu teléfono</string>
+  <string name="casa_app_phone">Haz que la app Casa configure tu teléfono</string>
   <string name="casa_guide_one_tip"><![CDATA[¿Preguntas sobre cómo configurar Casa? Ve a <font color=\"#00cdc3\">keys.casa/keystone<font>]]></string>
   <string name="casa_continue">Continuar</string>
   <string name="casa_app_ready">Prepara la app Casa</string>
-  <string name="casa_scan_device">A continuación, prepara la aplicación Casa para escanear un código QR que se muestra en este dispositivo:</string>
+  <string name="casa_scan_device">Prepara la app Casa para escanear un código QR que se muestra en este dispositivo:</string>
   <string name="casa_open_app">Abre la app Casa</string>
   <string name="casa_sec_tab">Navega a tu pestaña \'<b>Seguridad</b>\'.</string>
   <string name="casa_hardware">Toca \'<b>Configurar billetera [Hardware]</b>\'</string>
   <string name="casa_sel_keystone">Selecciona \'<b>Keystone</b>\'</string>
-  <string name="casa_con_scan_qr_code">Continuar con <b>Escanear código QR</b></string>
+  <string name="casa_con_scan_qr_code">Continuar a <b>Escanear código QR</b></string>
   <string name="casa_guide_two_tip"><![CDATA[¿Preguntas? Sigue nuestra guía en <font color=\"#00cdc3\">https://keyst.one/casa<font>]]></string>
   <string name="casa_continue_ready">Continúa, está listo</string>
   <string name="casa_guide">Cómo escanear el código QR en Casa</string>
@@ -811,9 +811,7 @@ Cofirmante:</string>
   <string name="add_caravan_wallet">Añadir billetera multifirma</string>
   <string name="create_successful">Crear con éxito</string>
   <string name="caravan_export_wallet_hint"><![CDATA[
-        1.  Puedes exportar esta billetera a los cofirmantes para que la importen (Los cofirmantes necesitan importar la billetera, de lo contrario no podrán firmar las transacciones de la billetera)<br>
-        2. <font color=\"#00cdc3\"> Los cofirmantes necesitan comprobar si el código de verificación de la billetera a importar es el mismo que el código de verificación de la billetera anterior</font>, y asegurarse de que son consistentes antes de la importación.<br>
+        1.  Exporta esta billetera a los cofirmantes para que la importen (Los cofirmantes necesitan importar la billetera, de lo contrario no podrán firmar las transacciones de la billetera)<br>
+        2. <font color=\"#00cdc3\"> Los cofirmantes deben comprobar si el código de verificación de la billetera a importar es el mismo que el código de verificación de la billetera anterior</font> y asegurarse de que son consistentes antes de la importación.<br>
     ]]></string>
-
-
 </resources>
