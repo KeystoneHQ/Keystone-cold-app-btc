@@ -41,6 +41,7 @@ public class LicenseFragment extends BaseFragment<PrivacyPolicyBinding> {
 
     public static final String KEY_URL = "url";
     public static final String KEY_TITLE = "title";
+    private String prefix;
 
     @Override
     protected int setView() {
@@ -52,9 +53,11 @@ public class LicenseFragment extends BaseFragment<PrivacyPolicyBinding> {
         Objects.requireNonNull(getArguments());
         mBinding.toolbar.setNavigationOnClickListener(view1 -> navigateUp());
         mBinding.toolbarTitle.setText(getArguments().getString(KEY_TITLE));
-        String prefix = Utilities.getPrefs(MainApplication.getApplication())
-                .getString(SETTING_LANGUAGE, DEFAULT);
-
+        prefix = Utilities.getPrefs(MainApplication.getApplication())
+                .getString(SETTING_LANGUAGE, "zh_rCN");
+        if (!prefix.equals("zh_rCN")) {
+            prefix = "en";
+        }
         AppExecutors.getInstance().diskIO().execute(() -> {
             String text = readFromAssets(prefix + "_" + getArguments().getString(KEY_URL));
             AppExecutors.getInstance()

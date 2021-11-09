@@ -75,11 +75,13 @@
 
     <string-array name="language_entries" translatable="false">
         <item>English</item>
-        <item>中文</item>
+        <item>Español</item>
+        <item>中文繁体</item>
     </string-array>
 
     <string-array name="language_values" translatable="false">
         <item>en</item>
+        <item>es_rES</item>
         <item>zh_rCN</item>
     </string-array>
 

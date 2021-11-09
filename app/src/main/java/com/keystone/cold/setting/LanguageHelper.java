@@ -28,11 +28,13 @@ import java.util.Locale;
 
 public class LanguageHelper {
     public static final String ENGLISH = "en";
+    public static final String SPANISH = "es_rES";
     public static final String SIMPLIFIED_CHINESE = "zh_rCN";
     public static final String DEFAULT = ENGLISH;
     private static final String TAG = "Vault.LanguageHelper";
     private static final HashMap<String, Locale> mAllLanguages = new HashMap<String, Locale>() {{
         put(ENGLISH, Locale.ENGLISH);
+        put(SPANISH, new Locale("ES"));
         put(SIMPLIFIED_CHINESE, Locale.SIMPLIFIED_CHINESE);
 
     }};
