@@ -384,17 +384,24 @@ Email: support@keyst.one</string>
   <string name="retry_format">¿Está reformateado?</string>
   <string name="retry">Reintentar</string>
   <string name="formatting">Formateando…</string>
-    <string-array name="address_format">
+  <string-array name="address_format">
     <item>SegWit anidado（P2SH-P2WPKH）</item>
     <item>SegWit nativo (P2WPKH)</item>
+  </string-array>
+  <string-array name="address_format_generic">
+    <item>SegWit anidado（P2SH-P2WPKH）</item>
+    <item>SegWit nativo (P2WPKH)</item>
+    <item>Heredado (P2WPKH)</item>
   </string-array>
   <string-array name="address_format_subtitle">
     <item><![CDATA[p.ej. <font color=\"#00cdc3\">3<font/>7VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]]></item>
     <item><![CDATA[p.ej. <font color=\"#00cdc3\">bc1<font/>qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu]]></item>
+    <item><![CDATA[p.ej. <font color=\"#00cdc3\">1<font/>LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA]]></item>
   </string-array>
   <string-array name="address_format_subtitle_testnet">
     <item><![CDATA[p.ej. <font color=\"#00cdc3\">2<font/>7VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]]></item>
     <item><![CDATA[p.ej. <font color=\"#00cdc3\">tb1<font/>qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu]]></item>
+    <item><![CDATA[p.ej. <font color=\"#00cdc3\">m<font/>kpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV]]></item>
   </string-array>
   <string-array name="multisig_mode_list">
     <item>Modo Casa</item>
@@ -594,7 +601,7 @@ Email: support@keyst.one</string>
   <string name="show_qrcode">Mostrar código QR</string>
   <string name="export_wallet">Exportar billetera</string>
   <string name="native_segwit">SegWit nativo</string>
-  <string name="p2pkh">Pagar a Hash de Clave Pública</string>
+  <string name="p2pkh">Heredado</string>
   <string name="nested_segwit">SegWit anidado</string>
   <string name="txid">TxID</string>
   <string name="skip_export">Exportado / Exportar luego</string>

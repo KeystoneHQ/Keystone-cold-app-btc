@@ -163,6 +163,10 @@
     <string-array name="address_format">
         <item>Nested SegWit（P2SH-P2WPKH）</item>
         <item>Native SegWit（P2WPKH）</item>
+    </string-array>
+    <string-array name="address_format_generic">
+        <item>Nested SegWit（P2SH-P2WPKH）</item>
+        <item>Native SegWit（P2WPKH）</item>
         <item>Legacy（P2PKH）</item>
     </string-array>
 
@@ -591,7 +595,7 @@
     <string name="show_qrcode">Display QR Code</string>
     <string name="export_wallet">Export Wallet</string>
     <string name="native_segwit">Native SegWit</string>
-    <string name="p2pkh">Pay To Public Key Hash</string>
+    <string name="p2pkh">Legacy</string>
     <string name="nested_segwit">Nested SegWit</string>
     <string name="txid">TxID</string>
     <string name="skip_export">Exported / Export Later</string>
