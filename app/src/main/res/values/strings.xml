@@ -163,6 +163,10 @@
     <string-array name="address_format">
         <item>Nested SegWit（P2SH-P2WPKH）</item>
         <item>Native SegWit（P2WPKH）</item>
+    </string-array>
+    <string-array name="address_format_generic">
+        <item>Nested SegWit（P2SH-P2WPKH）</item>
+        <item>Native SegWit（P2WPKH）</item>
         <item>Legacy（P2PKH）</item>
     </string-array>
 

@@ -534,6 +534,10 @@
     <string-array name="address_format">
         <item>隔離見證兼容（P2SH-P2WPKH）</item>
         <item>隔離見證原生（P2WPKH）</item>
+    </string-array>
+    <string-array name="address_format_generic">
+        <item>隔離見證兼容（P2SH-P2WPKH）</item>
+        <item>隔離見證原生（P2WPKH）</item>
         <item>傳統（P2PKH）</item>
     </string-array>
 

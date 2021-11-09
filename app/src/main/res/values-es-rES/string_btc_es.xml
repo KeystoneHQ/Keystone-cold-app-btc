@@ -384,7 +384,11 @@ Email: support@keyst.one</string>
   <string name="retry_format">¿Está reformateado?</string>
   <string name="retry">Reintentar</string>
   <string name="formatting">Formateando…</string>
-    <string-array name="address_format">
+  <string-array name="address_format">
+    <item>SegWit anidado（P2SH-P2WPKH）</item>
+    <item>SegWit nativo (P2WPKH)</item>
+  </string-array>
+  <string-array name="address_format_generic">
     <item>SegWit anidado（P2SH-P2WPKH）</item>
     <item>SegWit nativo (P2WPKH)</item>
     <item>Heredado (P2WPKH)</item>

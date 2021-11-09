@@ -65,7 +65,11 @@ public class SelectAddressFormatFragment extends ListPreferenceFragment {
 
     @Override
     protected int getEntries() {
-        return R.array.address_format;
+        if (WatchWallet.getWatchWallet(mActivity).equals(WatchWallet.GENERIC)) {
+            return R.array.address_format_generic;
+        } else {
+            return R.array.address_format;
+        }
     }
 
     @Override
