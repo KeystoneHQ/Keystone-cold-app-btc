@@ -465,7 +465,7 @@
     <string name="show_qrcode">查看二維碼</string>
     <string name="export_wallet">導出錢包</string>
     <string name="native_segwit">隔離見證原生</string>
-    <string name="p2pkh">支付給公鑰哈希</string>
+    <string name="p2pkh">傳統</string>
     <string name="nested_segwit">隔離見證兼容</string>
     <string name="txid">交易ID</string>
     <string name="skip_export">已導出 / 暫不導出</string>
@@ -534,7 +534,7 @@
     <string-array name="address_format">
         <item>隔離見證兼容（P2SH-P2WPKH）</item>
         <item>隔離見證原生（P2WPKH）</item>
-        <item>支付給公鑰哈希（P2PKH）</item>
+        <item>傳統（P2PKH）</item>
     </string-array>
 
     <string-array name="address_format_subtitle">
