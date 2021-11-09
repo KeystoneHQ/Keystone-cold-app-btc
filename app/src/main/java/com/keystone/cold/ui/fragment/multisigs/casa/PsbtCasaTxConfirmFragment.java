@@ -45,6 +45,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -213,9 +215,13 @@ public class PsbtCasaTxConfirmFragment extends BaseFragment<PsbtTxConfirmFragmen
 
     private void checkBtcFee() {
         if (casaSignature.getCoinCode().equals(Coins.BTC.coinCode())) {
-            float fee = Float.parseFloat(casaSignature.getFee().split(" ")[0]);
-            if (fee > 0.01) {
-                mBinding.txDetail.fee.setTextColor(Color.RED);
+            try {
+                Number parse = NumberFormat.getInstance().parse(casaSignature.getFee().split(" ")[0]);
+                if (parse != null && parse.doubleValue() > 0.01) {
+                    mBinding.txDetail.fee.setTextColor(Color.RED);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
     }
