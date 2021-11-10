@@ -106,7 +106,7 @@ public class ExportMultiSigWalletToWatchWallet extends MultiSigBaseFragment<Expo
                 modalDialog.dismiss();
                 try {
                     boolean result = writeToSdcard(storage, caravanWalletJson.toString(2), walletName + ".json");
-                    showExportResult(mActivity, null, result, walletName + ".json");
+                    showExportResult(mActivity, null, result, null);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
