@@ -205,7 +205,6 @@
   <string name="serialno">Número de serie: %s</string>
   <string name="receive_address">A %d</string>
   <string name="sync_in_progress">Sincronización en curso</string>
-  <string name="invalid_data">Error</string>
   <string name="reset_hint">Contraseña incorrecta. Este dispositivo se borrará.</string>
   <string name="set_passphrase">Billetera con passphrase</string>
   <string name="tx_list_empty">No hay resultado\nPor favor, introduce las palabras clave de la firma</string>
@@ -416,7 +415,6 @@
   <string name="setting_multisig_mode">Seleccionar billetera</string>
   <string name="multisig_legacy">Genérica</string>
   <string name="multisig_casa">Casa</string>
-  <string name="multisig_caravan">Caravan</string>
   <string name="casa_operation_health_check">Realizar comprobación de estado</string>
   <string name="casa_operation_export">Exportar XPUB</string>
   <string name="casa_sign_message">Firmar mensaje</string>
@@ -444,7 +442,6 @@
   <string name="error_hint">Error</string>
   <string name="unknown_qrcode">Escanee el código QR creado por %s</string>
   <string name="uuid_not_match">Error</string>
-  <string name="uuid_not_match_detail">La transacción no pertenece a la billetera actual, verifica la información de la transacción.</string>
   <string name="unknown_error">Error desconocido, inténtalo de nuevo</string>
   <string name="enlarge_qrcode">¿Dificultad para escanear? Toca el código QR para ampliar.</string>
   <string name="version_not_match">La versión móvil no coincide. Actualiza el firmware de Keystone.</string>
@@ -726,13 +723,11 @@ o exportar el archivo para que los cofirmantes lo importen</string>
   <string name="p2sh">Heredado (P2SH)</string>
   <string name="select_xpub_file">Seleccionar archivo XPUB</string>
   <string name="delete_wallet_title">¿Borrar billetera?</string>
-  <string name="delete_wallet">Borrar billetera</string>
   <string name="delete_wallet_hint">¿Confirma para eliminar billetera? La transacción de la billetera no se puede firmar desp. de eliminarla.</string>
   <string name="no_multisig_Wallet">No hay billetera multifirma</string>
   <string name="import_failed">Importación fallida</string>
   <string name="not_include_current_vault">Esta billetera multifirma no contiene la billetera actual.</string>
   <string name="not_valid_multisig_wallet">No es una billetera multifirma</string>
-  <string name="not_valid_path">Actualmente, Keystone no admite la importación de esta billetera multifirma. Cambia la ruta a 8 grados.</string>
   <string name="invalid_wallet_hint">Este archivo/código QR no es una billetera multifirma, no se puede importar.</string>
   <string name="check_verify_code_hint">Los cofirmantes deben verificar si el código de verificación de la billetera que se va a importar es el mismo que el código de verificación anterior, asegúrate de que sean consistentes antes de importar.</string>
   <string name="multisig_already_signed">Esta transacción ha sido firmada, transmítela directamente.</string>
@@ -747,7 +742,6 @@ o exportar el archivo para que los cofirmantes lo importen</string>
   <string name="scan_xpub_qrcode_with_btc_pay">Escanea el código QR con BTCPay Server</string>
   <string name="scan_xpub_qrcode_with_sparrow">Escanea el código QR con Sparrow Wallet</string>
   <string name="export_wallet_to_caravan">Exportar billetera a Caravan</string>
-  <string name="export_to_caravan">Exportar a Caravan</string>
   <string name="caravan_import_guide_title">Tutoriales de importación de Caravan:</string>
   <string name="caravan_import_guide"><![CDATA[
         1. Abre la billetera Caravan y selecciona \'<b>BILLETERA</b>\'<br>
@@ -777,12 +771,5 @@ o exportar el archivo para que los cofirmantes lo importen</string>
   <string name="casa_guide_two_tip"><![CDATA[¿Preguntas? Sigue nuestra guía en <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
   <string name="casa_continue_ready">Continúa, está listo</string>
   <string name="casa_guide">Cómo escanear el código QR en Casa</string>
-  <string name="caravan_hint"><![CDATA[Keystone admite la creación de una billetera multifirma con Caravan, con tutoriales gráficos<br>por favor visita www.https://keyst.one/caravan]]></string>
-  <string name="switch_wallet">Cambiar billetera</string>
-  <string name="add_caravan_wallet">Añadir billetera multifirma</string>
-  <string name="create_successful">Crear con éxito</string>
-  <string name="caravan_export_wallet_hint"><![CDATA[
-        1. Exporta esta billetera a los cofirmantes para que la importen (Los cofirmantes necesitan importar la billetera, de lo contrario no podrán firmar las transacciones de la billetera)<br>
-        2. <font color="#00cdc3">Los cofirmantes deben comprobar si el código de verificación de la billetera a importar es el mismo que el código de verificación de la billetera anterior</font> y asegurarse de que son consistentes antes de la importación.<br>
-    ]]></string>
+
 </resources>

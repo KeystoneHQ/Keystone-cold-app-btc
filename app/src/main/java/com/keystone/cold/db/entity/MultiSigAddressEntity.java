@@ -49,6 +49,16 @@ public class MultiSigAddressEntity {
     private int changeIndex;
     private String name;
 
+    private String addition;
+
+    public void setAddition(String json) {
+        this.addition = json;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
+
     public long getId() {
         return id;
     }

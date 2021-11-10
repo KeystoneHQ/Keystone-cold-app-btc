@@ -18,6 +18,7 @@
 package com.keystone.cold.db;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -51,7 +52,7 @@ import com.keystone.cold.db.entity.WhiteListEntity;
 @Database(entities = {CoinEntity.class, AddressEntity.class,
         TxEntity.class, WhiteListEntity.class,
         AccountEntity.class, MultiSigWalletEntity.class,
-        MultiSigAddressEntity.class, CasaSignature.class}, version = 7)
+        MultiSigAddressEntity.class, CasaSignature.class}, version = 9)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "keystone-db";
     private static AppDatabase sInstance;
@@ -104,10 +105,41 @@ public abstract class AppDatabase extends RoomDatabase {
                 })
                 .addMigrations(MIGRATION_1_5)
                 .addMigrations(MIGRATION_2_5)
+                .addMigrations(MIGRATION_3_5)
                 .addMigrations(MIGRATION_5_6)
                 .addMigrations(MIGRATION_6_7)
+                .addMigrations(MIGRATION_7_8)
+                .addMigrations(MIGRATION_8_9)
                 .fallbackToDestructiveMigration()
                 .build();
+    }
+
+    private static void migrationFromMultiToBTCOnly(SupportSQLiteDatabase database) {
+        database.execSQL("DELETE FROM coins WHERE coinCode != 'BTC'");
+        database.execSQL("ALTER TABLE txs ADD COLUMN signStatus TEXT");
+        database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_wallet` " +
+                "(`walletFingerPrint` TEXT PRIMARY KEY NOT NULL, " +
+                "`walletName` TEXT, " +
+                "`threshold` INTEGER NOT NULL, " +
+                "`total` INTEGER NOT NULL, " +
+                "`exPubPath` TEXT NOT NULL, " +
+                "`exPubs` TEXT NOT NULL , " +
+                "`belongTo` TEXT NOT NULL , " +
+                "`verifyCode` TEXT NOT NULL , " +
+                "`creator` TEXT NOT NULL default '' , " +
+                "`network` TEXT NOT NULL)");
+        database.execSQL("CREATE INDEX index_multi_sig_wallet_walletFingerPrint ON multi_sig_wallet (walletFingerPrint)");
+        database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_address` " +
+                "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "`address` TEXT NOT NULL, " +
+                "`index` INTEGER NOT NULL, " +
+                "`walletFingerPrint` TEXT NOT NULL, " +
+                "`path` TEXT NOT NULL, " +
+                "`changeIndex` INTEGER NOT NULL, " +
+                "`name` TEXT, " +
+                "FOREIGN KEY(`walletFingerPrint`) REFERENCES `multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+        database.execSQL("CREATE UNIQUE INDEX index_multi_sig_address_id ON multi_sig_address (id)");
+        database.execSQL("CREATE INDEX index_multi_sig_address_walletFingerPrint ON multi_sig_address (walletFingerPrint)");
     }
 
     private static final Migration MIGRATION_1_5 = new Migration(1, 5) {
@@ -115,31 +147,7 @@ public abstract class AppDatabase extends RoomDatabase {
         public void migrate(SupportSQLiteDatabase database) {
             database.beginTransaction();
             try {
-                database.execSQL("DELETE FROM coins WHERE coinCode != 'BTC'");
-                database.execSQL("ALTER TABLE txs ADD COLUMN signStatus TEXT");
-                database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_wallet` " +
-                        "(`walletFingerPrint` TEXT PRIMARY KEY NOT NULL, " +
-                        "`walletName` TEXT, " +
-                        "`threshold` INTEGER NOT NULL, " +
-                        "`total` INTEGER NOT NULL, " +
-                        "`exPubPath` TEXT NOT NULL, " +
-                        "`exPubs` TEXT NOT NULL , " +
-                        "`belongTo` TEXT NOT NULL , " +
-                        "`verifyCode` TEXT NOT NULL , " +
-                        "`creator` TEXT NOT NULL default '' , " +
-                        "`network` TEXT NOT NULL)");
-                database.execSQL("CREATE INDEX index_multi_sig_wallet_walletFingerPrint ON multi_sig_wallet (walletFingerPrint)");
-                database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_address` " +
-                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "`address` TEXT NOT NULL, " +
-                        "`index` INTEGER NOT NULL, " +
-                        "`walletFingerPrint` TEXT NOT NULL, " +
-                        "`path` TEXT NOT NULL, " +
-                        "`changeIndex` INTEGER NOT NULL, " +
-                        "`name` TEXT, " +
-                        "FOREIGN KEY(`walletFingerPrint`) REFERENCES `multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
-                database.execSQL("CREATE UNIQUE INDEX index_multi_sig_address_id ON multi_sig_address (id)");
-                database.execSQL("CREATE INDEX index_multi_sig_address_walletFingerPrint ON multi_sig_address (walletFingerPrint)");
+                migrationFromMultiToBTCOnly(database);
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
@@ -152,31 +160,22 @@ public abstract class AppDatabase extends RoomDatabase {
         public void migrate(SupportSQLiteDatabase database) {
             database.beginTransaction();
             try {
-                database.execSQL("DELETE FROM coins WHERE coinCode != 'BTC'");
-                database.execSQL("ALTER TABLE txs ADD COLUMN signStatus TEXT");
-                database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_wallet` " +
-                        "(`walletFingerPrint` TEXT PRIMARY KEY NOT NULL, " +
-                        "`walletName` TEXT, " +
-                        "`threshold` INTEGER NOT NULL, " +
-                        "`total` INTEGER NOT NULL, " +
-                        "`exPubPath` TEXT NOT NULL, " +
-                        "`exPubs` TEXT NOT NULL , " +
-                        "`belongTo` TEXT NOT NULL , " +
-                        "`verifyCode` TEXT NOT NULL , " +
-                        "`creator` TEXT NOT NULL default '' , " +
-                        "`network` TEXT NOT NULL)");
-                database.execSQL("CREATE INDEX index_multi_sig_wallet_walletFingerPrint ON multi_sig_wallet (walletFingerPrint)");
-                database.execSQL("CREATE TABLE IF NOT EXISTS `multi_sig_address` " +
-                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "`address` TEXT NOT NULL, " +
-                        "`index` INTEGER NOT NULL, " +
-                        "`walletFingerPrint` TEXT NOT NULL, " +
-                        "`path` TEXT NOT NULL, " +
-                        "`changeIndex` INTEGER NOT NULL, " +
-                        "`name` TEXT, " +
-                        "FOREIGN KEY(`walletFingerPrint`) REFERENCES `multi_sig_wallet`(`walletFingerPrint`) ON UPDATE NO ACTION ON DELETE CASCADE )");
-                database.execSQL("CREATE UNIQUE INDEX index_multi_sig_address_id ON multi_sig_address (id)");
-                database.execSQL("CREATE INDEX index_multi_sig_address_walletFingerPrint ON multi_sig_address (walletFingerPrint)");
+                migrationFromMultiToBTCOnly(database);
+                database.execSQL("DROP TABLE ethtxs;");
+                database.execSQL("DROP TABLE ethmsgs;");
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+
+    private static final Migration MIGRATION_3_5 = new Migration(3, 5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                migrationFromMultiToBTCOnly(database);
                 database.execSQL("DROP TABLE ethtxs;");
                 database.execSQL("DROP TABLE ethmsgs;");
                 database.setTransactionSuccessful();
@@ -217,6 +216,54 @@ public abstract class AppDatabase extends RoomDatabase {
                 String currentBelongTo = Utilities.getCurrentBelongTo(MainApplication.getApplication());
                 database.execSQL("ALTER TABLE casa_signature ADD COLUMN belongTo TEXT DEFAULT " + currentBelongTo);
                 database.execSQL("UPDATE coins SET show=" + 1);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+
+    private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                database.execSQL("ALTER TABLE multi_sig_wallet ADD COLUMN mode TEXT NOT NULL DEFAULT 'generic'");
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    };
+
+    private static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.beginTransaction();
+            try {
+                Cursor cursor = database.query("SELECT * from accounts");
+                int state = cursor.getColumnIndex("addition");
+                if (state < 0) {
+                    database.execSQL("ALTER TABLE accounts ADD addition TEXT DEFAULT '{}'");
+                }
+                cursor = database.query("SELECT * from addresses");
+                state = cursor.getColumnIndex("addition");
+                if (state < 0) {
+                    database.execSQL("ALTER TABLE addresses ADD addition TEXT DEFAULT '{}'");
+                }
+                cursor = database.query("SELECT * from coins");
+                state = cursor.getColumnIndex("addition");
+                if (state < 0) {
+                    database.execSQL("ALTER TABLE coins ADD addition TEXT DEFAULT '{}'");
+                }
+                cursor = database.query("SELECT * from txs");
+                state = cursor.getColumnIndex("addition");
+                if (state < 0) {
+                    database.execSQL("ALTER TABLE txs ADD addition TEXT DEFAULT '{}'");
+                }
+                database.execSQL("ALTER TABLE casa_signature ADD addition TEXT DEFAULT '{}'");
+                database.execSQL("ALTER TABLE multi_sig_address ADD addition TEXT DEFAULT '{}'");
+                database.execSQL("ALTER TABLE multi_sig_wallet ADD addition TEXT DEFAULT '{}'");
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

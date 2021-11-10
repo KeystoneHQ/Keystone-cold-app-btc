@@ -38,7 +38,7 @@ import java.util.List;
 public class MultiSigWalletEntity {
     @PrimaryKey
     @NonNull
-    private String walletFingerPrint;
+    private String walletFingerPrint; // generic mode： verifyCode + xfp，other modes： verifyCode + xfp + _ + mode name
     private String walletName;
     @NonNull
     private int threshold;
@@ -56,6 +56,19 @@ public class MultiSigWalletEntity {
     private String network;
     @NonNull
     private String creator;
+    @NonNull
+    private String mode;
+
+    private String addition;
+
+    public void setAddition(String json) {
+        this.addition = json;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
+
     public MultiSigWalletEntity(String walletName, int threshold, int total,
                                 String exPubPath, String exPubs, String belongTo,
                                 String network, String verifyCode, String creator) {
@@ -68,6 +81,7 @@ public class MultiSigWalletEntity {
         this.network = network;
         this.verifyCode = verifyCode;
         this.creator = creator;
+        this.mode = "generic";
     }
 
     @NonNull
@@ -152,6 +166,15 @@ public class MultiSigWalletEntity {
         this.creator = creator;
     }
 
+    @NonNull
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(@NonNull String mode) {
+        this.mode = mode;
+    }
+
     public String deriveAddress(int[] index, boolean isMainnet) {
         Deriver deriver = new Deriver(isMainnet);
         List<String> xpubList = new ArrayList<>();
@@ -180,6 +203,7 @@ public class MultiSigWalletEntity {
                 ", belongTo='" + belongTo + '\'' +
                 ", network='" + network + '\'' +
                 ", creator='" + creator + '\'' +
+                ", mode='" + mode + '\'' +
                 '}';
     }
 }
