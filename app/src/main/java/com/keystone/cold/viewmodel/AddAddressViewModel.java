@@ -19,6 +19,7 @@ package com.keystone.cold.viewmodel;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -70,7 +71,6 @@ public class AddAddressViewModel extends AndroidViewModel {
                 break;
         }
         List<AccountEntity> accounts = mRepo.loadAccountsForCoin(coin);
-
         accounts.stream()
                 .filter(account -> account.getHdPath().toUpperCase().equals(hdPath))
                 .findFirst()

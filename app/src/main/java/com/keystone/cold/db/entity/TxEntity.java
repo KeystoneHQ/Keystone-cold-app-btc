@@ -48,6 +48,16 @@ public class TxEntity implements Tx, FilterableItem {
     private String belongTo;
     private String signStatus;
 
+    private String addition;
+
+    public void setAddition(String json) {
+        this.addition = json;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
+
     @Override
     public String getBelongTo() {
         return belongTo;

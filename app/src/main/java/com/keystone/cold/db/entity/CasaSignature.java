@@ -26,6 +26,15 @@ public class CasaSignature implements Tx, FilterableItem {
     private String fee;
     private String memo;
     private String belongTo;
+    private String addition;
+
+    public void setAddition(String json) {
+        this.addition = json;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
 
     public String getTxId() {
         return txId;

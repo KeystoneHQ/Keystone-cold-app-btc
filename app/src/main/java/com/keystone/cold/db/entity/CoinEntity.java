@@ -44,6 +44,15 @@ public class CoinEntity implements Coin, FilterableItem {
     private String exPub;
     private String belongTo;
     private int index;
+    private String addition;
+
+    public void setAddition(String json) {
+        this.addition = json;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
 
     @Ignore
     private final List<AccountEntity> accounts = new ArrayList<>();
