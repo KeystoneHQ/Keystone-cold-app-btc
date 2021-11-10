@@ -38,8 +38,7 @@
   <string name="signing_hint">Firmando...</string>
   <string name="scan_progress">Continúa escaneando: %s</string>
   <string name="eos_hint">Aquí está tu %s clave pública (segura para compartir)</string>
-  <string name="eos_pubkey">Clave pública:
-%s</string>
+  <string name="eos_pubkey">Clave pública:\n%s</string>
   <string name="version">Versión</string>
   <string name="setting_language">Idioma</string>
   <string name="setting_vibrator">Vibrar Encendido / Apagado</string>
@@ -165,7 +164,7 @@
   <string name="verify_way">Selecciona el método de verificación</string>
   <string name="verify_way_sharding">Verificar fragmentación</string>
   <string name="verify_way_mnemonic">Verificar la frase de recuperación</string>
-  <string name="tx_id">ID de transacción</string>
+  <string name="tx_id">TxID</string>
   <string name="mnemonic_save_hint">La frase de recuperación es la única forma de recuperar tus activos y contraseña. Si se pierde, tus activos son irrecuperables y el dispositivo puede quedar bloqueado. (La frase de recuperación no se volverá a mostrar después de la inicialización del dispositivo).</string>
   <string name="verify_code_hint">Ingresa el código de verificación en la página de Autenticación web del sitio web oficial para que tu dispositivo sea autenticado.</string>
   <string name="update_alert_boot_low_battery_message">El nivel de potencia del dispositivo debe estar por encima de %s para garantizar que la actualización se realice correctamente. El nivel actual de la batería es %s, reemplaza o carga la batería.</string>
@@ -426,10 +425,10 @@
   <string name="scan_qrcode_with_casa">Escanea el código QR usando Casa</string>
   <string name="tab_my_address">Recibir</string>
   <string name="tab_my_change_address">Cambio</string>
-  <string name="web_auth1"><![CDATA[1. Haz clic en <font color="#00cdc3">"Escanear código QR"<font/> y escanea el código QR que se muestra en el sitio web]]></string>
-  <string name="web_auth2">2. Ingresa el código que se muestra en tu Keystone en el sitio web oficial para la autenticación;</string>
-  <string name="web_auth3"><![CDATA[3. Haz clic en <font color="#00cdc3">"Verify"<font/> en el sitio web para ver el resultado]]></string>
-  <string name="web_auth4">Si la autenticación falla, no uses tu dispositivo, ya que puede haber sido comprometido!</string>
+  <string name="web_auth1"><![CDATA[1. Visita <font color="#00cdc3">https://keyst.one/auth<font/>]]></string>
+  <string name="web_auth2"><![CDATA[2. Haz clic en <font color="#00cdc3">\"Escanear código QR\" <font/> y escanea el código QR que se muestra en el sitio web]]></string>
+  <string name="web_auth3">3. Ingresa el código que se muestra en tu Keystone en el sitio web oficial para la autenticación;</string>
+  <string name="web_auth4">4. Si la autenticación falla, no uses tu dispositivo, ya que puede haber sido comprometido!</string>
   <string name="create_vault_hint"><![CDATA[1. Toca <font color="#00cdc3">\"Crear billetera\"<font/> para generar una nueva billetera.]]></string>
   <string name="import_vault_hint"><![CDATA[2. Toca <font color="#00cdc3">\"Importar billetera\"<font/> para importar una billetera HD existente.]]></string>
   <string name="sync_hint1">Escanear código QR con Keystone app</string>
@@ -570,7 +569,7 @@
   <string name="txid">TxID</string>
   <string name="skip_export">Exportado / Exportar luego</string>
   <string name="export_later">Exportar más tarde</string>
-  <string name="choose_watch_only_wallet">Seleccionar una billetera watch-only</string>
+  <string name="choose_watch_only_wallet">Seleccionar Watch-only</string>
   <string name="watch_only_wallet">Billetera watch-only</string>
   <string name="switch_watch_only_wallet_guide">Ve a Menú > Configuración > Para cambiar a billetera watch-only</string>
   <string name="wallet_info">Información de la billetera</string>
@@ -769,5 +768,4 @@ o exportar el archivo para que los cofirmantes lo importen</string>
   <string name="casa_guide_two_tip"><![CDATA[¿Preguntas? Sigue nuestra guía en <font color="#00cdc3">https://keyst.one/casa<font>]]></string>
   <string name="casa_continue_ready">Continúa, está listo</string>
   <string name="casa_guide">Cómo escanear el código QR en Casa</string>
-
 </resources>
