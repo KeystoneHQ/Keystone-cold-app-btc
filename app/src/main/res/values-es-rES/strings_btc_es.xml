@@ -427,7 +427,7 @@
   <string name="tab_my_change_address">Cambio</string>
   <string name="web_auth1"><![CDATA[1. Visita <font color="#00cdc3">https://keyst.one/auth<font/>]]></string>
   <string name="web_auth2"><![CDATA[2. Haz clic en <font color="#00cdc3">\"Escanear código QR\" <font/> y escanea el código QR que se muestra en el sitio web]]></string>
-  <string name="web_auth3">3. Ingresa el código que se muestra en tu Keystone en el sitio web oficial para la autenticación;</string>
+  <string name="web_auth3">3. Ingresa el código que se muestra en tu Keystone en el sitio web oficial para la autenticación</string>
   <string name="web_auth4">4. Si la autenticación falla, no uses tu dispositivo, ya que puede haber sido comprometido!</string>
   <string name="create_vault_hint"><![CDATA[1. Toca <font color="#00cdc3">\"Crear billetera\"<font/> para generar una nueva billetera.]]></string>
   <string name="import_vault_hint"><![CDATA[2. Toca <font color="#00cdc3">\"Importar billetera\"<font/> para importar una billetera HD existente.]]></string>
@@ -438,7 +438,7 @@
   <string name="know">Entendido</string>
   <string name="error_hint">Error</string>
   <string name="unknown_qrcode">Escanee el código QR creado por %s</string>
-  <string name="uuid_not_match">Error</string>
+  <string name="uuid_not_match">La transacción no pertenece a la billetera actual, verifica la información de la transacción.</string>
   <string name="unknown_error">Error desconocido, inténtalo de nuevo</string>
   <string name="enlarge_qrcode">¿Dificultad para escanear? Toca el código QR para ampliar.</string>
   <string name="version_not_match">La versión móvil no coincide. Actualiza el firmware de Keystone.</string>
