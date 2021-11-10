@@ -58,6 +58,17 @@ public class MultiSigWalletEntity {
     private String creator;
     @NonNull
     private String mode;
+
+    private String addition;
+
+    public void setAddition(String json) {
+        this.addition = json;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
+
     public MultiSigWalletEntity(String walletName, int threshold, int total,
                                 String exPubPath, String exPubs, String belongTo,
                                 String network, String verifyCode, String creator,
