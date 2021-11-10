@@ -27,6 +27,8 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.keystone.coinlib.ExtendPubkeyFormat;
+import com.keystone.coinlib.accounts.Account;
+import com.keystone.coinlib.accounts.ExtendedPublicKeyVersion;
 import com.keystone.coinlib.accounts.MultiSig;
 import com.keystone.cold.R;
 import com.keystone.cold.Utilities;
@@ -114,6 +116,11 @@ public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWal
     }
 
     private String getXpub(MultiSigWalletEntity wallet) {
+        Account account = MultiSig.ofPath(wallet.getExPubPath()).get(0);
+        ExtendedPublicKeyVersion extendedPublicKeyVersion = account.getXPubVersion();
+        if (account == Account.MULTI_P2SH && isTestNet) {
+            extendedPublicKeyVersion = ExtendedPublicKeyVersion.tpub;
+        }
         StringBuilder builder = new StringBuilder();
         try {
             JSONArray array = new JSONArray(wallet.getExPubs());
@@ -125,7 +132,9 @@ public class MultisigWalletInfoFragment extends MultiSigBaseFragment<MultisigWal
                     mBinding.llDerivationPath.setVisibility(View.GONE);
                     builder.append("Derivation: ").append(path).append("\n");
                 }
-                builder.append(info.getString("xpub")).append("\n");
+                String xpub = info.getString("xpub");
+                xpub = ExtendedPublicKeyVersion.convertXPubVersion(xpub, extendedPublicKeyVersion);
+                builder.append(xpub).append("\n");
                 if (i < wallet.getTotal() - 1) builder.append("\n");
             }
 
