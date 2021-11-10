@@ -64,6 +64,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="89dp"
+            android:gravity="center"
+            android:layout_marginHorizontal="16dp"
             android:text="@string/web_auth_code"
             android:textColor="@color/white"
             android:textSize="17sp" />
@@ -94,6 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginHorizontal="16dp"
+            android:gravity="center"
             android:text="@string/verify_code_hint"
             android:textColor="@color/white"
             android:textSize="15sp" />
