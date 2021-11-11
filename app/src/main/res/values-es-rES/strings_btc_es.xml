@@ -240,7 +240,7 @@
   <string name="export_signed_txn_file">Exportar archivo firmado</string>
   <string name="export_signed_txn_action_guide">Cómo transmitir con Electrum: En Electrum, ve a Herramientas > Cargar transacción > Desde archivo. Abre el archivo y haz clic en "Transmitir".</string>
   <string name="export">Exportar</string>
-  <string name="export_xpub_text_file">Exportar archivo de clave pública maestra</string>
+  <string name="export_xpub_text_file">Exportar Archivo</string>
   <string name="file_name_label">Nombre del archivo:</string>
   <string name="sign_txn_in_sdcard">Archivos de transacciones sin firmar</string>
   <string name="master_pubkey_not_match">Transacción no reconocida. Tu Keystone no se enlazó correctamente con la billetera watch-only.</string>
@@ -375,7 +375,7 @@
     <item>Modo genérico</item>
   </string-array>
   <string-array name="multisig_mode_list_sub_titles" translatable="true">
-    <item>Llave de hardware, llave móvil, llave de recuperación de Casa</item>
+    <item>Hardware, Móvil, Casa</item>
     <item>BlueWallet, Specter, Sparrow Wallet…</item>
   </string-array>
   <string-array name="network_entries">
@@ -629,7 +629,7 @@
   <string name="select_threshold">Firmantes</string>
   <string name="select_address_type">Tipo de dirección</string>
   <string name="import_multisig_wallet">Importar billetera multifirma</string>
-  <string name="extend_pubkey">Ampliar la clave pública</string>
+  <string name="extend_pubkey">XPUB</string>
   <string name="extend_pubkey1">XPUB</string>
   <string name="file_name">Nombre de archivo:%s</string>
   <string name="wallet_verification_code"><![CDATA[Código de verificación de la billetera: <font color="#00cdc3">%s<font>]]></string>
