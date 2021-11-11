@@ -56,6 +56,7 @@
             android:layout_height="wrap_content"
             android:text="@string/choose_import_type"
             android:layout_gravity="center"
+            android:gravity="center"
             android:layout_marginTop="118dp"
             android:textSize="17sp"
             android:textStyle="bold"

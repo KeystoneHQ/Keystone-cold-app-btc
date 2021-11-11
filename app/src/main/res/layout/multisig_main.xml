@@ -49,12 +49,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:drawablePadding="4dp"
                     android:gravity="center"
                     android:text="@string/multisig_legacy"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
                     android:textSize="15sp"
-                    android:drawablePadding="4dp"
+                    android:textStyle="bold"
                     app:drawableEndCompat="@drawable/arrow_right"
                     app:drawableTint="@color/colorAccent" />
             </FrameLayout>
@@ -79,13 +79,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginHorizontal="16dp"
+                android:drawablePadding="4dp"
                 android:ellipsize="middle"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:drawablePadding="4dp"
                 app:drawableEndCompat="@drawable/arrow_right"
                 app:drawableTint="@color/colorAccent" />
         </FrameLayout>
@@ -125,62 +125,67 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="32dp"
             android:src="@drawable/plus"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <LinearLayout
+        <ScrollView
             android:id="@+id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:visibility="visible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:text="@string/no_multisig_wallet"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <com.keystone.cold.ui.views.SpanedTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/create_multisig_wallet_hint"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:text="@string/confirm_sdcard_insert"
-                android:textColor="@color/white40" />
-
-            <Space
+            android:visibility="visible"
+            android:fillViewport="true">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <Button
-                android:id="@+id/create_multisig"
-                style="@style/AcceptButton"
-                android:layout_width="match_parent"
-                android:text="@string/create_multisig_wallet" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="@string/no_multisig_wallet"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/import_multisig"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="?selectableItemBackground"
-                android:padding="10dp"
-                android:gravity="center"
-                android:layout_marginTop="5dp"
-                android:text="@string/import_multisig_wallet"
-                android:textColor="@color/colorAccent" />
+                <com.keystone.cold.ui.views.SpanedTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/create_multisig_wallet_hint"
+                    android:textColor="@color/white" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="@string/confirm_sdcard_insert"
+                    android:textColor="@color/white40" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/create_multisig"
+                    style="@style/AcceptButton"
+                    android:layout_width="match_parent"
+                    android:text="@string/create_multisig_wallet" />
+
+                <TextView
+                    android:id="@+id/import_multisig"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="5dp"
+                    android:background="?selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/import_multisig_wallet"
+                    android:textColor="@color/colorAccent" />
+
+            </LinearLayout>
+        </ScrollView>
     </RelativeLayout>
 </layout>

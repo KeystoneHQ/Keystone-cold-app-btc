@@ -80,8 +80,10 @@
 
                     <com.keystone.cold.ui.views.SpanedTextView
                         android:id="@+id/verify_code"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/wallet_verification_code"
                         android:textColor="@color/white" />
 

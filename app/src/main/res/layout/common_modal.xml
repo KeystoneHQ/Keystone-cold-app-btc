@@ -86,6 +86,7 @@
                 android:layout_below="@id/confirm"
                 android:layout_centerHorizontal="true"
                 android:background="?attr/selectableItemBackground"
+                android:gravity="center"
                 android:textColor="@color/colorAccent"
                 android:visibility="gone"
                 android:textSize="14sp" />
