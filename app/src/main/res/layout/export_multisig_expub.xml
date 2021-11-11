@@ -50,7 +50,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:navigationIcon="@drawable/arrow_left"
-            app:menu="@menu/export_all"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
@@ -58,7 +57,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:singleLine="true"
                 android:text="@string/extend_pubkey"
                 android:textColor="@android:color/white"
                 android:textSize="15sp" />
