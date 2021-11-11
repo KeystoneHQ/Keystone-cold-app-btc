@@ -618,7 +618,7 @@
      Debes crear o importar una billetera multifirma antes de firmar transacciones con esta billetera.<br><br>
      Cómo crear una billetera multifirma:<br>
      1. Reúne los XPUB de los cofirmantes, haz clic en Más > Mostrar/Exportar XPUB para exportar XPUB.<br>
-     2. El XPUB puede mostrarse como un código QR o guardarse como archivo.<font color="#00cdc3"> Guarda los archivos XPUBs recogidos en una tarjeta microSD <font/> si el XPUB se guarda como archivo (formato FAT32).<br>
+     2. El XPUB puede mostrarse como un código QR o guardarse como archivo.<br>
      3. Toca el botón "Crear billetera multifirma" abajo para determinar el número de cofirmantes y firmas y el tipo de dirección, luego rellena los XPUBs escaneando el código QR o importando el archivo. <br>
     ]]></string>
   <string name="export_all">Exportar todo</string>

@@ -617,7 +617,7 @@
      You need to create or import a multisig wallet before signing transactions with this wallet.<br><br>
      How to create a multisig wallet:<br>
      1. Collect the co-signers’ XPUBs first, click More > Show/Export  XPUB to export XPUB.<br>
-     2. The XPUB can be displayed as a QR code or saved as a file,<font color="#00cdc3"> you need to save XPUBs files collected in one microSD card <font/> if XPUB saved as file (FAT32 format).<br>
+     2. The XPUB can be displayed as a QR code or saved as a file.<br>
      3. Touch the "Create Multisig Wallet" button below to determine the number of co-signers and signatures and the address type, then fill in the  XPUBs by scanning QR code or importing the file. <br>
     ]]></string>
     <string name="export_all">Export All</string>
