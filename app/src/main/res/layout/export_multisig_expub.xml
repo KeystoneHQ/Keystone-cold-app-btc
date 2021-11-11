@@ -40,7 +40,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -50,6 +50,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:navigationIcon="@drawable/arrow_left"
+            app:menu="@menu/export_all"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
@@ -57,77 +58,91 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:singleLine="true"
                 android:text="@string/extend_pubkey"
                 android:textColor="@android:color/white"
                 android:textSize="15sp" />
         </androidx.appcompat.widget.Toolbar>
 
-        <TextView
-            android:id="@+id/address_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:layout_marginTop="20dp"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:drawableEnd="@drawable/arrow_right"
-            android:textStyle="bold" />
 
-        <com.keystone.cold.ui.views.SpanedTextView
-            android:id="@+id/expub"
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            tools:text="Zpub755NbzNDFus6egJM22CLBqjabHyNV8PEWJHGBkfCSXN2W8HRPKEA2MyxvycgD4AxNMcrTuxSwKYiNJ19h9PLURGZoWyC2Tutr7SWaU1swYK" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/path"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            tools:text="（m/48'/0'/0'/2')" />
-
-        <com.keystone.cold.ui.views.qrcode.QrCodeView
-            android:id="@+id/qrcode"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
-            android:layout_marginHorizontal="34dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/white"
-            android:keepScreenOn="true"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/img"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible"
-                tools:ignore="ContentDescription" />
-
-            <ProgressBar
-                android:id="@+id/progress"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="visible" />
-        </com.keystone.cold.ui.views.qrcode.QrCodeView>
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
-        <com.keystone.cold.ui.views.SpanedTextView
-            android:id="@+id/export_to_sdcard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:paddingVertical="10dp"
-            android:gravity="center"
-            android:text="@string/generic_qrcode_hint"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/address_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="?selectableItemBackground"
+                    android:drawableEnd="@drawable/arrow_right"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
+                <com.keystone.cold.ui.views.SpanedTextView
+                    android:id="@+id/expub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    tools:text="Zpub755NbzNDFus6egJM22CLBqjabHyNV8PEWJHGBkfCSXN2W8HRPKEA2MyxvycgD4AxNMcrTuxSwKYiNJ19h9PLURGZoWyC2Tutr7SWaU1swYK" />
+
+                <TextView
+                    android:id="@+id/path"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    tools:text="（m/48'/0'/0'/2')" />
+
+                <com.keystone.cold.ui.views.qrcode.QrCodeView
+                    android:id="@+id/qrcode"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_marginHorizontal="34dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/white"
+                    android:keepScreenOn="true"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="visible"
+                        tools:ignore="ContentDescription" />
+
+                    <ProgressBar
+                        android:id="@+id/progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="visible" />
+                </com.keystone.cold.ui.views.qrcode.QrCodeView>
+
+                <com.keystone.cold.ui.views.SpanedTextView
+                    android:id="@+id/export_to_sdcard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:paddingVertical="10dp"
+                    android:text="@string/generic_qrcode_hint"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </layout>
