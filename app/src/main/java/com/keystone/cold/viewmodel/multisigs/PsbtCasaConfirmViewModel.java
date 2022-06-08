@@ -354,7 +354,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
                     String[] index = path.split("/");
                     isCasaMainnet = index[1].startsWith("0");
                     utxo.put("publicKey", myCasaKey);
-                    utxo.put("value", psbtInput.optInt("value"));
+                    utxo.put("value", psbtInput.optLong("value"));
                     in.put("utxo", utxo);
                     in.put("ownerKeyPath", hdPath);
                     in.put("masterFingerprint", mfp);
@@ -392,7 +392,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
                     address = Util.convertAddressToTestnet(address);
                 }
                 out.put("address", address);
-                out.put("value", psbtOutput.getInt("value"));
+                out.put("value", psbtOutput.getLong("value"));
                 outputs.put(out);
             }
         }

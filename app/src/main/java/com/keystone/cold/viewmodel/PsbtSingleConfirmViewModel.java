@@ -453,7 +453,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
                     }
                     if (match) {
                         utxo.put("publicKey", item.getString("pubkey"));
-                        utxo.put("value", psbtInput.optInt("value"));
+                        utxo.put("value", psbtInput.optLong("value"));
                         in.put("utxo", utxo);
                         in.put("ownerKeyPath", hdPath);
                         in.put("masterFingerprint", item.getString("masterFingerprint"));
@@ -489,7 +489,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
                 JSONObject out = new JSONObject();
                 String address = psbtOutput.getString("address");
                 out.put("address", address);
-                out.put("value", psbtOutput.getInt("value"));
+                out.put("value", psbtOutput.getLong("value"));
                 JSONArray bip32Derivation = psbtOutput.optJSONArray("hdPath");
                 if (bip32Derivation != null) {
                     for (int j = 0; j < bip32Derivation.length(); j++) {
