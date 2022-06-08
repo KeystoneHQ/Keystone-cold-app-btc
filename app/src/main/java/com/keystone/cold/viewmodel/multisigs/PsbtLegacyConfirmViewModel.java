@@ -548,7 +548,7 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
                         hdPath = wallet.getExPubPath() + hdPath.substring(1);
                     }
                     utxo.put("publicKey", findMyPubKey(bip32Derivation));
-                    utxo.put("value", psbtInput.optInt("value"));
+                    utxo.put("value", psbtInput.optLong("value"));
                     in.put("utxo", utxo);
                     in.put("ownerKeyPath", hdPath);
                     in.put("masterFingerprint", wallet.getBelongTo());

@@ -453,7 +453,7 @@ public class PsbtSingleConfirmViewModel extends ParsePsbtViewModel {
                     }
                     if (match) {
                         utxo.put("publicKey", item.getString("pubkey"));
-                        utxo.put("value", psbtInput.optInt("value"));
+                        utxo.put("value", psbtInput.optLong("value"));
                         in.put("utxo", utxo);
                         in.put("ownerKeyPath", hdPath);
                         in.put("masterFingerprint", item.getString("masterFingerprint"));
