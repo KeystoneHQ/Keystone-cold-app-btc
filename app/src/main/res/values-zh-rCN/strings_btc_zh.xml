@@ -102,7 +102,7 @@
     <string name="confirm_mnemonic">確認助記詞</string>
     <string name="confirm_input_mnemonic_hint">請在下方表格中輸入%d個助記詞。</string>
     <string name="complete">完成</string>
-    <string name="password_verify_too_short">至少10個字符</string>
+    <string name="password_verify_too_short">至少6個字符</string>
     <string-array name="screen_off_entries">
         <item>15 秒</item>
         <item>30 秒</item>
@@ -208,7 +208,7 @@
     <string name="welcome_text">將引導您對鎧石硬件錢包進行初始化設置</string>
     <string name="welcome_site"><![CDATA[請用電腦訪問: <font color="#00cdc3">https://keyst.one/start<font/>]]></string>
     <string name="welcome_done">準備好了，開始</string>
-    <string name="text_password_required">至少10個字符；必須同時包含大、小寫字母和數字；可包含常用特殊字符</string>
+    <string name="text_password_required">您的密碼必須至少包含6個字符（可以是數字、字母或符號的組合）。我們強烈建議使用至少包含10個字符的強密碼，包括大小寫字母和數字。</string>
     <string name="guide_completed_title">恭喜！鎧石錢包設置已完成，\n  可以開始使用了！</string>
     <string name="guide_completed_remind"><![CDATA[更多錢包設置可點擊菜單-設置，如手勢解鎖，創建Passphrase錢包。了解更多功能，請訪問：\n <font color="#00cdc3">https://keyst.one<font/>]]></string>
     <string name="tx_id">交易ID</string>
