@@ -337,7 +337,7 @@
     <string name="welcome_site"><![CDATA[Please open the following link using a PC: <font color="#00cdc3">https://keyst.one/start</font>]]></string>
     <string name="welcome_text">This will help guide setting up your Keystone hardware wallet.</string>
     <string name="welcome_done">It\'s ready, start</string>
-    <string name="text_password_required">Must contain at least 10 characters and include upper and lower case letters and digits. Symbols are allowed. Case sensitive.</string>
+    <string name="text_password_required">Your password must contain a minimum of 6 characters (can be a mix of numbers, letters or symbols). We highly recommend using a strong password with at least 10 characters, including upper and lower case letters and numerical digits.</string>
     <string name="guide_completed_title">Congratulations! \nSetup is now complete!</string>
     <string name="guide_completed_remind"><![CDATA[You can create Passphrase(Hidden Wallet) or reset your password in Settings. \n Read the enclosed Quick Guide or visit our website to learn more: <br> <font color="#00cdc3"><u>https://keyst.one</u><font/>]]></string>
     <string name="tx_from">From</string>
