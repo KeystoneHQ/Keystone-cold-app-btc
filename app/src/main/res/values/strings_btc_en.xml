@@ -125,19 +125,19 @@
 
     <string-array name="multisig_mode_list">
         <item>Casa Mode</item>
-        <item>Caravan Mode</item>
+<!--        <item>Caravan Mode</item>-->
         <item>Generic Mode</item>
     </string-array>
 
     <string-array name="multisig_mode_list_values" translatable="false">
         <item>casa</item>
-        <item>caravan</item>
+<!--        <item>caravan</item>-->
         <item>legacy</item>
     </string-array>
 
     <string-array name="multisig_mode_list_sub_titles" translatable="true">
         <item>Hardware Key, Mobile Key, Casa Recovery Key</item>
-        <item>Caravan Multisig</item>
+<!--        <item>Caravan Multisig</item>-->
         <item>BlueWallet, Specter, Sparrow Wallet…</item>
     </string-array>
 
