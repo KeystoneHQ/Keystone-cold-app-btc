@@ -405,12 +405,12 @@ Email: support@keyst.one</string>
   </string-array>
   <string-array name="multisig_mode_list">
     <item>Modo Casa</item>
-    <item>Modo Caravan</item>
+<!--    <item>Modo Caravan</item>-->
     <item>Modo genérico</item>
   </string-array>
   <string-array name="multisig_mode_list_sub_titles" translatable="true">
     <item>Llave de hardware, llave móvil, llave de recuperación de Casa</item>
-    <item>Caravan multifirma</item>
+<!--    <item>Caravan multifirma</item>-->
     <item>BlueWallet, Specter, Sparrow Wallet…</item>
   </string-array>
   <string-array name="network_entries">
