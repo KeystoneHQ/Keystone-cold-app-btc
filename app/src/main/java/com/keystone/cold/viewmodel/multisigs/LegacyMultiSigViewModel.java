@@ -177,7 +177,6 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             }
 
             object.put("Xpubs", xpubs);
-
         } catch (IOException | JSONException | NumberFormatException e) {
             e.printStackTrace();
             Log.w("Multisig", "invalid wallet ", e);
@@ -211,7 +210,7 @@ public class LegacyMultiSigViewModel extends ViewModelBase {
             String[] strings = content.split("Derivation: ");
             if (xpubs.length() + 1 != strings.length) return null;
             for (int i = 0; i < xpubs.length(); i++) {
-                String path = strings[i+1].split("\n")[0].trim();
+                String path = strings[i+1].replace('h', '\'').split("\n")[0].trim();
                 xpubs.getJSONObject(i).put("path", path);
                 String xpub = xpubs.getJSONObject(i).getString("xpub");
                 if (object.getBoolean("isTest")) {
