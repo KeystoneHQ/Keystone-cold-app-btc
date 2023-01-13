@@ -392,7 +392,7 @@ public class PsbtCasaConfirmViewModel extends ParsePsbtViewModel {
                     address = Util.convertAddressToTestnet(address);
                 }
                 out.put("address", address);
-                out.put("value", psbtOutput.getInt("value"));
+                out.put("value", psbtOutput.getLong("value"));
                 outputs.put(out);
             }
         }
