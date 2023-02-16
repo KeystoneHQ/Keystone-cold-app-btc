@@ -330,20 +330,22 @@ public class PsbtLegacyConfirmViewModel extends ParsePsbtViewModel {
     }
 
     protected String getExPubPath(String distinctPath) {
-        String expubPath = wallet.getExPubPath();
+        String expubPath = "";
         try {
             JSONArray jsonArray = new JSONArray(wallet.getExPubs());
             for (int i = 0; i < jsonArray.length(); i++) {
                 String path = jsonArray.getJSONObject(i).optString("path");
                 if (path.isEmpty()) break;
                 if (distinctPath.startsWith(path)) {
-                    expubPath = path;
-                    break;
+                    if (expubPath.length() < path.length()) {
+                        expubPath = path;
+                    }
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        if (expubPath.isEmpty()) expubPath = wallet.getExPubPath();
         return expubPath;
     }
 
