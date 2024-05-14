@@ -104,7 +104,7 @@
     </string-array>
 
     <string-array name="watch_wallet_list">
-        <item>Keystone Mobile</item>
+        <!-- <item>Keystone Mobile</item> -->
         <item>BlueWallet</item>
         <item>Electrum</item>
         <item>BTCPay Server</item>
@@ -114,7 +114,7 @@
     </string-array>
 
     <string-array name="watch_wallet_list_values" translatable="false">
-        <item>0</item>
+        <!-- <item>0</item> -->
         <item>1</item>
         <item>2</item>
         <item>3</item>
