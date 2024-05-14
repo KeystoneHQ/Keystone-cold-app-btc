@@ -425,7 +425,7 @@ Email: support@keyst.one</string>
     <item>Completo</item>
   </string-array>
   <string-array name="watch_wallet_list">
-    <item>Keystone Mobile</item>
+    <!-- <item>Keystone Mobile</item> -->
     <item>BlueWallet</item>
     <item>Electrum</item>
     <item>BTCPay Server</item>

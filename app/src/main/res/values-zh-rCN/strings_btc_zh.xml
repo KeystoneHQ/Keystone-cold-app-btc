@@ -491,7 +491,7 @@
     <string name="toggle_later">暫不切換</string>
     <string name="toggle_confirm">確認切換</string>
     <string-array name="watch_wallet_list">
-        <item>鎧石錢包移動端</item>
+        <!-- <item>鎧石錢包移動端</item> -->
         <item>BlueWallet</item>
         <item>Electrum</item>
         <item>BTCPay Server</item>
