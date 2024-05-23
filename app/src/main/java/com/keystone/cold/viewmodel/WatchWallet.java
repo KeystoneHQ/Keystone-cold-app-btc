@@ -56,7 +56,7 @@
          if (walletId.equals(GENERIC.getWalletId())) {
              return wallets[wallets.length - 1];
          } else {
-             return wallets[Integer.parseInt(walletId)];
+             return wallets[Integer.parseInt(walletId) -1 ];
          }
      }
 
